@@ -1,0 +1,139 @@
+@use 'sass:list';
+@use "@/assets/styles/env" as env;
+
+html {
+    line-height: 1.15; // 校正瀏覽器 line-height
+    -webkit-text-size-adjust: 100%; // 避免iOS裝置旋轉後調整文字大小
+}
+
+/* margin padding 標準化 */
+body, div, ul, ol, li, td, input, p {
+    margin: 0;
+    padding: 0;
+}
+
+/* 移除清單list-style樣式 */
+ol, ul {
+    list-style: none;
+}
+
+/* font-style */
+strong {
+    font-style: normal;
+}
+
+/* font-weight */
+th {
+    font-weight: normal;
+}
+
+/* font-family */
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+}
+
+input,
+select,
+textarea {
+    &:focus {
+        outline: none;
+    }
+}
+
+/* del table border */
+table {
+    border-collapse: collapse;
+    border-spacing: 0;
+}
+
+/* delete img border */
+img {
+    border: 0;
+}
+
+/* caption and th text-align:left */
+th {
+    text-align: left;
+}
+
+/* a */
+a {
+    outline: none; /* for Firefox Google Chrome */
+    text-decoration: none;
+}
+
+/* button */
+button {
+    cursor: pointer;
+    outline: none;
+    font-size: inherit;
+    border: 0;
+    padding: 0;
+}
+
+
+
+
+// lang
+$langs: ('zh-tw', 'zh-cn', 'en');
+.lang-wrap {
+    .ele-lang-wrap {
+        .ele-lang-option {
+            cursor: pointer;
+            display: inline-block;
+            width: 22px;
+            height: 20px;
+            background-image: url('/image/not-use/lang_circle_a.png');
+        }
+        @for $i from 1 through list.length($langs) {
+            $lang: list.nth($langs, $i);
+            $position: -40px * ($i - 1);
+            .lang-#{$lang} {
+                background-position: 0 #{$position}
+            }
+        }
+    }
+}
+
+// login
+.login-wrap {
+    .ele-login-unit {
+        display: inline-block;
+        vertical-align: middle;
+        position: relative;
+        .ele-login-input {
+            width: 100%;
+            height: 100%;
+            color: var(--color-primary-text);
+            border: 0;
+            background-color: transparent;
+            padding: 0 0 0 var(--input-padding);
+        }
+    }
+    .ele-login-placeholder {
+        position: absolute;
+        top: 50%;
+        left: calc(var(--input-padding) + 2px);
+        transform: translateY(-50%);
+    }
+    .ele-acc-unicod,
+    .ele-show-password {
+        position: absolute;
+        top: 50%;
+        right: var(--input-padding);
+        transform: translateY(-50%);
+    }
+}
+
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}

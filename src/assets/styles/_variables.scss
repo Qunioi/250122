@@ -1,0 +1,16 @@
+:root {
+  --page-width: 1366px;
+  --input-padding: 6px; //input padding
+}
+
+:root[data-theme*="2501221"] {
+  --color-primary: 14 116 255; //#0e74ff
+  --color-secondary: 80 184 248; //#50b8f8
+  --color-tertiary: 255 255 255; //#ffffff
+  --color-primary-bg: 0 0 0; //#000000
+  --color-secondary-bg: 248 248 248; //#f8f8f8
+  --color-tertiary-bg: 2 2 2; //#020202
+  --color-primary-text: 255 255 255; //#ffffff
+  --color-secondary-text: 167 167 167; //#a7a7a7
+  --color-tertiary-text: 255 255 255; //#ffffff
+}

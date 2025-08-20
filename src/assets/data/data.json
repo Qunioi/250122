@@ -1,0 +1,48 @@
+{
+  "headerNav": [
+    { "title": "首頁", "link": "/", "navClass": "first", "pageClass": "first", "img": "", "subItems": [] },
+    { "title": "電子游藝", "link": "/casino", "navClass": "game", "pageClass": "game casino", "img": "game", "subItems": [] },
+    { "title": "视讯直播", "link": "/live", "navClass": "live", "pageClass": "game live", "img": "live", "subItems": [] },
+    { "title": "棋牌游戏", "link": "/card", "navClass": "card", "pageClass": "game card", "img": "card", "subItems": [] },
+    { "title": "体育赛事", "link": "/sport", "navClass": "ball", "pageClass": "game sport", "img": "ball", "subItems": [] },
+    { "title": "彩票游戏", "link": "/lottery", "navClass": "ltlottery", "pageClass": "game lottery", "img": "lottery", "subItems": [] },
+    { "title": "优惠活动", "link": "/promotion", "navClass": "promotion", "pageClass": "promotion", "img": "", "subItems": [] },
+    { "title": "手机下注", "link": "", "navClass": "mob", "pageClass": "", "img": "", "subItems": [] },
+    { "title": "更多", "link": "", "navClass": "morenav", "pageClass": "", "img": "", "subItems": [{ "title": "在线客服", "link": "#" },{ "title": "关于我们", "link": "/about" }] }
+  ],
+  "footerLinks": [
+    { "title": "关于我们", "link": "/about" },
+    { "title": "联系我们", "link": "" },
+    { "title": "代理合作", "link": "" },
+    { "title": "存款帮助", "link": "" },
+    { "title": "取款帮助", "link": "" },
+    { "title": "常见问题", "link": "" }
+  ],
+  "customLinks": [
+    { "title": "网站首页", "link": "/" },
+    { "title": "官方导航", "link": "" },
+    { "title": "快速充值", "link": "" }
+  ],
+  "meminfoLinks": {
+    "first": [
+      { "title": "会员中心", "link": "" },
+      { "title": "线上存款", "link": "" },
+      { "title": "线上取款", "link": "" },
+      { "title": "一键归户", "link": "" },
+      { "title": "未读讯息(1)", "link": "" }
+    ],
+    "ball": [
+      { "title": "下注记录", "link": "" },
+      { "title": "会员中心", "link": "" },
+      { "title": "线上存款", "link": "" },
+      { "title": "线上取款", "link": "" },
+      { "title": "一键归户", "link": "" }
+    ],
+    "else": [
+      { "title": "会员中心", "link": "" },
+      { "title": "线上存款", "link": "" },
+      { "title": "线上取款", "link": "" },
+      { "title": "一键归户", "link": "" }
+    ]
+  }
+}

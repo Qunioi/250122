@@ -1,0 +1,221 @@
+<template>
+  <div class="mainnav-wrap">
+    <nav class="ele-navbar">
+      <ul>
+          <li
+          v-for="(item, index) in headerNav.filter(item => item.navClass !== 'morenav')"
+          :key="index"
+          :class="['ele-navbar-link-wrap', 'ele-navbar-link-' + item.navClass]"
+          @mouseenter="hoverIndex = index"
+          @mouseleave="hoverIndex = null"
+        >
+          <!-- 如果 link 為空，渲染靜態文本 -->
+          <template v-if="!item.link">
+            <span class="ele-navbar-link">
+              <p class="ele-navbar-title">{{ item.title }}</p>
+            </span>
+          </template>
+          <!-- 否则，渲染 router-link -->
+          <template v-else>
+            <router-link
+              :to="item.link"
+              class="ele-navbar-link"
+              :class="{ active: isActive(item.link) }"
+            >
+              <p class="ele-navbar-title">{{ item.title }}</p>
+            </router-link>
+          </template>
+
+          <transition name="fade" appear v-if="item.img && getSubNavItems(item.link)">
+            <nav v-if="hoverIndex === index" class="ele-subnav">
+              <div class="ele-subnav-container">
+                <img :src="`/image/not-use/subnav/zh-cn/subnav_${item.img}_title.png`" class="ele-subnav-title">
+                <ul v-if="!isLoading">
+                  <li v-for="(subItem, subIndex) in getSubNavItems(item.link)" :key="subIndex">
+                    <a href="#" :title="subItem.pn_name" class="ele-navbar-sublink">
+                      <span class="ele-subnav-icon" :style="{ backgroundImage: `url('https://web.bbinpartner.com/images/subnav/${getRouteKey(item.link)}/${subItem.pn_logo}')` }"></span>
+                      <p class="ele-subnav-link-title">{{ subItem.pn_name }}</p>
+                    </a>
+                  </li>
+                </ul>
+                <div v-else class="loading">載入中...</div>
+              </div>
+            </nav>
+          </transition>
+        </li>
+        <li
+          v-for="(item, index) in headerNav.filter(item => item.navClass === 'morenav')"
+          :key="'more-' + index"
+          class="ele-morenav-link-wrap"
+          @mouseenter="showMoreNav = true"
+          @mouseleave="showMoreNav = false"
+        >
+          <a href="#" class="ele-morenav-sublink-title">
+            <svg xmlns="http://www.w3.org/2000/svg" width="15" height="18" viewBox="0 0 15 18"><path d="M12,18H3a3,3,0,0,1-3-3V3A3,3,0,0,1,3,0h9a3,3,0,0,1,3,3V15A3,3,0,0,1,12,18ZM3.637,8a.556.556,0,0,0-.367.142A.694.694,0,0,0,3,8.679V8.69a.809.809,0,0,0,.112.391l3.8,3.889a.873.873,0,0,0,.565.247.886.886,0,0,0,.565-.247l3.8-3.892a.809.809,0,0,0,.113-.39V8.676a.7.7,0,0,0-.271-.535A.563.563,0,0,0,11.335,8H11.3a.986.986,0,0,0-.574.276l-3.16,3.167L4.231,8.28A.97.97,0,0,0,3.637,8Z" fill="currentcolor"></path></svg>
+          </a>
+          <transition name="fade">
+            <ul v-if="showMoreNav" class="ele-morenav-container">
+              <li v-for="(subItem, subIndex) in item.subItems" :key="subIndex">
+                <a :href="subItem.link" class="ele-morenav-sublink">{{ subItem.title }}</a>
+              </li>
+            </ul>
+          </transition>
+        </li>
+      </ul>
+    </nav>
+  </div>
+</template>
+
+<script setup>
+import { useDataStore } from '@/stores/dataStore.js';
+
+const dataStore = useDataStore();
+const headerNav = dataStore.headerNav;
+const route = useRoute();
+
+// 控制更多選單顯示
+const showMoreNav = ref(false);
+const hoverIndex = ref(null);
+
+// API 資料
+const headerNavSub = ref({});
+const isLoading = ref(true);
+
+// 判斷當前路由是否為 active
+const isActive = (link) => {
+  if (!link) return false;
+  return route.path === link;
+};
+
+// 根據路由獲取對應的子選單資料
+const getSubNavItems = (link) => {
+  if (!link || isLoading.value) return null;
+
+  if (link === '/casino') return headerNavSub.value.casino;
+  if (link === '/live') return headerNavSub.value.live;
+  if (link === '/card') return headerNavSub.value.card;
+  if (link === '/sport') return headerNavSub.value.sport;
+  if (link === '/lottery') return headerNavSub.value.lottery;
+
+  return null;
+};
+
+// 獲取路由對應的圖片路徑鍵值
+const getRouteKey = (link) => {
+  if (link === '/casino') return 'game';
+  if (link === '/live') return 'live';
+  if (link === '/card') return 'card';
+  if (link === '/sport') return 'ball';
+  if (link === '/lottery') return 'lottery';
+  
+  return '';
+};// 從 API 獲取導航子選單資料
+const fetchNavData = async () => {
+  try {
+    isLoading.value = true;
+    const response = await fetch('https://wms.bbinpartner.com/api/navs');
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    // 重新組織資料結構
+    headerNavSub.value = {
+      casino: data.games || [],    // 電子游藝
+      live: data.lives || [],      // 視訊直播
+      card: data.cards || [],      // 棋牌游戲
+      sport: data.balls || [],     // 體育賽事
+      lottery: data.lotterys || [] // 彩票游戲
+    };
+
+    console.log('Fetched headerNavSub:', headerNavSub.value);
+  } catch (error) {
+    console.error('Error fetching nav data:', error);
+    // 設置預設空值，避免錯誤
+    headerNavSub.value = {
+      casino: [],
+      live: [],
+      card: [],
+      sport: [],
+      lottery: []
+    };
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+// 在組件掛載時獲取資料
+onMounted(() => {
+  fetchNavData();
+});
+
+
+// import axios from 'axios'
+// import { useRoute } from 'vue-router'
+// import { useMainStore } from '@/stores/main';
+// const route = useRoute()
+// const mainStore = useMainStore();
+
+// const hoverIndex = ref(null)
+// const showMoreNav = ref(false)
+// const isActive = (link) => route.path === `/${link}`
+
+// const getSubNavImage = (link) => {
+//   if (!link || !subNavItems.value[link] || !subNavItems.value[link].length) {
+//     return null;
+//   }
+//   return `${mainStore.imageBasePath}/image/not-use/subnav/zh-cn/subnav_${link}_title.png`;
+// };
+
+// const subNavItems = shallowRef({
+//   ball: [],
+//   live: [],
+//   game: [],
+//   lottery: [],
+//   card: []
+// })
+
+// const filteredNavItems = computed(() => {
+//   return mainStore.apiData.navItems.filter(item => item.class !== 'morenav')
+// })
+
+// // 添加請求緩存
+// const cache = new Map();
+
+// const fetchNavData = async () => {
+//   const cacheKey = 'navData';
+//   if (cache.has(cacheKey)) {
+//     return cache.get(cacheKey);
+//   }
+
+//   try {
+//     const response = await axios.get('https://wms.bbinpartner.com/api/navs');
+//     const data = response.data;
+//     cache.set(cacheKey, data);
+//     return data;
+//   } catch (error) {
+//     console.error('Error fetching nav data:', error);
+//     throw error;
+//   }
+// };
+
+// onMounted(() => {
+//   fetchNavData()
+//     .then((data) => {
+//       // 將 API 回應的資料重新組織，替換鍵名
+//       subNavItems.value.ball = data.balls
+//       subNavItems.value.live = data.lives
+//       subNavItems.value.game = data.games
+//       subNavItems.value.lottery = data.lotterys
+//       subNavItems.value.card = data.cards
+//       subNavItems.value.mores = data.mores
+
+//       // console.log('Fetched and renamed subNavItems:', subNavItems.value)
+//     })
+//     .catch((error) => {
+//       console.log('Error fetching data:', error)
+//     })
+// })
+</script>
