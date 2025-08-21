@@ -1,0 +1,61 @@
+{
+  "showDevTools": true,
+  "colorThemes": [
+    {
+      "themeID": 1,
+      "themeMode": "dark",
+      "themeName": "2501221",
+      "themeColor": {
+        "primary": "#212224",
+        "secondary": "#0E77FF"
+      },
+      "footerLogo": {
+        "bb": "white",
+        "ub": "white"
+      },
+      "value": "2501221"
+    },
+    {
+      "themeID": 2,
+      "themeMode": "dark",
+      "themeName": "2501222",
+      "themeColor": {
+        "primary": "#3625af",
+        "secondary": "#f47aea"
+      },
+      "footerLogo": {
+        "bb": "white",
+        "ub": "white"
+      },
+      "value": "2501222"
+    },
+    {
+      "themeID": 3,
+      "themeMode": "light",
+      "themeName": "2501223",
+      "themeColor": {
+        "primary": "#0ECEFF",
+        "secondary": "#FFA81D"
+      },
+      "footerLogo": {
+        "bb": "white",
+        "ub": "white"
+      },
+      "value": "2501223"
+    },
+    {
+      "themeID": 4,
+      "themeMode": "light",
+      "themeName": "2501224",
+      "themeColor": {
+        "primary": "#e6e6e6",
+        "secondary": "#e25757"
+      },
+      "footerLogo": {
+        "bb": "red",
+        "ub": "black"
+      },
+      "value": "2501224"
+    }
+  ]
+}

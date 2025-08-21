@@ -65,20 +65,20 @@
         <div class="ele-meminfo-wrap">
           <div class="ele-meminfo ele-meminfo-name">
             <span>账号：</span>
-            <strong>admin</strong>
+            <strong>{{ user?.fullUsername || 'admin' }}</strong>
           </div>
           <div class="ele-meminfo-unit">
             <div class="ele-meminfo ele-meminfo-balance">
               <span>BBIN余额：</span>
               <strong>168.08</strong>
             </div>
-            <div class="ele-accinfo ele-other-balance" @mouseover="cancelHideTimer" @mouseleave="startHideTimer">
+            <div class="ele-accinfo ele-other-balance" @mouseenter="showBalance = true" @mouseleave="showBalance = false">
               <svg role="presentation" width="14" height="16" viewBox="0 0 448 512" class="ele-other-balance-icon fa-icon" fill="currentColor">
                 <path d="M400 32H48C21.5 32 0 53.5 0 80V432C0 458.5 21.5 480 48 480H400C426.5 480 448 458.5 448 432V80C448 53.5 426.5 32 400 32zM368 284C368 290.6 362.6 296 356 296H264V388C264 394.6 258.6 400 252 400H196C189.4 400 184 394.6 184 388V296H92C85.4 296 80 290.6 80 284V228C80 221.4 85.4 216 92 216H184V124C184 117.4 189.4 112 196 112H252C258.6 112 264 117.4 264 124V216H356C362.6 216 368 221.4 368 228V284z"></path>
               </svg>
             </div>
             <transition name="fade">
-              <div v-show="showBalance" @mouseover="cancelHideTimer" @mouseleave="startHideTimer" class="ele-balance-wrap">
+              <div v-show="showBalance" @mouseenter="showBalance = true" @mouseleave="showBalance = false" class="ele-balance-wrap">
                 <div class="ele-balance-item">
                   <div class="ele-balance">
                     <span>AG视讯余额：</span>
@@ -123,9 +123,16 @@
 </template>
 
 <script setup>
+import { storeToRefs } from 'pinia';
 import { useDataStore } from '@/stores/dataStore';
+import { useAuthStore } from '@/stores/authStore';
+
 const dataStore = useDataStore();
+const authStore = useAuthStore();
 const route = useRoute();
+
+// 使用 authStore 的登入狀態
+const { isLoggedIn, user } = storeToRefs(authStore);
 
 // 根據當前路由判斷 navClass，然後顯示對應的 meminfoLinks
 const filteredLinks = computed(() => {
@@ -148,7 +155,6 @@ const props = defineProps({
     default: '|'
   }
 });
-
 
 
 // 登入欄位點擊後透明度效果
@@ -192,45 +198,46 @@ const togglePasswordVisibility = () => {
 
 const passwordType = computed(() => (isPasswordVisible.value ? 'text' : 'password'));
 
-const showBalance = ref(false);
-let hideTimer = null;
-const startHideTimer = () => {
-  hideTimer = setTimeout(() => {
-    showBalance.value = false;
-  }, 300);
-};
-
-const cancelHideTimer = () => {
-  if (hideTimer) {
-    clearTimeout(hideTimer);
-    hideTimer = null;
-  }
-  showBalance.value = true;
-};
-
-
-// 登入狀態管理
-const isLoggedIn = ref(false);
-
 // 登入處理函數
 const handleLogin = () => {
-  // 這裡可以添加實際的登入邏輯，例如 API 調用
-  if (username.value.trim() && password.value.trim()) {
-    // 模擬登入成功
-    isLoggedIn.value = true;
-    console.log('登入成功:', username.value);
-  } else {
+  if (!username.value.trim() || !password.value.trim()) {
     alert('請輸入帳號和密碼');
+    return;
+  }
+
+  const success = authStore.login({
+    username: username.value.trim(),
+    password: password.value.trim()
+  });
+
+  if (success) {
+    // 登入成功後清除表單
+    username.value = '';
+    password.value = '';
+    usernamePlaceholderOpacity.value = 1;
+    passwordPlaceholderOpacity.value = 1;
+    isPasswordVisible.value = false;
+
+    console.log('登入成功:', authStore.user?.username);
+  } else {
+    alert('請輸入有效的帳號和密碼');
   }
 };
 
 // 登出處理函數
 const handleLogout = () => {
-  isLoggedIn.value = false;
+  authStore.logout();
+
+  // 重置表單狀態
   username.value = '';
   password.value = '';
   usernamePlaceholderOpacity.value = 1;
   passwordPlaceholderOpacity.value = 1;
+  isPasswordVisible.value = false;
+
   console.log('已登出');
 };
+
+// 控制餘額顯示
+const showBalance = ref(false);
 </script>

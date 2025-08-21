@@ -1,5 +1,9 @@
-# Vue 3 + Vite
+# template for vite + vue3
+> - node v20.0.0
+> - npm
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
-
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+# template Version
+  [-] 2501221
+  [-] 2501222
+  [-] 2501223
+  [-] 2501224

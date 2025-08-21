@@ -28,7 +28,4 @@ import CustomLink from '@/components/common/CustomLink.vue';
 import Lang from '@/components/common/Lang.vue';
 import Member from '@/components/common/Member.vue';
 import Navigation from '@/components/common/Navigation.vue';
-// import { useDataStore } from '@/stores/dataStore.js';
-// const dataStore = useDataStore();
-// const headerNav = dataStore.headerNav;
 </script>

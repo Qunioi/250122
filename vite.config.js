@@ -22,6 +22,7 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       port: Number(env.VITE_PORT) || 3001,
+      host: true, // 只在 dev 模式暴露網路 IP
     },
     css: {
       preprocessorOptions: {

@@ -1,16 +1,44 @@
 :root {
   --page-width: 1366px;
+  --page-bg: none; //此版型背景有使用到漸層
   --input-padding: 6px; //input padding
+  --color-red: 210 25 39;
+  --color-tertiary: 255 255 255; //#ffffff
+  --color-secondary-bg: 248 248 248; //#f8f8f8
+  --color-tertiary-bg: 2 2 2; //#020202
+  --color-tertiary-text: 255 255 255; //#ffffff
 }
 
 :root[data-theme*="2501221"] {
   --color-primary: 14 116 255; //#0e74ff
   --color-secondary: 80 184 248; //#50b8f8
-  --color-tertiary: 255 255 255; //#ffffff
   --color-primary-bg: 0 0 0; //#000000
-  --color-secondary-bg: 248 248 248; //#f8f8f8
-  --color-tertiary-bg: 2 2 2; //#020202
   --color-primary-text: 255 255 255; //#ffffff
   --color-secondary-text: 167 167 167; //#a7a7a7
-  --color-tertiary-text: 255 255 255; //#ffffff
+}
+
+:root[data-theme*="2501222"] {
+  --color-primary: 244 122 234; //#f47aea
+  --color-secondary: 132 71 200; //#8447c8
+  --color-primary-bg: 54 37 175; //#3625af
+  --color-primary-text: 255 255 255; //#ffffff
+  --color-secondary-text: 219 219 219; //#dbdbdb
+  --page-bg: linear-gradient(180deg, rgb(var(--color-secondary)), transparent);
+}
+
+:root[data-theme*="2501223"] {
+  --color-primary: 255 168 29; //#ffa81d
+  --color-secondary: 36 249 228; //#24f9e4
+  --color-primary-bg: 14 206 255; //#0eceff
+  --color-primary-text: 0 0 0; //#000000
+  --color-secondary-text: 54 54 54; //#363636
+  --page-bg: linear-gradient(180deg, rgb(var(--color-secondary) / 80%), transparent);
+}
+
+:root[data-theme*="2501224"] {
+  --color-primary: 226 87 87; //#e25757
+  --color-secondary: 255 217 220; //#ffd9dc
+  --color-primary-bg: 230 230 230; //#e6e6e6
+  --color-primary-text: 0 0 0; //#000000
+  --color-secondary-text: 72 72 72; //#484848
 }
