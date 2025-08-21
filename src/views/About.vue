@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <h1>About</h1>
-    <p>關於我們。</p>
+  <div class="banner-wrap">
   </div>
 </template>
 <script setup>

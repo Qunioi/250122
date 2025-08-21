@@ -1,3 +1,5 @@
+@use "@/assets/styles/env" as *;
+
 // .float-wrap {
 //     display: none;
 // }
@@ -497,6 +499,7 @@ body {
             width: 100%;
             height: 100%;
             background: rgb(var(--color-tertiary-bg) / 50%);
+            border-radius: 20px;
             position: absolute;
             top: 0;
             left: 0;
@@ -788,4 +791,12 @@ body {
         vertical-align: top;
         color: rgb(var(--color-secondary-text));
 	}
+}
+
+
+
+.banner-wrap {
+    width: 1200px;
+    height: 250px;
+    background-repeat: no-repeat;
 }

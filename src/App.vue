@@ -1,9 +1,9 @@
 <template>
   <div class="page-wrap">
     <Header />
-    <main>
+    <div class="page-container">
       <router-view />
-    </main>
+    </div>
     <Footer />
     <!-- 只在開發環境顯示 -->
     <DevTools />
