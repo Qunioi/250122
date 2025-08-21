@@ -30,6 +30,18 @@ export const useConfigStore = defineStore('config', () => {
     return theme ? theme.footerLogo : { bb: 'white', ub: 'white' }
   })
 
+  // 獲取當前主題的 imgQrcode 配置
+  const themeImgQrcode = computed(() => {
+    const theme = themeConfig.colorThemes.find(theme => theme.value === themeColor.value)
+    return theme ? theme.imgQrcode : 'qrcode_d'
+  })
+
+  // 獲取當前主題的 themeNav 配置
+  const themeNavType = computed(() => {
+    const theme = themeConfig.colorThemes.find(theme => theme.value === themeColor.value)
+    return theme ? theme.themeNav : 'type-1'
+  })
+
   const themeMode = ref(
     localStorage.getItem('themeMode') || 
     getThemeModeByColor(themeColor.value) || 
@@ -85,6 +97,8 @@ export const useConfigStore = defineStore('config', () => {
     themeMode,
     themeColor,
     themeFooterLogo,
+    themeImgQrcode,
+    themeNavType,
     lang,
     setThemeMode,
     setThemeColor,

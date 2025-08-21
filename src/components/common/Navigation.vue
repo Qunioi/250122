@@ -27,7 +27,7 @@
           </template>
 
           <transition name="fade" appear v-if="item.img && getSubNavItems(item.link)">
-            <nav v-show="hoverIndex === index" class="ele-subnav">
+            <nav v-show="hoverIndex === index" :class="['ele-subnav', 'ele-subnav-' + themeNav]">
               <div class="ele-subnav-container">
                 <img :src="`/image/not-use/subnav/${lang}/subnav_${item.img}_title.png`" class="ele-subnav-title">
                 <ul v-if="!isLoading">
@@ -69,7 +69,7 @@
 <script setup>
 import { useDataStore } from '@/stores/dataStore.js';
 import { useTheme } from '@/composables/useTheme.js';
-const { lang } = useTheme(); // 使用動態主題和語言設定
+const { themeNav, lang } = useTheme(); // 使用動態主題和語言設定
 
 const dataStore = useDataStore();
 const headerNav = dataStore.headerNav;

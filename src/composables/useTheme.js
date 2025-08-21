@@ -42,6 +42,8 @@ export const useTheme = () => {
   return {
     themeColor: computed(() => configStore.themeColor),
     themeMode: computed(() => configStore.themeMode),
+    themeNav: computed(() => configStore.themeNavType),
+    imgQrcode: computed(() => configStore.themeImgQrcode),
     lang: computed(() => configStore.lang)
   }
 }

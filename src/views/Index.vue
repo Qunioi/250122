@@ -70,7 +70,7 @@
         </a>
         <a href="#" class="first-live-item" :style="{
           backgroundImage: `url(/image/${themeColor}/btn_live02.png)`,
-          '--first-live-line': '#02AC63'
+          '--first-live-line': 'rgb(2 172 99)'
           }">
           <button class="first-live-btn">Play</button>
           <div class="first-live-info">
@@ -82,7 +82,7 @@
         </a>
         <a href="#" class="first-live-item" :style="{
           backgroundImage: `url(/image/${themeColor}/btn_live03.png)`,
-          '--first-live-line': '#F5B443'
+          '--first-live-line': 'rgb(245 180 67)'
           }">
           <button class="first-live-btn">Play</button>
           <div class="first-live-info">
@@ -94,7 +94,7 @@
         </a>
         <a href="#" class="first-live-item" :style="{
           backgroundImage: `url(/image/${themeColor}/btn_live04.png)`,
-          '--first-live-line': '#3E56E1'
+          '--first-live-line': 'rgb(62 86 225)'
           }">
           <button class="first-live-btn">Play</button>
           <div class="first-live-info">
@@ -106,7 +106,7 @@
         </a>
         <a href="#" class="first-live-item" :style="{
           backgroundImage: `url(/image/${themeColor}/btn_live05.png)`,
-          '--first-live-line': '#45DDF6'
+          '--first-live-line': 'rgb(69 221 246)'
           }">
           <button class="first-live-btn">Play</button>
           <div class="first-live-info">
@@ -131,7 +131,7 @@
             <div class="first-mob-qrcode">
               <img :src="isLoggedIn
                     ? `/image/not-use/qrcode.jpg` 
-                    : `/image/not-use/lang/${lang}/qrcode_d.png`" class="first-mob-qrcode-img" />
+                    : `/image/not-use/lang/${lang}/${imgQrcode}.png`" class="first-mob-qrcode-img" />
               <p class="first-mob-qrcode-text">扫码下载App<br>iOS & Android</p>
             </div>
             <div class="first-mob-h5">
@@ -154,7 +154,7 @@ import HotGame from '@/components/common/HotGame.vue';
 import { useTheme } from '@/composables/useTheme.js';
 import { useAuthStore } from '@/stores/authStore.js';
 
-const { themeColor, lang } = useTheme(); // 使用動態主題和語言設定
+const { themeColor, lang, imgQrcode } = useTheme(); // 使用動態主題和語言設定
 const authStore = useAuthStore();
 const { isLoggedIn } = storeToRefs(authStore); // 使用全域登入狀態
 

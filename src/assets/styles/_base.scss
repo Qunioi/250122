@@ -1,5 +1,7 @@
 @use 'sass:list';
+@use 'sass:map';
 @use "@/assets/styles/env" as env;
+@use "@/assets/styles/variables" as vars;
 
 html {
     line-height: 1.15; // 校正瀏覽器 line-height
@@ -125,6 +127,73 @@ $langs: ('zh-tw', 'zh-cn', 'en');
         top: 50%;
         right: var(--input-padding);
         transform: translateY(-50%);
+    }
+}
+
+// === 子選單樣式 - 以背景色分類 ===
+.ele-subnav {
+    width: 100%;
+    min-width: 1000px;
+    background-color: rgb(18 18 18 / 85%);
+    box-shadow: 2px 3px 3px rgb(16 16 16 / 30%);
+    padding: 30px 0;
+    position: absolute;
+    left: 0;
+    z-index: 1099;
+    &.ele-subnav-type-1 {
+        background-color: rgb(18 18 18 / 85%);
+        .ele-navbar-sublink {
+            color: rgb(255 255 255);
+        }
+    }
+    &.ele-subnav-type-2 {
+        background-color: rgb(85 85 85 / 85%);
+        .ele-navbar-sublink {
+            color: rgb(255 255 255);
+        }
+    }
+    &.ele-subnav-type-3 {
+        background-color: rgb(249 249 249 / 95%);
+        .ele-navbar-sublink {
+            color: rgb(51 51 51);
+        }
+    }
+    &.ele-subnav-type-4 {
+        background-color: rgba(255 255 255 / 95%);
+        .ele-navbar-sublink {
+            color: rgb(51 51 51);
+        }
+    }
+
+    .ele-subnav-container {
+        width: var(--page-width);
+        margin: 0 auto;
+        > ul {
+            display: inline-grid;
+            grid-template-columns: repeat(8, 1fr);
+            gap: 16px 0;
+            width: calc(100% - 200px);
+            vertical-align: top;
+        }
+    }
+    .ele-subnav-title {
+        margin-right: 26px;
+    }
+    .ele-navbar-sublink {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: rgb(255 255 255);
+        &:hover {
+            color: rgb(var(--color-primary));
+        }
+    }
+    .ele-subnav-icon {
+        width: 120px;
+        height: 40px;
     }
 }
 

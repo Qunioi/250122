@@ -9,6 +9,8 @@
         "primary": "#212224",
         "secondary": "#0E77FF"
       },
+      "themeNav": "type-1",
+      "imgQrcode": "qrcode_d",
       "footerLogo": {
         "bb": "white",
         "ub": "white"
@@ -23,6 +25,8 @@
         "primary": "#3625af",
         "secondary": "#f47aea"
       },
+      "themeNav": "type-1",
+      "imgQrcode": "qrcode_e",
       "footerLogo": {
         "bb": "white",
         "ub": "white"
@@ -37,9 +41,11 @@
         "primary": "#0ECEFF",
         "secondary": "#FFA81D"
       },
+      "themeNav": "type-3",
+      "imgQrcode": "qrcode_b",
       "footerLogo": {
-        "bb": "white",
-        "ub": "white"
+        "bb": "black",
+        "ub": "black"
       },
       "value": "2501223"
     },
@@ -51,6 +57,8 @@
         "primary": "#e6e6e6",
         "secondary": "#e25757"
       },
+      "themeNav": "type-3",
+      "imgQrcode": "qrcode_e",
       "footerLogo": {
         "bb": "red",
         "ub": "black"
