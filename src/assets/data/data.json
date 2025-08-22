@@ -13,7 +13,7 @@
   "footerLinks": [
     { "title": "关于我们", "link": "/about" },
     { "title": "联系我们", "link": "" },
-    { "title": "代理合作", "link": "" },
+    { "title": "代理合作", "link": "/article" },
     { "title": "存款帮助", "link": "" },
     { "title": "取款帮助", "link": "" },
     { "title": "常见问题", "link": "" }

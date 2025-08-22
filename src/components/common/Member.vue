@@ -56,7 +56,7 @@
             </a>
           </label>
           <button type="submit" class="ele-login-submit">登入</button>
-          <a href="#" class="ele-join-btn">注册</a>
+          <router-link to="/join" class="ele-join-btn">注册</router-link>
         </div>
       </form>
     </div>

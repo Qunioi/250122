@@ -1,5 +1,6 @@
 :root {
   --page-width: 1366px;
+  --body-width: 1200px;
   --page-bg: none; //此版型背景有使用到漸層
   --input-padding: 6px; //input padding
   --color-red: 210 25 39;
@@ -8,6 +9,15 @@
   --color-tertiary-bg: 2 2 2; //#020202
   --color-tertiary-text: 255 255 255; //#ffffff
   --swiper-pagination-color: rgb(var(--color-primary));
+  // 餘額
+  --balance-bg: rgb(0 0 0); //餘額背景
+  --balance-text: rgb(255 255 255); //餘額文字
+  --balance-tool-bg: rgb(167 167 167); //餘額工具背景
+  --balance-tool-line: transparent; //餘額工具上線條
+  --balance-btn-bg: rgb(var(--color-primary)); //餘額轉換按鈕背景
+  --balance-btn-bg-hover: rgb(var(--color-primary) / 80%); //餘額轉換按鈕hover背景
+  --balance-btn-text: rgb(255 255 255); //餘額轉換按鈕文字
+  --balance-btn-radius: 4px; //餘額轉換按鈕導角
 }
 
 :root[data-theme*="2501221"] {
