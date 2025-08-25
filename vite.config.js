@@ -5,9 +5,13 @@ import AutoImport from 'unplugin-auto-import/vite'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
+  const version = env.VITE_VERSION || ''
+
+  // 根據環境切換 base
+  const base = mode === 'development' ? './' : `/bbinpartner/${version}/`
 
   return {
-    base: './',
+    base,
     plugins: [
       vue(),
       AutoImport({
