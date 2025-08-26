@@ -1,4 +1,5 @@
 import { ref, onMounted, onBeforeUnmount, computed } from 'vue'
+import themeData from '@/assets/data/theme.json'
 import { useConfigStore } from '@/stores/configStore.js'
 
 // 使用配置 store 而不是直接讀取環境變數
@@ -34,12 +35,24 @@ const cleanupThemeObserver = () => {
 export const useTheme = () => {
   const configStore = useConfigStore()
 
+  // 切換主題，根據 theme.json
+  const setTheme = (themeName) => {
+    const theme = themeData.colorThemes.find(t => t.themeName === themeName)
+    if (theme) {
+      document.documentElement.setAttribute('data-theme', `${theme.themeMode} ${theme.themeName}`)
+      Object.entries(theme.themeColor).forEach(([key, value]) => {
+        document.documentElement.style.setProperty(`--${key}`, value)
+      })
+    }
+  }
+
   onMounted(() => {
     initThemeObserver()
   })
 
-  // 使用 computed 來創建只讀的響應式值，避免 readonly 警告
   return {
+    setTheme,
+    themes: themeData.colorThemes,
     themeColor: computed(() => configStore.themeColor),
     themeMode: computed(() => configStore.themeMode),
     themeNav: computed(() => configStore.themeNavType),

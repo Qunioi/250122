@@ -1,16 +1,18 @@
 <template>
   <div class="page-wrap">
+    <ThemeManager />
     <Header />
     <div class="page-container">
       <router-view />
     </div>
     <Footer />
     <!-- 只在開發環境顯示 -->
-    <DevTools />
+    <!-- <DevTools /> -->
   </div>
 </template>
 
 <script setup>
+import ThemeManager from '@/theme/components/ThemeManager.vue'
 import Header from './components/Header.vue';
 import Footer from './components/Footer.vue';
 import DevTools from './components/DevTools.vue';

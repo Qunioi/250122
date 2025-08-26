@@ -6,7 +6,7 @@ export const useConfigStore = defineStore('config', () => {
   // 從主題配置檔案獲取主題選項
   const themeOptions = computed(() => {
     return themeConfig.colorThemes.map(theme => ({
-      value: theme.value,
+      value: theme.themeName,
       label: `${theme.themeName} (${theme.themeMode})`
     }))
   })
@@ -19,26 +19,26 @@ export const useConfigStore = defineStore('config', () => {
   const lang = ref(localStorage.getItem('lang') || import.meta.env.VITE_LANG || 'en')
 
   // 根據主題顏色自動設定對應的 mode
-  const getThemeModeByColor = (color) => {
-    const theme = themeConfig.colorThemes.find(theme => theme.value === color)
+  const getThemeModeByColor = (themeName) => {
+    const theme = themeConfig.colorThemes.find(theme => theme.themeName === themeName)
     return theme ? theme.themeMode : 'dark'
   }
 
   // 獲取當前主題的 footerLogo 配置
   const themeFooterLogo = computed(() => {
-    const theme = themeConfig.colorThemes.find(theme => theme.value === themeColor.value)
+    const theme = themeConfig.colorThemes.find(theme => theme.themeName === themeColor.value)
     return theme ? theme.footerLogo : { bb: 'white', ub: 'white' }
   })
 
   // 獲取當前主題的 imgQrcode 配置
   const themeImgQrcode = computed(() => {
-    const theme = themeConfig.colorThemes.find(theme => theme.value === themeColor.value)
+    const theme = themeConfig.colorThemes.find(theme => theme.themeName === themeColor.value)
     return theme ? theme.imgQrcode : 'qrcode_d'
   })
 
   // 獲取當前主題的 themeNav 配置
   const themeNavType = computed(() => {
-    const theme = themeConfig.colorThemes.find(theme => theme.value === themeColor.value)
+    const theme = themeConfig.colorThemes.find(theme => theme.themeName === themeColor.value)
     return theme ? theme.themeNav : 'type-1'
   })
 
@@ -57,12 +57,12 @@ export const useConfigStore = defineStore('config', () => {
   }
 
   // 更新主題顏色（同時自動更新對應的 mode）
-  const setThemeColor = (color) => {
-    themeColor.value = color
-    localStorage.setItem('themeColor', color)
+  const setThemeColor = (themeName) => {
+    themeColor.value = themeName
+    localStorage.setItem('themeColor', themeName)
 
-    // 根據主題顏色自動設定對應的 mode
-    const selectedTheme = themeConfig.colorThemes.find(theme => theme.value === color)
+    // 根據主題名稱自動設定對應的 mode
+    const selectedTheme = themeConfig.colorThemes.find(theme => theme.themeName === themeName)
     if (selectedTheme) {
       themeMode.value = selectedTheme.themeMode
       localStorage.setItem('themeMode', selectedTheme.themeMode)
