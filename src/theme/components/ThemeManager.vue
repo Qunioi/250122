@@ -23,12 +23,59 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
-
-import themeData from '@/assets/data/theme.json'
+// 將 hex 轉成 'r g b' 空白間隔格式
+function hexToRgbSpace(hex) {
+  hex = hex.replace('#', '')
+  if (hex.length === 3) hex = hex.split('').map(x => x + x).join('')
+  const num = parseInt(hex, 16)
+  const r = (num >> 16) & 255
+  const g = (num >> 8) & 255
+  const b = num & 255
+  return `${r} ${g} ${b}`
+}
+// 將 hex 轉成 rgb(x,x,x)
+function hexToRgb(hex) {
+  hex = hex.replace('#', '')
+  if (hex.length === 3) hex = hex.split('').map(x => x + x).join('')
+  const num = parseInt(hex, 16)
+  const r = (num >> 16) & 255
+  const g = (num >> 8) & 255
+  const b = num & 255
+  return `rgb(${r},${g},${b})`
+}
+// 將 rgb(x,x,x) 或 'x x x' 轉成 hex
+function toHex(val) {
+  if (typeof val === 'string' && val.startsWith('rgb')) {
+    const result = val.match(/\d+/g)
+    if (result && result.length === 3) {
+      return (
+        '#' +
+        result
+          .map(x => {
+            const hex = parseInt(x).toString(16)
+            return hex.length === 1 ? '0' + hex : hex
+          })
+          .join('')
+      )
+    }
+  } else if (typeof val === 'string' && /^\d+ \d+ \d+$/.test(val)) {
+    const arr = val.split(' ')
+    return (
+      '#' +
+      arr
+        .map(x => {
+          const hex = parseInt(x).toString(16)
+          return hex.length === 1 ? '0' + hex : hex
+        })
+        .join('')
+    )
+  }
+  return val
+}
 import { colorDatabase } from '../colorDatabase'
-import ColorPicker from './ColorPicker.vue'
 import { useTheme } from '../useTheme'
+import themeData from '@/assets/data/theme.json'
+import ColorPicker from './ColorPicker.vue'
 
 const themes = themeData.colorThemes
 const { setTheme } = useTheme()
@@ -40,28 +87,17 @@ function onThemeChange() {
   setTheme(selectedThemeName.value)
   selectedColors.value = colorDatabase.filter(item => colorVars.includes(item.id)).map(item => ({
     ...item,
-    value: getThemeColorValue(item.varName)
+    value: toHex(getThemeColorValue(item.varName))
   }))
 }
 
 function getThemeColorValue(varName) {
   return getComputedStyle(document.documentElement).getPropertyValue(varName).trim() || '#000000'
 }
-
-function hexToRgb(hex) {
-  hex = hex.replace('#', '')
-  if (hex.length === 3) hex = hex.split('').map(x => x + x).join('')
-  const num = parseInt(hex, 16)
-  const r = (num >> 16) & 255
-  const g = (num >> 8) & 255
-  const b = num & 255
-  return `rgb(${r},${g},${b})`
-}
-
 function updateColor(item, newValue) {
-  const rgbValue = hexToRgb(newValue)
-  item.value = rgbValue
-  document.documentElement.style.setProperty(item.varName, rgbValue)
+  // 保證 newValue 為 hex
+  item.value = newValue
+  document.documentElement.style.setProperty(item.varName, hexToRgbSpace(newValue))
 }
 
 // 初始化

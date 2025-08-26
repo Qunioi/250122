@@ -5,10 +5,7 @@ import AutoImport from 'unplugin-auto-import/vite'
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '')
-  const version = env.VITE_VERSION || ''
-
-  // 根據環境切換 base
-  const base = mode === 'development' ? './' : `/bbinpartner/${version}/`
+  const base = mode === 'development' ? '/' : `/${env.VITE_VERSION}/`
 
   return {
     base,

@@ -22,7 +22,7 @@
             >
               <div class="first-hotgame-rank">
                 <img
-                  :src="`/image/ic_crown0${index + 1}.png`"
+                  :src="getPath(`/image/ic_crown0${index + 1}.png`)"
                   :title="`top${index + 1}`"
                   v-if="index + 1 <= 3"
                 />
@@ -30,9 +30,7 @@
               </div>
               <div class="first-hotgame-icon">
                 <img
-                  :src="`/image/hotgame_icon${String(
-                    index + 1
-                  ).padStart(2, '0')}.png`"
+                  :src="getPath(`/image/hotgame_icon${String(index + 1).padStart(2, '0')}.png`)"
                 />
               </div>
               <div class="first-hotgame-name">
@@ -54,7 +52,7 @@
             >
               <div class="first-hotgame-rank">
                 <img
-                  :src="`/image/ic_crown0${index + 6}.png`"
+                  :src="getPath(`/image/ic_crown0${index + 6}.png`)"
                   :title="`top${index + 6}`"
                   v-if="index + 6 <= 3"
                 />
@@ -62,9 +60,7 @@
               </div>
               <div class="first-hotgame-icon">
                 <img
-                  :src="`/image/hotgame_icon${String(
-                    index + 6
-                  ).padStart(2, '0')}.png`"
+                  :src="getPath(`/image/hotgame_icon${String(index + 6).padStart(2, '0')}.png`)"
                 />
               </div>
               <div class="first-hotgame-name">
@@ -83,6 +79,7 @@
 </template>
 
 <script setup>
+import { getPath } from '@/composables/usePath.js'
 import { useTheme } from '@/composables/useTheme.js';
 const { themeColor } = useTheme();
 

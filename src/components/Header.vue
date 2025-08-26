@@ -38,6 +38,7 @@ import Member from '@/components/common/Member.vue';
 import Navigation from '@/components/common/Navigation.vue';
 import News from '@/components/common/News.vue';
 
+import { getPath } from '@/composables/usePath.js';
 import { useTheme } from '@/composables/useTheme.js'
 import { useRoute } from 'vue-router'
 
@@ -52,6 +53,6 @@ const navClass = computed(() => {
 const isFirst = computed(() => route.path === '/' || route.path === '/first')
 
 const bannerImage = computed(() => ({
-  backgroundImage: `url(/image/${themeColor.value}/lang/${lang.value}/title_${navClass.value}.png)`
+  backgroundImage: `url(${getPath(`/image/${themeColor.value}/lang/${lang.value}/title_${navClass.value}.png`)})`
 }))
 </script>

@@ -1,5 +1,6 @@
 <template>
   <div class="page-wrap">
+    <PageTransitionMask :show="showMask" />
     <ThemeManager />
     <Header />
     <div class="page-container">
@@ -12,13 +13,20 @@
 </template>
 
 <script setup>
+import DevTools from './components/DevTools.vue';
 import ThemeManager from '@/theme/components/ThemeManager.vue'
+
+import PageTransitionMask from '@/components/common/PageTransitionMask.vue'
+import { setMaskRef } from '@/router'
+const showMask = ref(false)
+onMounted(() => {
+  setMaskRef(showMask)
+})
+
 import Header from './components/Header.vue';
 import Footer from './components/Footer.vue';
-import DevTools from './components/DevTools.vue';
 import { useDataStore } from '@/stores/dataStore.js';
 import { useConfigStore } from '@/stores/configStore.js';
-import { onMounted, watch } from 'vue';
 import { useRoute } from 'vue-router';
 
 const dataStore = useDataStore();

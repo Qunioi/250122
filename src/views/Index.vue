@@ -12,7 +12,7 @@
                   disableOnInteraction: true,
                 }">
                 <SwiperSlide v-for="(slide, index) in slides" :key="slide.id">
-                  <img :src="`/image/${themeColor}/${slide.image}`" class="ele-slider-img" />
+                  <img :src="getPath(`image/${themeColor}/${slide.image}`)" class="ele-slider-img" />
                 </SwiperSlide>
               </Swiper>
             </div>
@@ -20,7 +20,7 @@
             <div class="first-promotion-warp">
               <a v-for="index in [1, 2]" :key="index" href="#" class="ele-promotion-link"
                 @mouseover="promotionHover = index" @mouseout="promotionHover = null">
-                <img :src="`/image/${themeColor}/lang/${lang}/btn0${index}${promotionHover === index ? '_hover' : ''}.png`" />
+                <img :src="getPath(`image/${themeColor}/lang/${lang}/btn0${index}${promotionHover === index ? '_hover' : ''}.png`)" />
               </a>
             </div>
           </div>
@@ -42,7 +42,7 @@
             <a href="#" class="first-game-item" v-for="(game, index) in firstGame[activeTab].game" :key="index">
               <div class="first-item-img">
                 <button class="first-item-btn">Play</button>
-                <img :src="`/image/${game.image}`" />
+                <img :src="getPath(`image/${game.image}`)" />
               </div>
               <div class="first-item-info">
                 <div class="first-item-name">{{ game.name }}</div>
@@ -65,11 +65,11 @@
             </div>
             <button class="first-live-btn">进入游戏</button>
           </div>
-          <img class="first-live-img" :src="`/image/${themeColor}/btn_live01.png`">
+          <img class="first-live-img" :src="getPath(`image/${themeColor}/btn_live01.png`)">
           <svg class="first-live-bg" width="580" height="272" viewBox="0 0 580 272" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 68.3185C0 57.9518 7.92126 49.3035 18.2481 48.3954L558.248 0.912665C569.94 -0.115424 580 9.09868 580 20.8358V252C580 263.046 571.046 272 560 272H20C8.95432 272 0 263.046 0 252V68.3185Z" fill="currentColor"/></svg>
         </a>
         <a href="#" class="first-live-item" :style="{
-          backgroundImage: `url(/image/${themeColor}/btn_live02.png)`,
+          backgroundImage: `url(${getPath(`image/${themeColor}/btn_live02.png`)})`,
           '--first-live-line': 'rgb(2 172 99)'
           }">
           <button class="first-live-btn">Play</button>
@@ -81,7 +81,7 @@
           </div>
         </a>
         <a href="#" class="first-live-item" :style="{
-          backgroundImage: `url(/image/${themeColor}/btn_live03.png)`,
+          backgroundImage: `url(${getPath(`image/${themeColor}/btn_live03.png`)})`,
           '--first-live-line': 'rgb(245 180 67)'
           }">
           <button class="first-live-btn">Play</button>
@@ -93,7 +93,7 @@
           </div>
         </a>
         <a href="#" class="first-live-item" :style="{
-          backgroundImage: `url(/image/${themeColor}/btn_live04.png)`,
+          backgroundImage: `url(${getPath(`image/${themeColor}/btn_live04.png`)})`,
           '--first-live-line': 'rgb(62 86 225)'
           }">
           <button class="first-live-btn">Play</button>
@@ -105,7 +105,7 @@
           </div>
         </a>
         <a href="#" class="first-live-item" :style="{
-          backgroundImage: `url(/image/${themeColor}/btn_live05.png)`,
+          backgroundImage: `url(${getPath(`image/${themeColor}/btn_live05.png`)})`,
           '--first-live-line': 'rgb(69 221 246)'
           }">
           <button class="first-live-btn">Play</button>
@@ -130,8 +130,8 @@
           <div class="first-mob-download">
             <div class="first-mob-qrcode">
               <img :src="isLoggedIn
-                    ? `/image/not-use/qrcode.jpg` 
-                    : `/image/not-use/lang/${lang}/${imgQrcode}.png`" class="first-mob-qrcode-img" />
+                ? getPath('image/not-use/qrcode.jpg')
+                : getPath(`image/not-use/lang/${lang}/${imgQrcode}.png`)" class="first-mob-qrcode-img" />
               <p class="first-mob-qrcode-text">扫码下载App<br>iOS & Android</p>
             </div>
             <div class="first-mob-h5">
@@ -141,7 +141,7 @@
           </div>
         </div>
         <div class="first-mob-right-wrap">
-          <img class="first-mob-phone" :src="`/image/${themeColor}/bg_mobile.png`">
+          <img class="first-mob-phone" :src="getPath(`image/${themeColor}/bg_mobile.png`)">
         </div>
       </div>
     </section>
@@ -153,6 +153,7 @@ import News from '@/components/common/News.vue';
 import HotGame from '@/components/common/HotGame.vue';
 import { useTheme } from '@/composables/useTheme.js';
 import { useAuthStore } from '@/stores/authStore.js';
+import { getPath } from '@/composables/usePath.js'
 
 const { themeColor, lang, imgQrcode } = useTheme(); // 使用動態主題和語言設定
 const authStore = useAuthStore();

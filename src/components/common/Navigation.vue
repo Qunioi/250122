@@ -29,7 +29,7 @@
           <transition name="fade" appear v-if="item.img && getSubNavItems(item.link)">
             <nav v-show="hoverIndex === index" :class="['ele-subnav', 'ele-subnav-' + themeNav]">
               <div class="ele-subnav-container">
-                <img :src="`/image/not-use/subnav/${lang}/subnav_${item.img}_title.png`" class="ele-subnav-title">
+                <img :src="getPath(`/image/not-use/subnav/${lang}/subnav_${item.img}_title.png`)" class="ele-subnav-title">
                 <ul v-if="!isLoading">
                   <li v-for="(subItem, subIndex) in getSubNavItems(item.link)" :key="subIndex">
                     <a href="#" :title="subItem.pn_name" class="ele-navbar-sublink">
@@ -54,9 +54,9 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="15" height="18" viewBox="0 0 15 18"><path d="M12,18H3a3,3,0,0,1-3-3V3A3,3,0,0,1,3,0h9a3,3,0,0,1,3,3V15A3,3,0,0,1,12,18ZM3.637,8a.556.556,0,0,0-.367.142A.694.694,0,0,0,3,8.679V8.69a.809.809,0,0,0,.112.391l3.8,3.889a.873.873,0,0,0,.565.247.886.886,0,0,0,.565-.247l3.8-3.892a.809.809,0,0,0,.113-.39V8.676a.7.7,0,0,0-.271-.535A.563.563,0,0,0,11.335,8H11.3a.986.986,0,0,0-.574.276l-3.16,3.167L4.231,8.28A.97.97,0,0,0,3.637,8Z" fill="currentcolor"></path></svg>
           </a>
           <transition name="fade">
-            <ul v-if="showMoreNav" class="ele-morenav-container" @mouseenter="showMoreMenu" @mouseleave="hideMoreMenu">
+            <ul v-show="showMoreNav" class="ele-morenav-container" @mouseenter="showMoreMenu" @mouseleave="hideMoreMenu">
               <li v-for="(subItem, subIndex) in item.subItems" :key="subIndex">
-                <a :href="subItem.link" class="ele-morenav-sublink">{{ subItem.title }}</a>
+                <router-link :to="subItem.link" class="ele-morenav-sublink">{{ subItem.title }}</router-link>
               </li>
             </ul>
           </transition>
@@ -69,6 +69,7 @@
 <script setup>
 import { useDataStore } from '@/stores/dataStore.js';
 import { useTheme } from '@/composables/useTheme.js';
+import { getPath } from '@/composables/usePath.js'
 const { themeNav, lang } = useTheme(); // 使用動態主題和語言設定
 
 const dataStore = useDataStore();

@@ -17,8 +17,26 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes,
 });
+
+
+// 全域遮罩控制
+let showMaskRef = null
+export function setMaskRef(ref) {
+  showMaskRef = ref
+}
+
+router.beforeEach((to, from, next) => {
+  if (showMaskRef) showMaskRef.value = true
+  setTimeout(() => {
+    next()
+  }, 300)
+})
+
+router.afterEach(() => {
+  if (showMaskRef) showMaskRef.value = false
+})
 
 export default router;
