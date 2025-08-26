@@ -1,11 +1,23 @@
 <template>
   <div class="theme-manager">
     <h3>主題切換</h3>
-    <select v-model="selectedThemeName" @change="onThemeChange">
-      <option v-for="theme in themes" :key="theme.themeID" :value="theme.themeName">
-        {{ theme.themeName }} ({{ theme.themeMode }})
-      </option>
-    </select>
+    <div class="changeColor-theme-wrap">
+      <button
+        v-for="theme in themes"
+        :key="theme.themeID"
+        :class="['changeColor-theme-btn', { active: selectedThemeName === theme.themeName }]"
+        @click="selectTheme(theme.themeName)"
+      >
+        <div
+          class="changeColor-theme-color"
+          :style="{
+            background: `linear-gradient(90deg, ${theme.themeColor.primary} 0, ${theme.themeColor.primary} 50%, ${theme.themeColor.secondary} 50%, ${theme.themeColor.secondary} 100%)`
+          }"
+        ></div>
+        <span class="changeColor-theme-name">{{ theme.themeName }} ({{ theme.themeMode }})</span>
+      </button>
+      <!-- <button class="changeColor-theme-reset" @click="resetTheme">重置主題</button> -->
+    </div>
 
     <h4>主題顏色自訂</h4>
     <div v-if="selectedColors.length">
@@ -23,6 +35,12 @@
 </template>
 
 <script setup>
+// 按鈕切換主題
+function selectTheme(themeName) {
+  selectedThemeName.value = themeName
+  onThemeChange()
+}
+
 // 將 hex 轉成 'r g b' 空白間隔格式
 function hexToRgbSpace(hex) {
   hex = hex.replace('#', '')
@@ -83,12 +101,41 @@ const selectedThemeName = ref(themes[0]?.themeName || '')
 const colorVars = themeData.colorVariables || []
 const selectedColors = ref([])
 
+// 依主題儲存 customThemeColors
+function getCustomThemeColors(themeName) {
+  return JSON.parse(localStorage.getItem(`customThemeColors_${themeName}`) || 'null')
+}
+function saveCustomThemeColors(themeName, colors) {
+  localStorage.setItem(`customThemeColors_${themeName}` , JSON.stringify(colors))
+}
+
+function clearThemeColors() {
+  // 清除所有 colorVars 相關的 style 顏色
+  colorDatabase.filter(item => colorVars.includes(item.id)).forEach(item => {
+    document.documentElement.style.removeProperty(item.varName)
+  })
+}
+
 function onThemeChange() {
   setTheme(selectedThemeName.value)
-  selectedColors.value = colorDatabase.filter(item => colorVars.includes(item.id)).map(item => ({
-    ...item,
-    value: toHex(getThemeColorValue(item.varName))
-  }))
+  clearThemeColors()
+  // 先嘗試讀取 localStorage
+  const saved = getCustomThemeColors(selectedThemeName.value)
+  if (saved) {
+    selectedColors.value = colorDatabase.filter(item => colorVars.includes(item.id)).map(item => ({
+      ...item,
+      value: saved[item.id] || toHex(getThemeColorValue(item.varName))
+    }))
+    // 套用已存顏色
+    selectedColors.value.forEach(item => {
+      document.documentElement.style.setProperty(item.varName, hexToRgbSpace(item.value))
+    })
+  } else {
+    selectedColors.value = colorDatabase.filter(item => colorVars.includes(item.id)).map(item => ({
+      ...item,
+      value: toHex(getThemeColorValue(item.varName))
+    }))
+  }
 }
 
 function getThemeColorValue(varName) {
@@ -98,13 +145,27 @@ function updateColor(item, newValue) {
   // 保證 newValue 為 hex
   item.value = newValue
   document.documentElement.style.setProperty(item.varName, hexToRgbSpace(newValue))
+  // 儲存到 localStorage
+  const themeName = selectedThemeName.value
+  const colors = getCustomThemeColors(themeName) || {}
+  colors[item.id] = newValue
+  saveCustomThemeColors(themeName, colors)
 }
 
 // 初始化
 onThemeChange()
 </script>
 
-<style scoped>
+<style lang="scss">
+:root {
+  --cp-bg-primary: #FFF;
+  --cp-bg-secondary: #889EBC;
+  --cp-color-bg: #F1F4F8;
+  --cp-color-primary: #417FF7;
+  --cp-color-third: #F5F7FA;
+  --cp-text-primary: #3D4154;
+  --cp-text-secondary: #97A2AF;
+}
 .theme-manager {
   padding: 24px;
   color: #000;
@@ -113,14 +174,35 @@ onThemeChange()
   max-width: 400px;
   margin: 32px auto;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+  h3 {
+    margin-top: 0;
+  }
 }
-h3 {
-  margin-top: 0;
-}
-select {
+
+// 主題切換
+.changeColor-theme-wrap {
+  display: flex;
+  gap: 8px;
   margin-bottom: 16px;
-  padding: 6px 12px;
-  border-radius: 4px;
-  border: 1px solid #ccc;
+  .changeColor-theme-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 26px;
+    height: 26px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+  }
+  .changeColor-theme-btn.active {
+    border-color: var(--cp-color-primary);
+  }
+  .changeColor-theme-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 2px;
+  }
+  .changeColor-theme-name {
+    display: none;
+  }
 }
 </style>

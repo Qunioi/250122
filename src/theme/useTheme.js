@@ -15,9 +15,6 @@ export function useTheme() {
     const theme = themeData.colorThemes.find(t => t.themeName === themeName)
     if (theme) {
       document.documentElement.setAttribute('data-theme', `${theme.themeMode} ${theme.themeName}`)
-      Object.entries(theme.themeColor).forEach(([key, value]) => {
-        document.documentElement.style.setProperty(`--${key}`, formatRgbValue(value))
-      })
     }
   }
   const getSelectedColors = (themeName) => {

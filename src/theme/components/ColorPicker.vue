@@ -3,6 +3,7 @@
     <label>{{ item.name }}</label>
     <input type="color" :value="rgbToHex(item.value)" @input="$emit('update', item, rgbToHex($event.target.value))" />
     <span>{{ rgbToHex(item.value) }}</span>
+    <button @click="$emit('remove', item)">重置</button>
   </div>
 </template>
 
