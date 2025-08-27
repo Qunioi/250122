@@ -4,10 +4,12 @@ import { colorDatabase } from './colorDatabase'
 /**
  * 共用主題工具
  * @param {object} options
- * @param {string} options.namespace - localStorage 命名空間（可選）
+ * @param {string} [options.namespace='app'] - localStorage 命名空間
+ * @param {string} [options.forceMode] - 強制設定主題模式（優先於 theme.json）
  */
 export function useTheme(options = {}) {
   const namespace = options.namespace || 'app'
+  const forceMode = options.forceMode
 
   const getTheme = (themeName) =>
     themeData.colorThemes?.find(t => t.themeName === themeName)
@@ -16,11 +18,7 @@ export function useTheme(options = {}) {
     const theme = getTheme(themeName)
     if (!theme) return
     const el = document.documentElement
-    // 舊有：合併字串（若你的 CSS 用 [data-theme~="dark"] 這類 token selector，仍可用）
     el.setAttribute('data-theme', `${theme.themeMode} ${theme.themeName}`)
-    // 建議：分開屬性，選擇器更直覺
-    el.setAttribute('data-theme-mode', theme.themeMode)
-    el.setAttribute('data-theme-name', theme.themeName)
   }
 
   const getColorVars = (themeName) =>

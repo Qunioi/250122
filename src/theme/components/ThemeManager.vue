@@ -10,12 +10,9 @@
         type="button"
         @click="selectTheme(theme.themeName)"
       >
-        <div
-          class="themeManager-theme-color"
-          :style="{
+        <div class="themeManager-theme-color" :style="{
             background: `linear-gradient(90deg, ${theme.themeColor.primary} 0, ${theme.themeColor.primary} 50%, ${theme.themeColor.secondary} 50%, ${theme.themeColor.secondary} 100%)`
-          }"
-        />
+          }"/>
         <span class="themeManager-theme-name">
           {{ theme.themeName }} ({{ theme.themeMode }})
         </span>
@@ -491,6 +488,4 @@ function selectTheme(themeName) {
 .themeManager-import-msg.ok  { background: #e9f7ef; border: 1px solid #b8e0c8; color: #156a42; }
 .themeManager-import-msg.err { background: #fff3f3; border: 1px solid #f1c0c0; color: #8b1f1f; }
 .themeManager-import-text { margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
-
-/* 你的原有樣式（顏色/間距）保留在上方變數可再調整 */
 </style>
