@@ -1,28 +1,28 @@
 <template>
-  <div class="changeColor-manager">
+  <div class="themeManager-manager">
     <h3>主題切換</h3>
 
-    <div class="changeColor-theme-wrap">
+    <div class="themeManager-theme-wrap">
       <button
         v-for="theme in themes"
         :key="theme.themeID ?? theme.themeName"
-        :class="['changeColor-theme-btn', { active: selectedThemeName === theme.themeName }]"
+        :class="['themeManager-theme-btn', { active: selectedThemeName === theme.themeName }]"
         type="button"
         @click="selectTheme(theme.themeName)"
       >
         <div
-          class="changeColor-theme-color"
+          class="themeManager-theme-color"
           :style="{
             background: `linear-gradient(90deg, ${theme.themeColor.primary} 0, ${theme.themeColor.primary} 50%, ${theme.themeColor.secondary} 50%, ${theme.themeColor.secondary} 100%)`
           }"
         />
-        <span class="changeColor-theme-name">
+        <span class="themeManager-theme-name">
           {{ theme.themeName }} ({{ theme.themeMode }})
         </span>
       </button>
 
       <button
-        class="changeColor-theme-reset"
+        class="themeManager-theme-reset"
         type="button"
         :disabled="!hasModified"
         :title="hasModified ? '重置當前主題所有自訂顏色' : '尚未調整，無需重置'"
@@ -31,7 +31,29 @@
         重置主題
       </button>
 
-      <span class="changeColor-theme-modified">已調整：{{ hasModified ? 'true' : 'false' }}</span>
+      <span class="themeManager-theme-modified">已調整：{{ hasModified ? 'true' : 'false' }}</span>
+    </div>
+
+    <!-- 匯出 / 匯入 -->
+    <div class="themeManager-io-wrap">
+      <button type="button" class="themeManager-btn themeManager-btn-export" @click="exportTheme">
+        匯出配色
+      </button>
+      <button type="button" class="themeManager-btn themeManager-btn-import" @click="triggerImport">
+        匯入配色
+      </button>
+      <input
+        ref="fileInputRef"
+        type="file"
+        accept=".css,.txt"
+        class="themeManager-file-hidden"
+        @change="onFileChange"
+      />
+    </div>
+
+    <!-- 匯入結果訊息 -->
+    <div v-if="importMessage" :class="['themeManager-import-msg', importSuccess ? 'ok' : 'err']">
+      <pre class="themeManager-import-text">{{ importMessage }}</pre>
     </div>
 
     <h4>主題顏色自訂</h4>
@@ -55,8 +77,10 @@
 import { ref, computed, watch } from 'vue'
 import { colorDatabase } from '../colorDatabase'
 import { useTheme } from '../useTheme'
-import themeData from '@/assets/data/theme.json'
 import ColorPicker from './ColorPicker.vue'
+
+/** ---- 從 .env 取得版型編號 ---- */
+const ENV_VERSION = String(import.meta.env?.VITE_VERSION ?? '').trim()
 
 /** ---- 工具：色彩轉換 ---- */
 const normalizeHex = (hex) => (hex || '').toLowerCase()
@@ -64,7 +88,7 @@ const normalizeHex = (hex) => (hex || '').toLowerCase()
 function hexToRgbSpace(hex) {
   const v = normalizeHex(hex).replace('#', '')
   const full = v.length === 3 ? v.split('').map(x => x + x).join('') : v
-  const num = parseInt(full, 16)
+  const num = parseInt(full, 16) || 0
   const r = (num >> 16) & 255
   const g = (num >> 8) & 255
   const b = num & 255
@@ -104,6 +128,11 @@ const selectedThemeName = ref(themes[0]?.themeName || '')
 const currentTheme = computed(() => themes.find(t => t.themeName === selectedThemeName.value))
 const colorVars = computed(() => getColorVars(selectedThemeName.value))
 
+// 版型編號優先使用 .env 的 VITE_VERSION，缺省時退回主題名稱
+const currentTemplateNumber = computed(() =>
+  ENV_VERSION || currentTheme.value?.themeName || selectedThemeName.value
+)
+
 // 畫面上的色票（reactive）
 const selectedColors = ref([]) // [{ id, name, varName, value: '#rrggbb' }]
 
@@ -127,7 +156,6 @@ function clearThemeInlineColors() {
 }
 
 function storageKey(themeName) {
-  // 若你在 useTheme 指定 namespace，可與此一致；此處簡單使用同樣格式
   return `app:customThemeColors:${themeName}`
 }
 
@@ -176,7 +204,6 @@ function onThemeChange() {
 watch(selectedThemeName, onThemeChange, { immediate: true })
 
 /** ---- 修改狀態（即時） ---- */
-// 每個顏色是否與 baseline 不同
 const modifiedMap = computed(() => {
   const map = {}
   for (const item of selectedColors.value) {
@@ -186,8 +213,6 @@ const modifiedMap = computed(() => {
   }
   return map
 })
-
-// 是否有任一顏色被修改
 const hasModified = computed(() => Object.values(modifiedMap.value).some(Boolean))
 
 /** ---- 事件：更新 / 重置單一色 ---- */
@@ -248,12 +273,135 @@ function resetTheme() {
   }))
 }
 
+/** ---- 匯出 / 匯入 ---- */
+const fileInputRef = ref(null)
+const importMessage = ref('')
+const importSuccess = ref(false)
+
+function triggerImport() {
+  importMessage.value = ''
+  importSuccess.value = false
+  if (fileInputRef.value && fileInputRef.value.click) fileInputRef.value.click()
+}
+
+function onFileChange(e) {
+  const file = e?.target?.files?.[0]
+  if (!file) return
+  const reader = new FileReader()
+  reader.onload = () => {
+    const text = String(reader.result || '')
+    importFromCssText(text)
+    // 允許同檔連續上傳
+    if (e?.target) e.target.value = ''
+  }
+  reader.readAsText(file, 'utf-8')
+}
+
+/** 由 CSS 文字匯入 */
+function importFromCssText(text) {
+  // 1) 擷取 Template number（例如：/* Template number: test_250123 */）
+  const tplMatch = text.match(/\/\*\s*Template\s+number\s*:\s*([^\*]+?)\s*\*\//i)
+  const importedTpl = tplMatch ? tplMatch[1].trim() : ''
+  const currentTpl = String(currentTemplateNumber.value || '').trim()
+
+  if (!importedTpl) {
+    importSuccess.value = false
+    importMessage.value = `未找到 Template number 註解！\n當前版型: ${currentTpl}`
+    return
+  }
+
+  // 2) 嚴格比對版型
+  if (importedTpl !== currentTpl) {
+    importSuccess.value = false
+    importMessage.value = `當前版型: ${currentTpl}\n匯入版型: ${importedTpl}`
+    return
+  }
+
+  // 3) 解析 CSS 變數：--var: #HEX;
+  const varPairs = [...text.matchAll(/--([a-z0-9\-]+)\s*:\s*(#[0-9a-fA-F]{3,6})\s*;/g)]
+    .map(m => [`--${m[1]}`, normalizeHex(m[2])])
+
+  if (!varPairs.length) {
+    importSuccess.value = false
+    importMessage.value = `未讀取到任何配色變數！\n版型编号 ${importedTpl} 匯入取消。`
+    return
+  }
+
+  // 4) 將配色套用到目前主題（僅處理 colorDatabase 有列出的變數）
+  const themeName = selectedThemeName.value
+  const colors = getCustomThemeColors(themeName) || {}
+  const varNameToId = Object.fromEntries(colorDatabase.map(i => [i.varName, i.id]))
+
+  for (const [varName, hex] of varPairs) {
+    const id = varNameToId[varName]
+    if (!id) continue
+
+    // 更新 UI 列表
+    const uiItem = selectedColors.value.find(i => i.id === id)
+    if (uiItem) uiItem.value = hex
+
+    // 覆寫 inline
+    document.documentElement.style.setProperty(varName, hexToRgbSpace(hex))
+
+    // 與 baseline 比較：相同就不存，否則存
+    const base = normalizeHex(baselineMap.value[id])
+    if (hex === base) {
+      delete colors[id]
+    } else {
+      colors[id] = hex
+    }
+  }
+
+  // 寫回 localStorage 與 reactive
+  saveCustomThemeColors(themeName, colors)
+  savedColors.value = { ...colors }
+
+  importSuccess.value = true
+  importMessage.value = `版型编号 ${importedTpl} 配色已成功汇入！`
+}
+
+/** 匯出當前配色為「版型編號.css」 */
+function exportTheme() {
+  const tpl = String(currentTemplateNumber.value || '').trim() || 'theme'
+
+  // 只輸出這五個變數（按你的需求）
+  const exportVars = [
+    ['/* 主要颜色 */', '--color-primary'],
+    ['/* 辅助颜色 */', '--color-secondary'],
+    ['/* 主背景颜色 */', '--color-primary-bg'],
+    ['/* 主文字颜色 */', '--color-primary-text'],
+    ['/* 辅助文字颜色 */', '--color-secondary-text']
+  ]
+
+  // 以目前畫面顏色為準（若有覆寫就會讀到覆寫值）
+  const lines = []
+  lines.push('/* ※注意 - Template number 汇入配色时会判断是否同一个版型，请勿删除 */')
+  lines.push(`/* Template number: ${tpl} */`)
+  lines.push('')
+
+  for (const [label, varName] of exportVars) {
+    const hex = toHex(getThemeColorValue(varName)).toUpperCase()
+    lines.push(label)
+    lines.push(`${varName}: ${hex};`)
+    lines.push('')
+  }
+
+  const content = lines.join('\n')
+  const blob = new Blob([content], { type: 'text/css;charset=utf-8' })
+  const a = document.createElement('a')
+  a.href = URL.createObjectURL(blob)
+  a.download = `${tpl}.css`
+  document.body.appendChild(a)
+  a.click()
+  URL.revokeObjectURL(a.href)
+  a.remove()
+}
+
 /** ---- UI 事件：切主題 ---- */
 function selectTheme(themeName) {
   selectedThemeName.value = themeName
 }
 </script>
-
 
 <style lang="scss">
 :root {
@@ -265,25 +413,26 @@ function selectTheme(themeName) {
   --cp-text-primary: #3D4154;
   --cp-text-secondary: #97A2AF;
 }
-.changeColor-manager {
+.themeManager-manager {
   padding: 24px;
   color: #000;
   background: #f9f9f9;
   border-radius: 8px;
-  max-width: 400px;
+  max-width: 480px;
   margin: 32px auto;
   box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-  h3 {
-    margin-top: 0;
-  }
+  h3 { margin-top: 0; }
 }
 
-// 主題切換
-.changeColor-theme-wrap {
+/* 主題切換 */
+.themeManager-theme-wrap {
   display: flex;
   gap: 8px;
   margin-bottom: 16px;
-  .changeColor-theme-btn {
+  align-items: center;
+  flex-wrap: wrap;
+
+  .themeManager-theme-btn {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -291,17 +440,57 @@ function selectTheme(themeName) {
     height: 26px;
     border-radius: 4px;
     border: 1px solid transparent;
+    background: #fff;
+    cursor: pointer;
   }
-  .changeColor-theme-btn.active {
+  .themeManager-theme-btn.active {
     border-color: var(--cp-color-primary);
   }
-  .changeColor-theme-color {
+  .themeManager-theme-color {
     width: 20px;
     height: 20px;
     border-radius: 2px;
   }
-  .changeColor-theme-name {
-    display: none;
+  .themeManager-theme-name { display: none; }
+
+  .themeManager-theme-reset {
+    margin-left: auto;
+    padding: 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background: #fff;
+    cursor: pointer;
+  }
+  .themeManager-theme-reset:disabled {
+    opacity: .5;
+    cursor: not-allowed;
   }
 }
+
+/* 匯出 / 匯入 */
+.themeManager-io-wrap {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0 16px;
+}
+.themeManager-btn {
+  padding: 6px 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #fff;
+  cursor: pointer;
+}
+.themeManager-file-hidden { display: none; }
+
+.themeManager-import-msg {
+  padding: 8px 10px;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  margin-bottom: 12px;
+}
+.themeManager-import-msg.ok  { background: #e9f7ef; border: 1px solid #b8e0c8; color: #156a42; }
+.themeManager-import-msg.err { background: #fff3f3; border: 1px solid #f1c0c0; color: #8b1f1f; }
+.themeManager-import-text { margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+
+/* 你的原有樣式（顏色/間距）保留在上方變數可再調整 */
 </style>

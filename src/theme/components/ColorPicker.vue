@@ -1,20 +1,20 @@
 <template>
-  <div class="changeColor-picker">
-    <label class="changeColor-picker-label">{{ item.name }}</label>
+  <div class="themeManager-picker">
+    <label class="themeManager-picker-label">{{ item.name }}</label>
 
     <!-- 不要在 template 用 TS 斷言；直接拿 $event.target.value 即可 -->
     <input
-      class="changeColor-picker-input"
+      class="themeManager-picker-input"
       type="color"
       :value="rgbToHex(item.value)"
       @input="$emit('update', item, $event.target && $event.target.value)"
     />
 
-    <span class="changeColor-picker-hex">{{ rgbToHex(item.value) }}</span>
-    <small class="changeColor-picker-modified">已調整：{{ modified ? 'true' : 'false' }}</small>
+    <span class="themeManager-picker-hex">{{ rgbToHex(item.value) }}</span>
+    <small class="themeManager-picker-modified">已調整：{{ modified ? 'true' : 'false' }}</small>
 
     <button
-      class="changeColor-picker-reset"
+      class="themeManager-picker-reset"
       type="button"
       :disabled="!modified"
       :title="modified ? '重置為主題預設值' : '尚未調整，無需重置'"
@@ -62,13 +62,13 @@ function rgbToHex(rgb) {
 
 
 <style scoped lang="scss">
-.changeColor-picker {
+.themeManager-picker {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-bottom: 8px;
 }
-.changeColor-picker-label {
+.themeManager-picker-label {
   min-width: 80px;
   input[type="color"] {
     border: none;
@@ -76,7 +76,7 @@ function rgbToHex(rgb) {
     height: 32px;
     cursor: pointer;
   }
-  .changeColor-picker-hex {
+  .themeManager-picker-hex {
     font-size: 12px;
     color: #333;
   }
