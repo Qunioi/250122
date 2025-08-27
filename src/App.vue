@@ -7,13 +7,10 @@
       <router-view />
     </div>
     <Footer />
-    <!-- 只在開發環境顯示 -->
-    <!-- <DevTools /> -->
   </div>
 </template>
 
 <script setup>
-import DevTools from './components/DevTools.vue';
 import ThemeManager from '@/theme/components/ThemeManager.vue'
 
 import PageTransitionMask from '@/components/common/PageTransitionMask.vue'

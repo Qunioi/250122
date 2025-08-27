@@ -14,7 +14,7 @@
     <small class="themeManager-picker-modified">已調整：{{ modified ? 'true' : 'false' }}</small>
 
     <button
-      class="themeManager-picker-reset"
+      class="themeManager-btn themeManager-picker-reset"
       type="button"
       :disabled="!modified"
       :title="modified ? '重置為主題預設值' : '尚未調整，無需重置'"

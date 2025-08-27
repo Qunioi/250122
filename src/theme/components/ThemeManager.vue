@@ -1,80 +1,97 @@
 <template>
-  <div class="themeManager-manager">
-    <h3>主題切換</h3>
+  <teleport to="body">
+    <div class="themeManager-wrap" v-show="panelVisible">
+      <div class="themeManager-content">
+        <h3>主題切換</h3>
+    
+        <div class="themeManager-theme-wrap">
+          <button
+            v-for="theme in themes"
+            :key="theme.themeID ?? theme.themeName"
+            :class="['themeManager-theme-btn', { active: selectedThemeName === theme.themeName }]"
+            type="button"
+            @click="selectTheme(theme.themeName)"
+          >
+            <div class="themeManager-theme-color" :style="{
+                background: `linear-gradient(90deg, ${theme.themeColor.primary} 0, ${theme.themeColor.primary} 50%, ${theme.themeColor.secondary} 50%, ${theme.themeColor.secondary} 100%)`
+              }"/>
+            <span class="themeManager-theme-name">
+              {{ theme.themeName }} ({{ theme.themeMode }})
+            </span>
+          </button>
+    
+          <button
+            class="themeManager-theme-reset"
+            type="button"
+            :disabled="!hasModified"
+            :title="hasModified ? '重置當前主題所有自訂顏色' : '尚未調整，無需重置'"
+            @click="resetTheme"
+          >
+            重置主題
+          </button>
+    
+          <span class="themeManager-theme-modified">已調整：{{ hasModified ? 'true' : 'false' }}</span>
+        </div>
 
-    <div class="themeManager-theme-wrap">
-      <button
-        v-for="theme in themes"
-        :key="theme.themeID ?? theme.themeName"
-        :class="['themeManager-theme-btn', { active: selectedThemeName === theme.themeName }]"
-        type="button"
-        @click="selectTheme(theme.themeName)"
-      >
-        <div class="themeManager-theme-color" :style="{
-            background: `linear-gradient(90deg, ${theme.themeColor.primary} 0, ${theme.themeColor.primary} 50%, ${theme.themeColor.secondary} 50%, ${theme.themeColor.secondary} 100%)`
-          }"/>
-        <span class="themeManager-theme-name">
-          {{ theme.themeName }} ({{ theme.themeMode }})
-        </span>
-      </button>
+        <!-- 匯出 / 匯入 / 保存 -->
+        <div class="themeManager-io-wrap">
+          <button type="button" class="themeManager-btn themeManager-btn-export" @click="exportTheme">
+            匯出配色
+          </button>
+          <button type="button" class="themeManager-btn themeManager-btn-import" @click="triggerImport">
+            匯入配色
+          </button>
+          <button
+            type="button"
+            class="themeManager-btn themeManager-btn-save"
+            :disabled="saving"
+            :title="saving ? '保存中…' : '下載壓縮檔（含 .css 與畫面示意圖）'"
+            @click="saveTheme"
+          >
+            保存
+          </button>
+          <input
+            ref="fileInputRef"
+            type="file"
+            accept=".css,.txt"
+            class="themeManager-file-hidden"
+            @change="onFileChange"
+          />
+        </div>
 
-      <button
-        class="themeManager-theme-reset"
-        type="button"
-        :disabled="!hasModified"
-        :title="hasModified ? '重置當前主題所有自訂顏色' : '尚未調整，無需重置'"
-        @click="resetTheme"
-      >
-        重置主題
-      </button>
-
-      <span class="themeManager-theme-modified">已調整：{{ hasModified ? 'true' : 'false' }}</span>
+        <!-- 匯入結果訊息 -->
+        <div v-if="importMessage" :class="['themeManager-import-msg', importSuccess ? 'ok' : 'err']">
+          <pre class="themeManager-import-text">{{ importMessage }}</pre>
+        </div>
+    
+        <h4>主題顏色自訂</h4>
+        <div v-if="selectedColors.length">
+          <ColorPicker
+            v-for="color in selectedColors"
+            :key="color.id"
+            :item="color"
+            :modified="modifiedMap[color.id]"
+            @update="updateColor"
+            @remove="removeColor"
+          />
+        </div>
+        <div v-else>
+          <p>此主題尚未設定 colorVariables。</p>
+        </div>
+      </div>
     </div>
-
-    <!-- 匯出 / 匯入 -->
-    <div class="themeManager-io-wrap">
-      <button type="button" class="themeManager-btn themeManager-btn-export" @click="exportTheme">
-        匯出配色
-      </button>
-      <button type="button" class="themeManager-btn themeManager-btn-import" @click="triggerImport">
-        匯入配色
-      </button>
-      <input
-        ref="fileInputRef"
-        type="file"
-        accept=".css,.txt"
-        class="themeManager-file-hidden"
-        @change="onFileChange"
-      />
-    </div>
-
-    <!-- 匯入結果訊息 -->
-    <div v-if="importMessage" :class="['themeManager-import-msg', importSuccess ? 'ok' : 'err']">
-      <pre class="themeManager-import-text">{{ importMessage }}</pre>
-    </div>
-
-    <h4>主題顏色自訂</h4>
-    <div v-if="selectedColors.length">
-      <ColorPicker
-        v-for="color in selectedColors"
-        :key="color.id"
-        :item="color"
-        :modified="modifiedMap[color.id]"
-        @update="updateColor"
-        @remove="removeColor"
-      />
-    </div>
-    <div v-else>
-      <p>此主題尚未設定 colorVariables。</p>
-    </div>
-  </div>
+  </teleport>
 </template>
 
 <script setup>
 import { ref, computed, watch } from 'vue'
+import JSZip from 'jszip'
+import { toPng } from 'html-to-image'
 import { colorDatabase } from '../colorDatabase'
 import { useTheme } from '../useTheme'
 import ColorPicker from './ColorPicker.vue'
+
+const panelVisible = ref(true) // 截圖隱藏 ThemeManager
 
 /** ---- 從 .env 取得版型編號 ---- */
 const ENV_VERSION = String(import.meta.env?.VITE_VERSION ?? '').trim()
@@ -358,10 +375,46 @@ function importFromCssText(text) {
 }
 
 /** 匯出當前配色為「版型編號.css」 */
-function exportTheme() {
+async function exportTheme() {
   const tpl = String(currentTemplateNumber.value || '').trim() || 'theme'
+  const content = buildCssContent()
+  const cssBlob = new Blob([content], { type: 'text/css;charset=utf-8' })
 
-  // 只輸出這五個變數（按你的需求）
+  // 下載：優先使用 File System Access API（可確定寫入完成），否則退回 <a download>
+  if ('showSaveFilePicker' in window) {
+    try {
+      const handle = await window.showSaveFilePicker({
+        suggestedName: `${tpl}.css`,
+        types: [{ description: 'CSS 檔案', accept: { 'text/css': ['.css'] } }]
+      })
+      const writable = await handle.createWritable()
+      await writable.write(cssBlob)
+      await writable.close()
+      alert('檔案已成功保存！')
+    } catch (e) {
+      // 使用者按「取消」會丟 AbortError，不要跳成功
+      if (e?.name === 'AbortError') return
+      console.error(e)
+      alert(`保存失敗：${e.message || e}`)
+    }
+  } else {
+    // Fallback：無法得知是否完成，只能啟動下載
+    const a = document.createElement('a')
+    const url = URL.createObjectURL(cssBlob)
+    a.href = url
+    a.download = `${tpl}.css`
+    document.body.appendChild(a)
+    a.click()
+    URL.revokeObjectURL(url)
+    a.remove()
+    // 建議改為「下載已開始」，避免誤導為已完成
+    alert('下載已開始（無法偵測是否完成）。')
+  }
+}
+
+/** 產生匯出 CSS 文字（供 export 與 save 共用） */
+function buildCssContent() {
+  const tpl = String(currentTemplateNumber.value || '').trim() || 'theme'
   const exportVars = [
     ['/* 主要颜色 */', '--color-primary'],
     ['/* 辅助颜色 */', '--color-secondary'],
@@ -369,34 +422,172 @@ function exportTheme() {
     ['/* 主文字颜色 */', '--color-primary-text'],
     ['/* 辅助文字颜色 */', '--color-secondary-text']
   ]
-
-  // 以目前畫面顏色為準（若有覆寫就會讀到覆寫值）
   const lines = []
   lines.push('/* ※注意 - Template number 汇入配色时会判断是否同一个版型，请勿删除 */')
   lines.push(`/* Template number: ${tpl} */`)
   lines.push('')
-
   for (const [label, varName] of exportVars) {
     const hex = toHex(getThemeColorValue(varName)).toUpperCase()
     lines.push(label)
     lines.push(`${varName}: ${hex};`)
     lines.push('')
   }
+  return lines.join('\n')
+}
 
-  const content = lines.join('\n')
-  const blob = new Blob([content], { type: 'text/css;charset=utf-8' })
-  const a = document.createElement('a')
-  a.href = URL.createObjectURL(blob)
-  a.download = `${tpl}.css`
-  document.body.appendChild(a)
-  a.click()
-  URL.revokeObjectURL(a.href)
-  a.remove()
+/** 保存：下載 <版型編號>.zip（含 .css 與不含工具的畫面示意圖） */
+const saving = ref(false)
+async function saveTheme() {
+  if (saving.value) return;
+  saving.value = true;
+
+  let captureEl = null;
+  let originalStyle = '';
+  let objectUrl = null;
+
+  try {
+    const tpl = String(currentTemplateNumber.value || '').trim() || 'theme';
+    const cssContent = buildCssContent();
+
+    // 目標容器：優先 #capture-root，其次 .page-wrap（都不含 ThemeManager）
+    captureEl =
+      document.getElementById('capture-root') ||
+      document.querySelector('.page-wrap') ||
+      document.body;
+
+    if (!captureEl) throw new Error('找不到可截圖的容器');
+
+    // 暫存原始 inline style，並把寬度設為 1920px（更貼近 1920 排版）
+    originalStyle = captureEl.style.cssText || '';
+    captureEl.style.cssText = `${originalStyle}; width: 1920px;`;
+
+    // 處理圖片：失敗就隱藏，並等待載入完成
+    const imgs = captureEl.querySelectorAll('img');
+    imgs.forEach((img) => {
+      img.onerror = () => {
+        console.warn('圖片載入失敗，已隱藏：', img.src);
+        img.style.display = 'none';
+      };
+    });
+
+    await waitForImages(captureEl);
+    await nextTick();
+
+    // 產生 PNG（保持當前縮放；用 filter 排除不需截圖元素）
+    const dataUrl = await toPng(captureEl, {
+      cacheBust: true,
+      pixelRatio: 1,           // 輸出剛好 1920 寬（由上方 width:1920px 決定）
+      skipAutoScale: true,     // 非標準參數，無害；有些版本會忽略
+      style: { transform: 'scale(1)' },
+      filter: (node) => {
+        // 你可以在不想截圖的元素上加 .ignore-screenshot
+        if (node.classList?.contains?.('ignore-screenshot')) return false;
+        // 防守：若有其他 Theme 面板被寫在 page-wrap 內，也排除
+        if (node.classList?.contains?.('themeManager-wrap')) return false;
+        // 排除失敗後被隱藏的圖片（display:none）
+        if (node.tagName === 'IMG' && (node.style?.display === 'none')) return false;
+        return true;
+      },
+      backgroundColor: getComputedStyle(document.body).backgroundColor || '#ffffff'
+    });
+
+    // 轉 Blob，順便限制大小（例如 10MB）
+    const imageBlob = await fetch(dataUrl).then((r) => r.blob());
+    if (imageBlob.size > 10 * 1024 * 1024) {
+      throw new Error('截圖檔案過大，請調整畫面大小或內容');
+    }
+
+    // 打包 ZIP
+    const zip = new JSZip();
+    zip.file(`${tpl}.css`, cssContent);
+    zip.file(`${tpl}.png`, imageBlob, { compression: 'STORE' });
+
+    const zipBlob = await zip.generateAsync({
+      type: 'blob',
+      compression: 'DEFLATE',
+      compressionOptions: { level: 6 },
+      streamFiles: true,
+      comment: `Generated at ${new Date().toISOString()}`
+    });
+
+    // 下載
+    const a = document.createElement('a');
+    objectUrl = URL.createObjectURL(zipBlob);
+    a.href = objectUrl;
+    a.download = `${tpl}.zip`;
+
+    await new Promise((resolve, reject) => {
+      const timeout = setTimeout(() => reject(new Error('下載超時')), 30000);
+      const onClick = () => {
+        clearTimeout(timeout);
+        setTimeout(() => {
+          if (objectUrl) {
+            URL.revokeObjectURL(objectUrl);
+            objectUrl = null;
+          }
+          a.removeEventListener('click', onClick);
+          resolve();
+        }, 1000);
+      };
+      a.addEventListener('click', onClick);
+      a.click();
+    });
+
+    alert('檔案已成功保存，請查看下載列表。');
+  } catch (err) {
+    console.error('保存過程發生錯誤：', err);
+    alert(`保存失敗：${err.message || err.toString()}`);
+  } finally {
+    if (objectUrl) URL.revokeObjectURL(objectUrl);
+    if (captureEl) captureEl.style.cssText = originalStyle; // 復原寬度
+    saving.value = false;
+    // 可選：若你的環境注入了 window.gc() 作手動 GC
+    if (window.gc) try { window.gc(); } catch {}
+  }
 }
 
 /** ---- UI 事件：切主題 ---- */
 function selectTheme(themeName) {
   selectedThemeName.value = themeName
+}
+
+
+// 等待容器內所有 <img> 載入完成或失敗（失敗就隱藏）
+function waitForImages(root, timeoutMs = 15000) {
+  const imgs = Array.from(root.querySelectorAll('img'));
+  if (imgs.length === 0) return Promise.resolve();
+
+  return new Promise((resolve) => {
+    let pending = imgs.length;
+    const done = () => (--pending <= 0) && resolve();
+
+    imgs.forEach((img) => {
+      // 載入失敗就隱藏，避免黑塊
+      img.onerror = () => {
+        img.style.display = 'none';
+        done();
+      };
+      if (img.complete && img.naturalWidth > 0) {
+        done();
+      } else if (img.complete && img.naturalWidth === 0) {
+        // 已經失敗
+        img.style.display = 'none';
+        done();
+      } else {
+        const onEnd = () => {
+          img.removeEventListener('load', onEnd);
+          img.removeEventListener('error', onEnd);
+          if (img.naturalWidth === 0) img.style.display = 'none';
+          done();
+        };
+        img.addEventListener('load', onEnd);
+        img.addEventListener('error', onEnd);
+      }
+    });
+
+    // 安全超時（避免卡住）
+    setTimeout(resolve, timeoutMs);
+  });
 }
 </script>
 
@@ -410,7 +601,15 @@ function selectTheme(themeName) {
   --cp-text-primary: #3D4154;
   --cp-text-secondary: #97A2AF;
 }
-.themeManager-manager {
+.themeManager-wrap {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 9999;
+}
+
+.themeManager-content {
+  font-size: 13px;
   padding: 24px;
   color: #000;
   background: #f9f9f9;
@@ -464,7 +663,7 @@ function selectTheme(themeName) {
   }
 }
 
-/* 匯出 / 匯入 */
+/* 匯出 / 匯入 / 保存 */
 .themeManager-io-wrap {
   display: flex;
   gap: 8px;
@@ -476,6 +675,10 @@ function selectTheme(themeName) {
   border: 1px solid #ddd;
   background: #fff;
   cursor: pointer;
+}
+.themeManager-btn-save:disabled {
+  opacity: .5;
+  cursor: not-allowed;
 }
 .themeManager-file-hidden { display: none; }
 
