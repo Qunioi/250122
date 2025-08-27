@@ -1,26 +1,43 @@
 import themeData from '@/assets/data/theme.json'
 import { colorDatabase } from './colorDatabase'
 
-export function useTheme() {
-  // 將 rgb(x,x,x) 轉成 'x x x' 格式
-  function formatRgbValue(value) {
-    if (typeof value === 'string' && value.startsWith('rgb')) {
-      const result = value.match(/\d+/g);
-      return result ? result.join(' ') : value;
-    }
-    return value;
-  }
+/**
+ * 共用主題工具
+ * @param {object} options
+ * @param {string} options.namespace - localStorage 命名空間（可選）
+ */
+export function useTheme(options = {}) {
+  const namespace = options.namespace || 'app'
+
+  const getTheme = (themeName) =>
+    themeData.colorThemes?.find(t => t.themeName === themeName)
 
   const setTheme = (themeName) => {
-    const theme = themeData.colorThemes.find(t => t.themeName === themeName)
-    if (theme) {
-      document.documentElement.setAttribute('data-theme', `${theme.themeMode} ${theme.themeName}`)
-    }
+    const theme = getTheme(themeName)
+    if (!theme) return
+    const el = document.documentElement
+    // 舊有：合併字串（若你的 CSS 用 [data-theme~="dark"] 這類 token selector，仍可用）
+    el.setAttribute('data-theme', `${theme.themeMode} ${theme.themeName}`)
+    // 建議：分開屬性，選擇器更直覺
+    el.setAttribute('data-theme-mode', theme.themeMode)
+    el.setAttribute('data-theme-name', theme.themeName)
   }
+
+  const getColorVars = (themeName) =>
+    getTheme(themeName)?.colorVariables || themeData.colorVariables || []
+
   const getSelectedColors = (themeName) => {
-    const theme = themeData.colorThemes.find(t => t.themeName === themeName)
-    if (!theme || !theme.colorVariables) return []
-    return colorDatabase.filter(item => theme.colorVariables.includes(item.id))
+    const vars = getColorVars(themeName)
+    return colorDatabase.filter(item => vars.includes(item.id))
   }
-  return { setTheme, getSelectedColors, themes: themeData.colorThemes }
+
+  const storageKey = (themeName) => `${namespace}:customThemeColors:${themeName}`
+
+  return {
+    setTheme,
+    getColorVars,
+    getSelectedColors,
+    storageKey,
+    themes: themeData.colorThemes || []
+  }
 }
