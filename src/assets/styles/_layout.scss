@@ -54,6 +54,7 @@ body {
 .header-bottom {
     .header-container {
         width: var(--body-width);
+        padding: 19px 0 18px;
         margin: 0 auto;
         position: relative;
     }
@@ -67,7 +68,6 @@ body {
     width: var(--body-width);
     height: 250px;
     background-repeat: no-repeat;
-    margin: 19px 0 18px;
 }
 
 
@@ -823,12 +823,15 @@ body {
         padding: 31px 22px 33px;
     }
 }
+.page-container {
+    padding-bottom: 62px;
+}
 .page-body {
     display: flex;
     width: var(--body-width);
     background: rgba(255 255 255 / 20%);
     border-radius: 20px;
-    margin: 0 auto 62px;
+    margin: 0 auto;
     .imgHall {
         max-width: 100%;
         margin: 0 auto;

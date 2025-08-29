@@ -5,7 +5,6 @@ import { colorDatabase } from './colorDatabase'
  * 共用主題工具
  * @param {object} options
  * @param {string} [options.namespace='app'] - localStorage 命名空間
- * @param {string} [options.forceMode] - 強制設定主題模式（優先於 theme.json）
  */
 export function useTheme(options = {}) {
   const namespace = options.namespace || 'app'
@@ -18,7 +17,9 @@ export function useTheme(options = {}) {
     const theme = getTheme(themeName)
     if (!theme) return
     const el = document.documentElement
-    el.setAttribute('data-theme', `${theme.themeMode} ${theme.themeName}`)
+    // el.setAttribute('data-theme', `${theme.themeMode} ${theme.themeName}`)
+    const mode = forceMode || theme.themeMode
+    el.setAttribute('data-theme', `${mode} ${theme.themeName}`)
   }
 
   const getColorVars = (themeName) =>
@@ -31,11 +32,24 @@ export function useTheme(options = {}) {
 
   const storageKey = (themeName) => `${namespace}:customThemeColors:${themeName}`
 
+  const persist = {
+    get(themeName) {
+      return JSON.parse(localStorage.getItem(storageKey(themeName)) || 'null')
+    },
+    set(themeName, colors) {
+      localStorage.setItem(storageKey(themeName), JSON.stringify(colors))
+    },
+    clear(themeName) {
+      localStorage.removeItem(storageKey(themeName))
+    }
+  }
+
   return {
     setTheme,
     getColorVars,
     getSelectedColors,
     storageKey,
+    persist,
     themes: themeData.colorThemes || []
   }
 }

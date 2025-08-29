@@ -35,7 +35,10 @@
 
         <!-- 匯出 / 匯入 / 保存 -->
         <div class="themeManager-io-wrap">
-          <button type="button" class="themeManager-btn themeManager-btn-export" @click="exportTheme">
+          <button type="button"
+            lass="themeManager-btn themeManager-btn-export"
+            @click="exportTheme"
+            :title="hasModified ? '汇出目前自订配色' : '没有自订变更，汇出将与预设相同'">
             匯出配色
           </button>
           <button type="button" class="themeManager-btn themeManager-btn-import" @click="triggerImport">
@@ -45,7 +48,7 @@
             type="button"
             class="themeManager-btn themeManager-btn-save"
             :disabled="saving"
-            :title="saving ? '保存中…' : '下載壓縮檔（含 .css 與畫面示意圖）'"
+            :title="saving ? '汇出保存中…' : '下載壓縮檔（含 .css 與畫面示意圖）'"
             @click="saveTheme"
           >
             保存
@@ -84,10 +87,11 @@
 </template>
 
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { nextTick } from 'vue'
 import JSZip from 'jszip'
 import { toPng } from 'html-to-image'
 import { colorDatabase } from '../colorDatabase'
+import themeData from '@/assets/data/theme.json'
 import { useTheme } from '../useTheme'
 import ColorPicker from './ColorPicker.vue'
 
@@ -136,7 +140,10 @@ function toHex(val) {
 }
 
 /** ---- 主題資料與狀態 ---- */
-const { setTheme, getColorVars, themes } = useTheme({ namespace: 'app' })
+const { setTheme, getColorVars, themes, storageKey, persist } = useTheme({ namespace: 'app' })
+const getCustomThemeColors = persist.get
+const saveCustomThemeColors = persist.set
+const clearCustomThemeColors = persist.clear
 
 const selectedThemeName = ref(themes[0]?.themeName || '')
 const currentTheme = computed(() => themes.find(t => t.themeName === selectedThemeName.value))
@@ -169,19 +176,6 @@ function clearThemeInlineColors() {
     .forEach(item => el.style.removeProperty(item.varName))
 }
 
-function storageKey(themeName) {
-  return `app:customThemeColors:${themeName}`
-}
-
-function getCustomThemeColors(themeName) {
-  return JSON.parse(localStorage.getItem(storageKey(themeName)) || 'null')
-}
-function saveCustomThemeColors(themeName, colors) {
-  localStorage.setItem(storageKey(themeName), JSON.stringify(colors))
-}
-function clearCustomThemeColors(themeName) {
-  localStorage.removeItem(storageKey(themeName))
-}
 
 /** ---- 初始化 / 切主題 ---- */
 function onThemeChange() {
@@ -376,6 +370,12 @@ function importFromCssText(text) {
 
 /** 匯出當前配色為「版型編號.css」 */
 async function exportTheme() {
+  // 若沒有任何自訂變更，先提醒
+  if (!hasModified.value) {
+    const ok = confirm('目前没有任何自订变更，汇出将与主题预设值相同。\n仍要汇出吗？')
+    if (!ok) return
+  }
+
   const tpl = String(currentTemplateNumber.value || '').trim() || 'theme'
   const content = buildCssContent()
   const cssBlob = new Blob([content], { type: 'text/css;charset=utf-8' })
@@ -415,13 +415,13 @@ async function exportTheme() {
 /** 產生匯出 CSS 文字（供 export 與 save 共用） */
 function buildCssContent() {
   const tpl = String(currentTemplateNumber.value || '').trim() || 'theme'
-  const exportVars = [
-    ['/* 主要颜色 */', '--color-primary'],
-    ['/* 辅助颜色 */', '--color-secondary'],
-    ['/* 主背景颜色 */', '--color-primary-bg'],
-    ['/* 主文字颜色 */', '--color-primary-text'],
-    ['/* 辅助文字颜色 */', '--color-secondary-text']
-  ]
+  // 直接用 themeData.colorVariables 產生 exportVars
+  const colorVariables = themeData.colorVariables
+  const exportVars = colorVariables.map(id => {
+    const item = colorDatabase.find(c => c.id === id)
+    return item ? [`/* ${item.name} */`, item.varName] : null
+  }).filter(Boolean)
+
   const lines = []
   lines.push('/* ※注意 - Template number 汇入配色时会判断是否同一个版型，请勿删除 */')
   lines.push(`/* Template number: ${tpl} */`)
@@ -440,6 +440,12 @@ const saving = ref(false)
 async function saveTheme() {
   if (saving.value) return;
   saving.value = true;
+
+  // 若沒有任何自訂變更，先提醒
+  if (!hasModified.value) {
+    const ok = confirm('目前没有任何自订变更，汇出将与主题预设值相同。\n仍要汇出吗？')
+    if (!ok) return
+  }
 
   let captureEl = null;
   let originalStyle = '';
