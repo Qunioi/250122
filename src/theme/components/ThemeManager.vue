@@ -18,6 +18,10 @@
           <LogoUploader />
         </details>
         <details class="themeManager-details">
+          <summary>版型主題</summary>
+          <PlatformSelet />
+        </details>
+        <details class="themeManager-details">
           <summary>版型配色</summary>
           <div class="themeManager-theme-wrap">
             <button v-for="theme in themes" :key="theme.themeID ?? theme.themeName" :class="['themeManager-theme-btn',{ active: selectedThemeName === theme.themeName },]" type="button" @click="selectTheme(theme.themeName)">
@@ -31,6 +35,14 @@
               重置主題
             </button>
             <span class="themeManager-theme-modified">已調整：{{ hasModified ? "true" : "false" }}</span>
+          </div>
+
+          <h4>主題顏色自訂</h4>
+          <div v-if="selectedColors.length">
+            <ColorPicker v-for="color in selectedColors" :key="color.id" :item="color" :modified="modifiedMap[color.id]" @update="updateColor" @remove="removeColor" />
+          </div>
+          <div v-else>
+            <p>此主題尚未設定 colorVariables。</p>
           </div>
 
           <!-- 匯出 / 匯入 / 保存 -->
@@ -57,13 +69,6 @@
             <pre class="themeManager-import-text">{{ importMessage }}</pre>
           </div>
 
-          <h4>主題顏色自訂</h4>
-          <div v-if="selectedColors.length">
-            <ColorPicker v-for="color in selectedColors" :key="color.id" :item="color" :modified="modifiedMap[color.id]" @update="updateColor" @remove="removeColor" />
-          </div>
-          <div v-else>
-            <p>此主題尚未設定 colorVariables。</p>
-          </div>
         </details>
       </div>
     </div>
@@ -83,6 +88,7 @@ import themeData from "@/assets/data/theme.json";
 
 import ColorPicker from "./ColorPicker.vue";
 import LogoUploader from "./LogoUploader.vue";
+import PlatformSelet from "./PlatformSelet.vue";
 
 /** ---- UI：面板顯示 ---- */
 const panelVisible = ref(true);
