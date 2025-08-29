@@ -3,8 +3,10 @@
     <div class="footer-top-wrap">
       <div class="top-logo-wrap">
         <div class="footer-top-title">游戏提供商</div>
-        <img class="footer-logo-bb" :src="getPath(`/image/not-use/${themeFooterLogo.bb}.png`)" width="96px">
-        <a class="footer-logo-ub" href="#"> <img :src="getPath(`image/not-use/ublogo/${themeFooterLogo.ub}.png`)" width="162px"></a>
+        <img class="footer-logo-bb" :src="getPath(`image/not-use/${themeFooterLogo.bb}.png`)" width="96" />
+        <a class="footer-logo-ub" href="#">
+          <img :src="getPath(`image/not-use/ublogo/${themeFooterLogo.ub}.png`)" width="162" />
+        </a>
         <img :src="getPath(`image/${themeColor}/footer_img01.png`)" >
       </div>
       <div class="top-pay-wrap">
@@ -29,10 +31,8 @@
 <script setup>
 import FooterLink from '@/components/common/FooterLink.vue';
 import { useConfigStore } from '@/stores/configStore.js';
-import { useTheme } from '@/composables/useTheme.js';
 import { getPath } from '@/composables/usePath.js'
 
-const { themeColor } = useTheme();
-const configStore = useConfigStore();
-const { themeFooterLogo } = storeToRefs(configStore);
+const configStore = useConfigStore()
+const { themeColor, themeFooterLogo } = storeToRefs(configStore)
 </script>

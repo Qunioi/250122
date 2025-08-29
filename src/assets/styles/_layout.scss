@@ -149,14 +149,14 @@ body {
         }
     }
     .ele-forget-pw {
+        width: 21px;
+        height: 21px;
+        -webkit-mask: url('/image/ic_forget.svg');
+        background-color: rgb(var(--color-primary));
         position: absolute;
         top: 50%;
         right: var(--input-padding);
         transform: translateY(-50%);
-        svg {
-            width: 21px;
-            color: rgb(var(--color-primary));
-        }
     }
     .ele-login-unit-password {
         margin: 0 4px 0 11px;
@@ -258,10 +258,11 @@ body {
             display: block;
             width: 15px;
             height: 18px;
-            color: rgb(var(--color-primary));
             position: absolute;
             top: 6px;
             left: 0;
+            -webkit-mask: url('image/sub.svg');
+            background-color: rgb(var(--color-primary));
         }
         .ele-morenav-container {
             position: absolute;
@@ -356,6 +357,8 @@ body {
 }
 
 .first-hotgame-warp {
+    --swiper-pagination-bullet-inactive-color: rgb(33 34 36);
+    --swiper-pagination-bullet-inactive-opacity: 1;
     width: 363px;
     .first-hotgame-title {
         font-size: 21px;
@@ -589,6 +592,12 @@ body {
         border-radius: 20px;
         overflow: hidden;
         position: relative;
+        .first-live-bg {
+            width: 580px;
+            height: 332px;
+            -webkit-mask: url('image/first_live_bg.svg') bottom center no-repeat;
+            background-color: rgb(var(--color-secondary));
+        }
         .first-live-btn {
             width: 120px;
             height: 44px;
@@ -708,7 +717,13 @@ body {
             text-align: center;
             padding-top: 20px;
         }
-        .first-mob-h5-icon,
+        .first-mob-h5-icon {
+            width: 136px;
+            height: 136px;
+            -webkit-mask: url('image/first_h5.svg');
+            background-color: rgb(var(--color-primary));
+            margin: 0 auto;
+        }
         .first-mob-url {
             color: rgb(var(--color-primary));
         }
@@ -825,6 +840,9 @@ body {
 }
 .page-container {
     padding-bottom: 62px;
+    .first & {
+        padding-bottom: 0;
+    }
 }
 .page-body {
     display: flex;

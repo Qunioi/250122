@@ -1,6 +1,16 @@
 <template>
   <a href="#" class="ele-logo-wrap">
-    <svg class="ele-logo-img" width="180" height="116" viewBox="0 0 180 116" fill="none"
+    <!-- 若有自訂 logo，顯示圖片；否則顯示預設 SVG -->
+    <img
+      v-if="assets.logoDataUrl"
+      class="ele-logo-img"
+      :src="assets.logoDataUrl"
+      alt="Logo"
+      decoding="async"
+      loading="lazy"
+      referrerpolicy="no-referrer"
+    />
+    <svg v-else class="ele-logo-img" width="180" height="116" viewBox="0 0 180 116" fill="none"
       xmlns="http://www.w3.org/2000/svg">
       <path fill-rule="evenodd" clip-rule="evenodd"
         d="M139.2 39.65C144.7 39.65 149.88 41.8 153.77 45.69L153.76 45.66C157.65 49.55 159.8 54.72 159.8 60.23V80.93C153.31 80.93 152.43 74.83 152.34 72.4V60.23C152.34 56.72 150.97 53.42 148.49 50.94C146.01 48.46 142.7 47.09 139.19 47.09C135.68 47.09 132.37 48.45 129.89 50.94L129.78 51.05L126.04 54.48V71.42C126.04 71.42 126.68 80.94 118.58 80.94V61.34L103.85 74.87C99.83 78.85 94.58 80.84 89.33 80.84C84.05 80.84 78.78 78.83 74.76 74.81L62.83 62.88L50.89 50.95C45.85 45.91 37.69 45.83 32.55 50.71L32.16 51.09C29.7 53.62 28.46 56.91 28.46 60.2V60.24C28.46 63.61 29.73 66.98 32.3 69.54C37.42 74.65 45.29 74.85 50.89 69.54C56.5 64.23 63.52 67.46 63.52 67.46L56.18 74.8C48.12 82.84 35.05 82.83 27.02 74.8C23 70.78 21 65.5 21 60.22V28C29.1 28 28.46 37.52 28.46 37.52V44.37C32.25 41.22 36.92 39.63 41.59 39.63C46.88 39.63 52.15 41.64 56.17 45.66L68.1 57.59L80.04 69.53C80.34 69.83 80.65 70.11 80.97 70.37C80.6668 70.1236 80.3725 69.8682 80.0872 69.5869C85.221 74.66 93.5257 74.6443 98.64 69.54L98.75 69.43L98.78 69.4C103.77 64.27 103.72 56.03 98.64 50.95C93.52 45.84 85.65 45.64 80.05 50.95C74.44 56.26 67.42 53.02 67.42 53.02V28.03C75.52 28.03 74.88 37.55 74.88 37.55V45.58C82.94 37.66 95.92 37.7 103.91 45.69C107.66 49.45 109.64 54.3 109.89 59.22L118.59 51.23V41.4C122.16 41.4 124.03 43.25 125.01 45.32C128.86 41.66 133.7 39.65 139.2 39.65ZM122.22 38.31L119.21 35.3V35.31C117.55 33.64 117.55 30.95 119.21 29.29C120.87 27.63 123.57 27.63 125.23 29.29C126.89 30.95 126.89 33.64 125.23 35.3L122.22 38.31Z"
@@ -51,8 +61,57 @@
       </defs>
     </svg>
   </a>
+
+  <!-- 有自訂 Logo 才顯示還原按鈕 -->
+  <!-- <button
+      v-if="assets.logoDataUrl"
+      type="button"
+      class="logoUploader-reset-btn"
+      @click="resetLogo"
+    >
+    還原預設 Logo
+  </button> -->
 </template>
 
+
 <script setup>
-//
+import { useBrandAssetsStore } from '@/stores/brandAssetsStore'
+
+const assets = useBrandAssetsStore()
+onMounted(() => assets.load())
+
+// function resetLogo() {
+//   assets.clearLogo()
+//   // 視需要提示
+//   alert('已還原預設 Logo')
+// }
 </script>
+<!-- <style lang="scss">
+.header-logo {
+  position: relative;
+  &:hover {
+    .logoUploader-reset-btn {
+      pointer-events: auto;
+      opacity: 1;
+      top: 50%;
+    }
+  }
+}
+</style>
+<style scoped lang="scss">
+.logoUploader-reset-btn {
+  pointer-events: none;
+  opacity: 0;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+  margin-top: 8px;
+  padding: 6px 10px;
+  position: absolute;
+  top: 55%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  transition: .3s opacity, .3s top;
+}
+</style> -->

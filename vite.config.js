@@ -1,3 +1,4 @@
+// vite.config.ts
 import { defineConfig, loadEnv } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import path from 'path'
@@ -12,25 +13,31 @@ export default defineConfig(({ mode }) => {
     plugins: [
       vue(),
       AutoImport({
+        // 自動導入這些套件的 API
         imports: ['vue', 'vue-router', 'pinia'],
-        dts: true, // 自動生成類型定義
-      })
+        // 讓 <template> 裡也能用（如直接寫 ref/computed）
+        vueTemplate: true,
+        // 產生 d.ts，最好放在 src 底下，TS/IDE 比較好抓
+        dts: 'src/auto-imports.d.ts',
+        // 讓 ESLint 知道這些是全域自動導入，避免 no-undef
+        eslintrc: {
+          enabled: true,
+          globalsPropValue: true,
+        },
+      }),
     ],
     resolve: {
-      alias: {
-        '@': path.resolve(__dirname, 'src'),
-      },
+      alias: { '@': path.resolve(__dirname, 'src') },
     },
     server: {
       port: Number(env.VITE_PORT) || 3001,
-      host: true, // 只在 dev 模式暴露網路 IP
+      host: true,
     },
     css: {
       preprocessorOptions: {
         scss: {
           api: 'modern-compiler',
           silenceDeprecations: ['legacy-js-api'],
-          // 這裡直接注入 .env 的值為 Sass 全域變數
           additionalData: `
             $themeColor: "${env.VITE_THEME_COLOR}";
             $lang: "${env.VITE_LANG}";

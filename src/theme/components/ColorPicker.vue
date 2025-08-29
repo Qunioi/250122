@@ -1,8 +1,6 @@
 <template>
   <div class="themeManager-picker">
     <label class="themeManager-picker-label">{{ item.name }}</label>
-
-    <!-- 不要在 template 用 TS 斷言；直接拿 $event.target.value 即可 -->
     <input
       class="themeManager-picker-input"
       type="color"

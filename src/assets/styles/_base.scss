@@ -125,6 +125,15 @@ $langs: ('zh-tw', 'zh-cn', 'en');
         right: var(--input-padding);
         transform: translateY(-50%);
     }
+    .ele-show-password {
+        width: 17px;
+        height: 18px;
+        -webkit-mask: url('/image/not-use/ic_eyeClose.svg');
+        background-color: #fff;
+        &.is-show {
+            -webkit-mask: url('/image/not-use/ic_eyeOpen.svg');
+        }
+    }
 }
 
 

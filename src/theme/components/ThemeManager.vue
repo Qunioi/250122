@@ -1,9 +1,15 @@
 <template>
   <teleport to="body">
+    <div class="themeManager-toggle-btn" v-if="panelVisible === false">
+      <button type="button" class="themeManager-btn" @click="panelVisible = true">顯示主題面板</button>
+    </div>
     <div class="themeManager-wrap" v-show="panelVisible">
+      <button type="button" class="themeManager-hide-btn" @click="panelVisible = false">隱藏面板</button>
       <div class="themeManager-content">
+        <h3>Logo與輪播圖尺寸</h3>
+        <LogoUploader />
+
         <h3>主題切換</h3>
-    
         <div class="themeManager-theme-wrap">
           <button
             v-for="theme in themes"
@@ -19,7 +25,7 @@
               {{ theme.themeName }} ({{ theme.themeMode }})
             </span>
           </button>
-    
+
           <button
             class="themeManager-theme-reset"
             type="button"
@@ -29,14 +35,14 @@
           >
             重置主題
           </button>
-    
+
           <span class="themeManager-theme-modified">已調整：{{ hasModified ? 'true' : 'false' }}</span>
         </div>
 
         <!-- 匯出 / 匯入 / 保存 -->
         <div class="themeManager-io-wrap">
           <button type="button"
-            lass="themeManager-btn themeManager-btn-export"
+            class="themeManager-btn themeManager-btn-export"
             @click="exportTheme"
             :title="hasModified ? '汇出目前自订配色' : '没有自订变更，汇出将与预设相同'">
             匯出配色
@@ -66,7 +72,7 @@
         <div v-if="importMessage" :class="['themeManager-import-msg', importSuccess ? 'ok' : 'err']">
           <pre class="themeManager-import-text">{{ importMessage }}</pre>
         </div>
-    
+
         <h4>主題顏色自訂</h4>
         <div v-if="selectedColors.length">
           <ColorPicker
@@ -91,9 +97,11 @@ import { nextTick } from 'vue'
 import JSZip from 'jszip'
 import { toPng } from 'html-to-image'
 import { colorDatabase } from '../colorDatabase'
-import themeData from '@/assets/data/theme.json'
 import { useTheme } from '../useTheme'
+import { useConfigStore } from '@/stores/configStore'
+import themeData from '@/assets/data/theme.json'
 import ColorPicker from './ColorPicker.vue'
+import LogoUploader from './LogoUploader.vue'
 
 const panelVisible = ref(true) // 截圖隱藏 ThemeManager
 
@@ -141,11 +149,12 @@ function toHex(val) {
 
 /** ---- 主題資料與狀態 ---- */
 const { setTheme, getColorVars, themes, storageKey, persist } = useTheme({ namespace: 'app' })
+const config = useConfigStore()
 const getCustomThemeColors = persist.get
 const saveCustomThemeColors = persist.set
 const clearCustomThemeColors = persist.clear
 
-const selectedThemeName = ref(themes[0]?.themeName || '')
+const selectedThemeName = ref(config.themeColor || themes[0]?.themeName || '')
 const currentTheme = computed(() => themes.find(t => t.themeName === selectedThemeName.value))
 const colorVars = computed(() => getColorVars(selectedThemeName.value))
 
@@ -179,7 +188,7 @@ function clearThemeInlineColors() {
 
 /** ---- 初始化 / 切主題 ---- */
 function onThemeChange() {
-  setTheme(selectedThemeName.value)
+  config.setThemeColor(selectedThemeName.value)
   clearThemeInlineColors()
 
   const items = colorDatabase.filter(item => colorVars.value.includes(item.id))
@@ -595,6 +604,96 @@ function waitForImages(root, timeoutMs = 15000) {
     setTimeout(resolve, timeoutMs);
   });
 }
+
+/** ---- Logo與輪播圖尺寸 與 Logo上傳示意 ---- */
+import { useBrandAssetsStore } from '@/stores/brandAssetsStore'
+const assets = useBrandAssetsStore()
+onMounted(() => assets.load())
+
+// 取得當前頁面 Logo 容器尺寸：.ele-logo-img
+function getLogoBox() {
+  const el = document.querySelector('.ele-logo-img')
+  if (!el) return { el: null, w: 180, h: 116 } // fallback
+  const r = el.getBoundingClientRect()
+  // 若寬高為 0（尚未渲染），退回 SVG 的 width/height 或預設
+  const w = Math.round(r.width || Number(el.getAttribute('width')) || 180)
+  const h = Math.round(r.height || Number(el.getAttribute('height')) || 116)
+  return { el, w, h }
+}
+
+const logoBoxText = computed(() => {
+  const { w, h } = getLogoBox()
+  return `${w}x${h}`
+})
+
+async function onLogoFileChange(e) {
+  const file = e?.target?.files?.[0]
+  if (!file) return
+  if (!/^image\//.test(file.type)) {
+    alert('請選擇圖片檔案')
+    return
+  }
+  // 讀檔
+  const dataUrl = await readFileAsDataURL(file)
+  // 確保 DOM 已渲染，避免量到 0x0
+  await nextTick()
+
+  // 取得容器實際尺寸
+  const { w: boxW, h: boxH } = getLogoBox()
+  // 產生縮放後的 DataURL（等比 contain，透明背景）
+  const scaled = await resizeImageContain(dataUrl, boxW, boxH)
+
+  assets.setLogo(scaled)
+  // 允許同檔連續上傳
+  if (e?.target) e.target.value = ''
+  alert('Logo 已更新')
+}
+
+function resetLogo() {
+  assets.clearLogo()
+  alert('已還原預設 Logo')
+}
+
+// helpers
+function readFileAsDataURL(file) {
+  return new Promise((resolve, reject) => {
+    const fr = new FileReader()
+    fr.onload = () => resolve(fr.result)
+    fr.onerror = reject
+    fr.readAsDataURL(file)
+  })
+}
+
+function resizeImageContain(srcDataUrl, targetW, targetH) {
+  return new Promise((resolve, reject) => {
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas')
+        canvas.width = targetW
+        canvas.height = targetH
+        const ctx = canvas.getContext('2d')
+        // 透明背景
+        ctx.clearRect(0, 0, targetW, targetH)
+        // 等比縮放，置中
+        const scale = Math.min(targetW / img.width, targetH / img.height)
+        const drawW = Math.round(img.width * scale)
+        const drawH = Math.round(img.height * scale)
+        const dx = Math.round((targetW - drawW) / 2)
+        const dy = Math.round((targetH - drawH) / 2)
+        ctx.imageSmoothingEnabled = true
+        ctx.imageSmoothingQuality = 'high'
+        ctx.drawImage(img, dx, dy, drawW, drawH)
+        resolve(canvas.toDataURL('image/png'))
+      } catch (err) {
+        reject(err)
+      }
+    }
+    img.onerror = () => reject(new Error('圖片載入失敗'))
+    img.src = srcDataUrl
+  })
+}
 </script>
 
 <style lang="scss">
@@ -612,6 +711,25 @@ function waitForImages(root, timeoutMs = 15000) {
   top: 16px;
   right: 16px;
   z-index: 9999;
+}
+
+.themeManager-toggle-btn {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 9999;
+}
+.themeManager-hide-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+  background: #fff;
+  cursor: pointer;
+  font-size: 13px;
+  color: #888;
 }
 
 .themeManager-content {
@@ -697,4 +815,27 @@ function waitForImages(root, timeoutMs = 15000) {
 .themeManager-import-msg.ok  { background: #e9f7ef; border: 1px solid #b8e0c8; color: #156a42; }
 .themeManager-import-msg.err { background: #fff3f3; border: 1px solid #f1c0c0; color: #8b1f1f; }
 .themeManager-import-text { margin: 0; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace; }
+
+
+/* Logo&輪播圖尺寸 / Logo上傳 */
+.changeColor-images-wrap {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 8px 12px;
+  align-items: center;
+  margin: 8px 0 16px;
+}
+.changeColor-upload {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  .changeColor-upload-tips {
+    font-size: 12px;
+    color: #666;
+  }
+  .changeColor-upload-input {
+    cursor: pointer;
+  }
+}
 </style>
