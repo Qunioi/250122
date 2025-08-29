@@ -206,7 +206,6 @@ function loadImageSize(dataUrl) {
       color: #9aa3b8;
       font-size: 13px;
       letter-spacing: .02em;
-      :global(html[data-theme*="dark"]) & { color: #8590a8; }
     }
   }
 }
@@ -238,12 +237,6 @@ function loadImageSize(dataUrl) {
     line-height: 1;
     cursor: pointer;
     transition: transform .08s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease, color .2s ease;
-
-    :global(html[data-theme*="dark"]) & {
-      background: #232736;
-      border-color: #333a4f;
-      color: #e8ecff;
-    }
 
     &:hover {
       transform: translateY(-1px);

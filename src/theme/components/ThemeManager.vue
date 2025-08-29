@@ -1,6 +1,8 @@
 <!-- src/theme/components/ThemeManager.vue -->
 <template>
   <teleport to="body">
+    <TemplateZoom />
+
     <div class="themeManager-toggle-btn" v-if="panelVisible === false">
       <button type="button" class="themeManager-btn" @click="panelVisible = true">
         顯示主題面板
@@ -89,6 +91,7 @@ import themeData from "@/assets/data/theme.json";
 import ColorPicker from "./ColorPicker.vue";
 import LogoUploader from "./LogoUploader.vue";
 import PlatformSelet from "./PlatformSelet.vue";
+import TemplateZoom from "./TemplateZoom.vue";
 
 /** ---- UI：面板顯示 ---- */
 const panelVisible = ref(true);
