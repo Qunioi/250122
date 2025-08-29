@@ -61,16 +61,6 @@
       </defs>
     </svg>
   </a>
-
-  <!-- 有自訂 Logo 才顯示還原按鈕 -->
-  <!-- <button
-      v-if="assets.logoDataUrl"
-      type="button"
-      class="logoUploader-reset-btn"
-      @click="resetLogo"
-    >
-    還原預設 Logo
-  </button> -->
 </template>
 
 
@@ -79,39 +69,4 @@ import { useBrandAssetsStore } from '@/stores/brandAssetsStore'
 
 const assets = useBrandAssetsStore()
 onMounted(() => assets.load())
-
-// function resetLogo() {
-//   assets.clearLogo()
-//   // 視需要提示
-//   alert('已還原預設 Logo')
-// }
 </script>
-<!-- <style lang="scss">
-.header-logo {
-  position: relative;
-  &:hover {
-    .logoUploader-reset-btn {
-      pointer-events: auto;
-      opacity: 1;
-      top: 50%;
-    }
-  }
-}
-</style>
-<style scoped lang="scss">
-.logoUploader-reset-btn {
-  pointer-events: none;
-  opacity: 0;
-  background: #fff;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  cursor: pointer;
-  margin-top: 8px;
-  padding: 6px 10px;
-  position: absolute;
-  top: 55%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  transition: .3s opacity, .3s top;
-}
-</style> -->

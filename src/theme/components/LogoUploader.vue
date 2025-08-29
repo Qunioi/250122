@@ -17,10 +17,10 @@
           @change="onLogoFileChange"
           id="themeManager-imgSize-input"
         />
-        <label for="themeManager-imgSize-input" class="themeManager-imgSize-upload-btn">選擇圖片</label>
+        <label for="themeManager-imgSize-input" class="themeManager-btn themeManager-imgSize-upload-btn">選擇圖片</label>
         <button
           type="button"
-          class="themeManager-imgSize-reset-btn"
+          class="themeManager-btn themeManager-imgSize-reset-btn"
           @click="resetLogo"
           :disabled="!assets.logoDataUrl"
         >
@@ -98,24 +98,24 @@ async function onLogoFileChange(e) {
   try {
     const { width: imgW, height: imgH } = await loadImageSize(dataUrl)
     if (imgW !== targetW || imgH !== targetH) {
-      alert(`解析度不符合，需為 ${targetW}x${targetH} 像素（目前為 ${imgW}x${imgH}）`)
+      alert(`尺寸不符合，需为 ${targetW}x${targetH} 像素（目前为 ${imgW}x${imgH}）`)
       resetInput(e)
       return
     }
   } catch {
-    alert('圖片讀取失敗，請重新選擇')
+    alert('图片读取失败，请重新选择')
     resetInput(e)
     return
   }
 
   assets.setLogo(dataUrl)
   resetInput(e)
-  alert('Logo 已更新')
+  alert('Logo 已更新完成')
 }
 
 function resetLogo() {
   assets.clearLogo()
-  alert('已還原預設 Logo')
+  alert('已还原预设 Logo')
 }
 
 // helpers
@@ -153,13 +153,6 @@ function loadImageSize(dataUrl) {
   border-radius: 12px;
   padding: 16px;
   box-shadow: 0 2px 10px rgba(0,0,0,.04);
-
-  /* 暗色主題優化 */
-  :global(html[data-theme*="dark"]) & {
-    background: #1e1f26;
-    border-color: #2a2c36;
-    box-shadow: 0 2px 10px rgba(0,0,0,.25);
-  }
 }
 
 /* 標題列 */
@@ -175,7 +168,6 @@ function loadImageSize(dataUrl) {
     font-weight: 700;
     letter-spacing: .02em;
     color: #1e2233;
-    :global(html[data-theme*="dark"]) & { color: #e8ecff; }
   }
 
   .themeManager-imgSize-size {
@@ -185,11 +177,6 @@ function loadImageSize(dataUrl) {
     border: 1px solid #e7eaf4;
     border-radius: 6px;
     padding: 2px 8px;
-    :global(html[data-theme*="dark"]) & {
-      color: #b8c0d6;
-      background: #242735;
-      border-color: #2e3344;
-    }
   }
 }
 
@@ -203,11 +190,6 @@ function loadImageSize(dataUrl) {
   place-items: center;
   padding: 10px;
   margin-bottom: 12px;
-
-  :global(html[data-theme*="dark"]) & {
-    border-color: #384059;
-    background: linear-gradient(180deg, #1b1d27 0%, #171923 100%);
-  }
 
   .themeManager-imgSize-img {
     max-width: 100%;
@@ -267,10 +249,6 @@ function loadImageSize(dataUrl) {
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(28, 76, 231, .08);
       border-color: #b8c4f2;
-      :global(html[data-theme*="dark"]) & {
-        box-shadow: 0 4px 12px rgba(0,0,0,.25);
-        border-color: #485376;
-      }
     }
 
     &:active {
@@ -288,10 +266,6 @@ function loadImageSize(dataUrl) {
   .themeManager-imgSize-upload-btn {
     border-color: #bfc9f2;
     background: #f5f7ff;
-    :global(html[data-theme*="dark"]) & {
-      background: #2a2f41;
-      border-color: #49537a;
-    }
   }
 }
 
@@ -301,13 +275,7 @@ function loadImageSize(dataUrl) {
   font-size: 12px;
   color: #6f7791;
   line-height: 1.5;
-
   b { font-weight: 700; color: #384166; }
-
-  :global(html[data-theme*="dark"]) & {
-    color: #9aa3b8;
-    b { color: #c7d0ef; }
-  }
 }
 
 /* 小尺寸適配 */

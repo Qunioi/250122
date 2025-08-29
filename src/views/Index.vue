@@ -67,7 +67,6 @@
           </div>
           <img class="first-live-img" :src="getPath(`image/${themeColor}/btn_live01.png`)">
           <div class="first-live-bg"></div>
-          <!-- <svg class="first-live-bg" width="580" height="272" viewBox="0 0 580 272" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 68.3185C0 57.9518 7.92126 49.3035 18.2481 48.3954L558.248 0.912665C569.94 -0.115424 580 9.09868 580 20.8358V252C580 263.046 571.046 272 560 272H20C8.95432 272 0 263.046 0 252V68.3185Z" fill="currentColor"/></svg> -->
         </a>
         <a href="#" class="first-live-item" :style="{
           backgroundImage: `url(${getPath(`image/${themeColor}/btn_live02.png`)})`,
@@ -137,7 +136,6 @@
             </div>
             <div class="first-mob-h5">
               <div class="first-mob-h5-icon"></div>
-              <!-- <svg class="first-mob-h5-icon" width="136" height="136" viewBox="0 0 136 136" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16 9L25.5507 116.141L68.4132 128L111.449 116.083L121 9H16ZM100.162 44.0289H49.9195L51.1351 57.4793H98.9755L95.3578 97.8017L68.5 105.236V105.322L41.5265 97.8017L39.6742 77.1777H52.8716L53.7977 87.6777L68.4711 91.6116L83.1155 87.6777L84.6494 70.6116H68.4421H39.0954L35.5066 30.9256H101.378L100.162 44.0579V44.0289Z" fill="currentColor"/></svg> -->
               <p class="first-mob-h5-text">无需下载，扫码直接访问<br><span class="first-mob-url">web.bbinpartner.com</span></p>
             </div>
           </div>
@@ -203,8 +201,8 @@ const firstGame = ref({
     game: [
       { "name": "五龙捕鱼", "platform": "JDB电子", "image": "first_game_fishing01.png", "hot": true },
       { "name": "龙王捕鱼", "platform": "JDB电子", "image": "first_game_fishing02.png", "hot": true },
-      { "name": "捕鱼王3D", "platform": "AG电子", "image": "first_game_fishing03.png", "hot": false },
-      { "name": "捕鱼乐园", "platform": "AG电子", "image": "first_game_fishing04.png", "hot": true },
+      { "name": "發財捕魚", "platform": "FC电子", "image": "first_game_fishing03.png", "hot": false },
+      { "name": "寶船捕魚", "platform": "FC电子", "image": "first_game_fishing04.png", "hot": true },
       { "name": "财神捕鱼", "platform": "JDB电子", "image": "first_game_fishing05.png", "hot": false },
       { "name": "猎龙传说", "platform": "BB电子", "image": "first_game_fishing06.png", "hot": false },
       { "name": "捕鱼大师", "platform": "BB电子", "image": "first_game_fishing07.png", "hot": false },

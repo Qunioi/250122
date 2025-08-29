@@ -43,7 +43,6 @@ function setBodyClass() {
 }
 
 onMounted(() => {
-  configStore.updateHtmlDataTheme();
   setBodyClass();
 });
 
