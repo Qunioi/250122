@@ -1,6 +1,6 @@
 <template>
   <div class="page-wrap">
-    <PageTransitionMask :show="showMask" />
+    <Loading :show="showMask" />
     <ThemeManager />
     <Header />
     <div class="page-container">
@@ -12,8 +12,7 @@
 
 <script setup>
 import ThemeManager from '@/theme/components/ThemeManager.vue'
-
-import PageTransitionMask from '@/components/common/PageTransitionMask.vue'
+import Loading from '@/components/common/Loading.vue'
 import { setMaskRef } from '@/router'
 const showMask = ref(false)
 onMounted(() => {
