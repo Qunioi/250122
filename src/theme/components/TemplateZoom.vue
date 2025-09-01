@@ -55,7 +55,7 @@ onMounted(() => {
   position: fixed;
   bottom: 20px;
   left: 10px;
-  z-index: 1000;
+  z-index: 9998;
   > span {
     width: 40px;
     font-size: 13px;

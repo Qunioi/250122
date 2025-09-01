@@ -1,6 +1,6 @@
 <template>
   <header class="page-header">
-    <div class="header-top">
+    <div class="header-top" v-header-fixed>
       <div class="header-container">
         <div class="header-logo">
           <Logo />
@@ -56,3 +56,19 @@ const bannerImage = computed(() => ({
   backgroundImage: `url(${getPath(`/image/${themeColor.value}/lang/${lang.value}/title_${navClass.value}.png`)})`
 }))
 </script>
+
+
+<style lang="scss">
+.ele-fixed-container,
+.ele-fixed-inner {
+  min-width: var(--page-width);
+}
+.ele-fixed-inner.fixed {
+  background: rgb(var(--color-primary-bg));
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: 0;
+  z-index: 900;
+}
+</style>

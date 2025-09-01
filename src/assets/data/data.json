@@ -44,5 +44,19 @@
       { "title": "线上取款", "link": "" },
       { "title": "一键归户", "link": "" }
     ]
+  },
+  "flatImg": {
+    "left": [
+      { "id": 1, "imgDefault": "float_left_01.png", "imgHover": "" },
+      { "id": 2, "imgDefault": "float_left_02.png", "imgHover": "" },
+      { "id": 3, "imgDefault": "float_left_03.png", "imgHover": "" },
+      { "id": 4, "imgDefault": "float_left_04.png", "imgHover": "" }
+    ],
+    "right": [
+      { "id": 1, "imgDefault": "float_right_01.png", "imgHover": ""  },
+      { "id": 2, "imgDefault": "float_right_02.png", "imgHover": ""  },
+      { "id": 3, "imgDefault": "float_right_03.png", "imgHover": ""  },
+      { "id": 4, "imgDefault": "float_right_04.png", "imgHover": ""  }
+    ]
   }
 }

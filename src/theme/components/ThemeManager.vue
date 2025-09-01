@@ -648,24 +648,21 @@ function waitForImages(root, timeoutMs = 15000) {
   --cp-text-secondary: #97a2af;
 }
 
-.themeManager-wrap
-{
+.themeManager-wrap {
   position: fixed;
   top: 16px;
   right: 16px;
   z-index: 9999;
 }
 
-.themeManager-toggle-btn
-{
+.themeManager-toggle-btn {
   position: fixed;
   top: 16px;
   right: 16px;
   z-index: 9999;
 }
 
-.themeManager-hide-btn
-{
+.themeManager-hide-btn {
   position: absolute;
   top: 8px;
   right: 8px;
@@ -678,8 +675,7 @@ function waitForImages(root, timeoutMs = 15000) {
   color: #888;
 }
 
-.themeManager-content
-{
+.themeManager-content {
   font-size: 13px;
   padding: 24px;
   color: #000;
@@ -689,28 +685,24 @@ function waitForImages(root, timeoutMs = 15000) {
   margin: 32px auto;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 
-  h3
-  {
+  h3 {
     margin-top: 0;
   }
 }
 
-.themeManager-details summary
-{
+.themeManager-details summary {
   padding: 10px 0;
 }
 
 /* 主題切換 */
-.themeManager-theme-wrap
-{
+.themeManager-theme-wrap {
   display: flex;
   gap: 8px;
   margin-bottom: 16px;
   align-items: center;
   flex-wrap: wrap;
 
-  .themeManager-theme-btn
-  {
+  .themeManager-theme-btn {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -722,25 +714,21 @@ function waitForImages(root, timeoutMs = 15000) {
     cursor: pointer;
   }
 
-  .themeManager-theme-btn.active
-  {
+  .themeManager-theme-btn.active {
     border-color: var(--cp-color-primary);
   }
 
-  .themeManager-theme-color
-  {
+  .themeManager-theme-color{
     width: 20px;
     height: 20px;
     border-radius: 2px;
   }
 
-  .themeManager-theme-name
-  {
+  .themeManager-theme-name{
     display: none;
   }
 
-  .themeManager-theme-reset
-  {
+  .themeManager-theme-reset{
     margin-left: auto;
     padding: 6px 10px;
     border-radius: 6px;
@@ -749,23 +737,20 @@ function waitForImages(root, timeoutMs = 15000) {
     cursor: pointer;
   }
 
-  .themeManager-theme-reset:disabled
-  {
+  .themeManager-theme-reset:disabled{
     opacity: 0.5;
     cursor: not-allowed;
   }
 }
 
 /* 匯出 / 匯入 / 保存 */
-.themeManager-io-wrap
-{
+.themeManager-io-wrap{
   display: flex;
   gap: 8px;
   margin: 12px 0 16px;
 }
 
-.themeManager-btn
-{
+.themeManager-btn{
   padding: 6px 10px;
   border-radius: 6px;
   border: 1px solid #ddd;
