@@ -9,7 +9,6 @@
     />
 
     <span class="themeManager-picker-hex">{{ rgbToHex(item.value) }}</span>
-    <small class="themeManager-picker-modified">已調整：{{ modified ? 'true' : 'false' }}</small>
 
     <button
       class="themeManager-btn themeManager-picker-reset"

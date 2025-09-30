@@ -5,10 +5,15 @@
       <div class="section-wrap">
         <div class="main-left-wrap">
           <div class="first-slider-wrap">
-            <!-- 輪播 -->
+            <!-- 轮播 -->
             <div class="slider-wrap">
-              <Swiper :modules="[SwiperAutoplay, SwiperEffectCreative, SwiperPagination]" :pagination="true" :slides-per-view="1"
-                :loop="true" :autoplay="{
+              <Swiper
+                :modules="[Autoplay, Pagination]"
+                :pagination="{ clickable: true }"
+                :slides-per-view="1"
+                :loop="true"
+                :allowTouchMove="false"
+                :autoplay="{
                   delay: 8000,
                   disableOnInteraction: true,
                 }">
@@ -17,11 +22,10 @@
                 </SwiperSlide>
               </Swiper>
             </div>
-            <!-- 優惠 -->
+            <!-- 优惠 -->
             <div class="first-promotion-warp">
-              <a v-for="index in [1, 2]" :key="index" href="#" class="ele-promotion-link"
+              <a v-for="index in [1, 2]" :key="index" href="#" class="ele-promotion-link" :style="{ backgroundImage: `url(${getPath(`image/${themeColor}/lang/${lang}/first_btn0${index}.png`)})` }"
                 @mouseover="promotionHover = index" @mouseout="promotionHover = null">
-                <img :src="getPath(`image/${themeColor}/lang/${lang}/btn0${index}${promotionHover === index ? '_hover' : ''}.png`)" />
               </a>
             </div>
           </div>
@@ -157,21 +161,17 @@ import { useTheme } from '@/composables/useTheme.js';
 import { useAuthStore } from '@/stores/authStore.js';
 import { getPath } from '@/composables/usePath.js'
 
-const { themeColor, lang, imgQrcode } = useTheme(); // 使用動態主題和語言設定
+const { themeColor, lang, imgQrcode } = useTheme(); // 使用动态主题和语言设定
 const authStore = useAuthStore();
-const { isLoggedIn } = storeToRefs(authStore); // 使用全域登入狀態
+const { isLoggedIn } = storeToRefs(authStore); // 使用全域登入状态
 
 import { Swiper, SwiperSlide } from 'swiper/vue';
-import { Autoplay, EffectCreative, Pagination } from 'swiper/modules';
+import { Autoplay, Pagination } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/autoplay';
 
-const SwiperAutoplay = Autoplay;
-const SwiperEffectCreative = EffectCreative;
-const SwiperPagination = Pagination;
-
-// 輪播圖資料
+// 轮播图资料
 const slides = ref([
   { id: 1, image: 'event01.png' },
   { id: 2, image: 'event02.png' },
@@ -179,23 +179,23 @@ const slides = ref([
   { id: 4, image: 'event04.png' },
 ]);
 
-// 控制 promotion hover 狀態
+// 控制 promotion hover 状态
 const promotionHover = ref(null);
 
-// 控制首頁遊戲
+// 控制首页游戏
 const activeTab = ref('casino');
 const firstGame = ref({
   casino: {
     label: 'Casino',
     game: [
-      {"name": "糖果派對", "platform": "BB電子", "image": "first_game_casino01.png", "hot": true},
-      {"name": "賞金女王", "platform": "PG電子", "image": "first_game_casino02.png", "hot": true},
-      {"name": "聚寶消消樂", "platform": "BB電子", "image": "first_game_casino03.jpg", "hot": false},
-      {"name": "麻將胡了", "platform": "PG電子", "image": "first_game_casino04.png", "hot": true},
-      {"name": "發財神2", "platform": "CQ9電子", "image": "first_game_casino05.png", "hot": false},
-      {"name": "阿斯加德之火", "platform": "MG電子", "image": "first_game_casino06.png", "hot": false},
-      {"name": "糖果派對2", "platform": "BB電子", "image": "first_game_casino07.png", "hot": false},
-      {"name": "冰球突破", "platform": "MG電子", "image": "first_game_casino08.png", "hot": false}
+      {"name": "糖果派对", "platform": "BB电子", "image": "first_game_casino01.png", "hot": true},
+      {"name": "赏金女王", "platform": "PG电子", "image": "first_game_casino02.png", "hot": true},
+      {"name": "聚宝消消乐", "platform": "BB电子", "image": "first_game_casino03.jpg", "hot": false},
+      {"name": "麻将胡了", "platform": "PG电子", "image": "first_game_casino04.png", "hot": true},
+      {"name": "发财神2", "platform": "CQ9电子", "image": "first_game_casino05.png", "hot": false},
+      {"name": "阿斯加德之火", "platform": "MG电子", "image": "first_game_casino06.png", "hot": false},
+      {"name": "糖果派对2", "platform": "BB电子", "image": "first_game_casino07.png", "hot": false},
+      {"name": "冰球突破", "platform": "MG电子", "image": "first_game_casino08.png", "hot": false}
     ]
   },
   fishing: {
@@ -203,8 +203,8 @@ const firstGame = ref({
     game: [
       { "name": "五龙捕鱼", "platform": "JDB电子", "image": "first_game_fishing01.png", "hot": true },
       { "name": "龙王捕鱼", "platform": "JDB电子", "image": "first_game_fishing02.png", "hot": true },
-      { "name": "發財捕魚", "platform": "FC电子", "image": "first_game_fishing03.png", "hot": false },
-      { "name": "寶船捕魚", "platform": "FC电子", "image": "first_game_fishing04.png", "hot": true },
+      { "name": "发财捕鱼", "platform": "FC电子", "image": "first_game_fishing03.png", "hot": false },
+      { "name": "宝船捕鱼", "platform": "FC电子", "image": "first_game_fishing04.png", "hot": true },
       { "name": "财神捕鱼", "platform": "JDB电子", "image": "first_game_fishing05.png", "hot": false },
       { "name": "猎龙传说", "platform": "BB电子", "image": "first_game_fishing06.png", "hot": false },
       { "name": "捕鱼大师", "platform": "BB电子", "image": "first_game_fishing07.png", "hot": false },
@@ -221,7 +221,7 @@ const firstGame = ref({
       { "name": "炸财神", "platform": "开元棋牌", "image": "first_game_card05.png", "hot": false },
       { "name": "红黑大战", "platform": "BB棋牌", "image": "first_game_card06.png", "hot": false },
       { "name": "捕鱼高手", "platform": "BB棋牌", "image": "first_game_card07.png", "hot": false },
-      { "name": "抢庄牌九", "platform": "TP棋牌", "image": "first_game_card08.png", "hot": false }
+      { "name": "翻倍血流", "platform": "百胜棋牌", "image": "first_game_card08.png", "hot": false }
     ]
   }
 });

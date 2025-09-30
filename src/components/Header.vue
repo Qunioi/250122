@@ -59,6 +59,10 @@ const bannerImage = computed(() => ({
 
 
 <style lang="scss">
+.header-fixed-wrap {
+  position: sticky;
+  z-index: 900;
+}
 .ele-fixed-container,
 .ele-fixed-inner {
   min-width: var(--page-width);

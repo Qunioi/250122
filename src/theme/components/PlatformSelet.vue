@@ -30,7 +30,7 @@
     height: 26px;
     font-size: 12px;
     line-height: 1;
-    background-color: #F5F7FA;
+    background-color: var(--cp-color-third);
     border-radius: 4px;
     position: relative;
     transition: background-color .3s;
@@ -66,7 +66,7 @@
       color: #FFF;
       background-color: var(--cp-color-primary);
       &:has(input[type="radio"]:disabled) {
-        background-color: #F5F7FA;
+        background-color: var(--cp-color-third);
       }
     }
   }

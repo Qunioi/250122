@@ -32,6 +32,7 @@
 <script setup>
 import { computed, ref, onMounted, onBeforeUnmount } from "vue";
 import { useConfigStore } from "@/stores/configStore";
+import { getPath } from '@/composables/usePath.js'
 import data from "@/assets/data/data.json";
 
 const props = defineProps({
@@ -46,7 +47,7 @@ const leftList = computed(() => data.flatImg.left || []);
 const rightList = computed(() => data.flatImg.right || []);
 
 function getImgUrl(filename) {
-  return filename ? `/image/${themeName.value}/${filename}` : "";
+  return filename ? getPath(`/image/${themeName.value}/${filename}`) : "";
 }
 
 const floatContainer = ref(null);

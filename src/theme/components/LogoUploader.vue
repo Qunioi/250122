@@ -4,10 +4,7 @@
       <div class="themeManager-imgSize-title logo">
         <label>Logo</label>
         <span class="themeManager-imgSize-size">{{ logoSize }}</span>
-      </div>
-      <div class="themeManager-imgSize-preview">
-        <img v-if="assets.logoDataUrl" :src="assets.logoDataUrl" alt="Logo 預覽" class="themeManager-imgSize-img" />
-        <div v-else class="themeManager-imgSize-img themeManager-imgSize-img--empty">預設 Logo</div>
+        <svg data-v-4b021c78="" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="16" fill="currentColor"><path data-v-4b021c78="" d="M21 15V18H24V20H21V23H19V20H16V18H19V15H21ZM21.0082 3C21.556 3 22 3.44495 22 3.9934V13H20V5H4V18.999L14 9L17 12V14.829L14 11.8284L6.827 19H14V21H2.9918C2.44405 21 2 20.5551 2 20.0066V3.9934C2 3.44476 2.45531 3 2.9918 3H21.0082ZM8 7C9.10457 7 10 7.89543 10 9C10 10.1046 9.10457 11 8 11C6.89543 11 6 10.1046 6 9C6 7.89543 6.89543 7 8 7Z"></path></svg>
       </div>
       <div class="themeManager-imgSize-upload">
         <input
@@ -144,11 +141,12 @@ function loadImageSize(dataUrl) {
 .themeManager-imgSize-wrap {
   display: grid;
   gap: 4px;
+  margin-top: 10px;
 }
 
 /* 區塊卡片 */
 .themeManager-imgSize-section {
-  background: #fff;
+  background: var(--cp-color-third);
   border: 1px solid #e8e8ef;
   border-radius: 12px;
   padding: 16px;
@@ -158,7 +156,6 @@ function loadImageSize(dataUrl) {
 /* 標題列 */
 .themeManager-imgSize-title {
   display: flex;
-  align-items: baseline;
   gap: 10px;
   &.logo {
     margin-bottom: 8px;
@@ -172,41 +169,10 @@ function loadImageSize(dataUrl) {
 
   .themeManager-imgSize-size {
     font-size: 12px;
-    color: #7a8299;
-    background: #f3f5fa;
-    border: 1px solid #e7eaf4;
-    border-radius: 6px;
-    padding: 2px 8px;
-  }
-}
-
-/* 預覽框 */
-.themeManager-imgSize-preview {
-  border: 1px dashed #cfd6e6;
-  border-radius: 10px;
-  background: linear-gradient(180deg, #fafbff 0%, #f5f7fe 100%);
-  min-height: 116px; /* 保持最小高度，避免空時塌陷 */
-  display: grid;
-  place-items: center;
-  padding: 10px;
-  margin-bottom: 12px;
-
-  .themeManager-imgSize-img {
-    max-width: 100%;
-    max-height: 180px; /* 防暴衝；可依需求調整 */
-    object-fit: contain;
-    display: block;
-
-    &--empty {
-      width: 100%;
-      height: 100%;
-      min-height: 80px;
-      display: grid;
-      place-items: center;
-      color: #9aa3b8;
-      font-size: 13px;
-      letter-spacing: .02em;
-    }
+    color: #fff;
+    background: var(--cp-bg-secondary);
+    border-radius: 20px;
+    padding: 3px 8px 2px;
   }
 }
 
@@ -227,26 +193,24 @@ function loadImageSize(dataUrl) {
 
   .themeManager-imgSize-upload-btn,
   .themeManager-imgSize-reset-btn {
-    appearance: none;
-    border: 1px solid #d7dceb;
-    background: #fff;
-    color: #1e2233;
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 13px;
-    line-height: 1;
+    align-items: center;
+    border-radius: 4px;
     cursor: pointer;
-    transition: transform .08s ease, box-shadow .2s ease, background .2s ease, border-color .2s ease, color .2s ease;
+    display: flex;
+    flex: 1;
+    font-size: 12px;
+    height: 26px;
+    justify-content: center;
+    line-height: 1;
+    position: relative;
+    transition: background-color .3s;
+    appearance: none;
+    color: #fff;
+    background-color: var(--cp-bg-secondary);
 
     &:hover {
       transform: translateY(-1px);
       box-shadow: 0 4px 12px rgba(28, 76, 231, .08);
-      border-color: #b8c4f2;
-    }
-
-    &:active {
-      transform: translateY(0);
-      box-shadow: 0 2px 6px rgba(28, 76, 231, .06);
     }
 
     &:disabled {
@@ -254,11 +218,6 @@ function loadImageSize(dataUrl) {
       cursor: not-allowed;
       box-shadow: none;
     }
-  }
-
-  .themeManager-imgSize-upload-btn {
-    border-color: #bfc9f2;
-    background: #f5f7ff;
   }
 }
 
@@ -275,6 +234,5 @@ function loadImageSize(dataUrl) {
 @media (max-width: 480px) {
   .themeManager-imgSize-section { padding: 12px; }
   .themeManager-imgSize-title { flex-direction: column; gap: 6px; }
-  .themeManager-imgSize-preview { min-height: 90px; }
 }
 </style>

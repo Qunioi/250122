@@ -35,7 +35,7 @@ const resetScale = () => {
 };
 
 onMounted(() => {
-  pageLayout = document.querySelector("#page-layout"); // 直接抓取 DOM
+  pageLayout = document.querySelector(".page-wrap");
   applyZoom();
 });
 </script>
@@ -48,7 +48,7 @@ onMounted(() => {
   gap: 4px;
   font-family: "Google Sans", Roboto, Arial, sans-serif;
   color: var(--cp-text-primary);
-  background: #F5F7FA;
+  background: var(--cp-color-third);
   border-radius: 4px;
   box-shadow: 0 2px 5px rgb(0 0 0 / 20%);
   padding: 3px;
@@ -68,7 +68,7 @@ onMounted(() => {
     align-items: center;
     min-width: 30px;
     height: 30px;
-    background: #F5F7FA;
+    background: var(--cp-color-third);
     border-radius: 3px;
     padding: 2px 8px;
     &:hover {

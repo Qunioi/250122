@@ -78,6 +78,7 @@ body {
     height: 116px;
     padding-right: 13px;
     .ele-logo-img {
+        isolation: isolate; //混合限制在 SVG 內，避免跟頁面背景相乘導致邊緣異常
         color: rgb(var(--color-primary));
     }
 }
@@ -262,7 +263,7 @@ body {
             position: absolute;
             top: 6px;
             left: 0;
-            -webkit-mask: url('image/sub.svg');
+            -webkit-mask: url('/image/sub.svg');
             background-color: rgb(var(--color-primary));
         }
         .ele-morenav-container {
@@ -285,7 +286,7 @@ body {
     .ele-navbar-link {
         display: block;
         width: 112px;
-        height: 40px;
+        height: 39px;
         text-align: center;
         font-size: 18px;
         color: rgb(var(--color-primary-text));
@@ -353,6 +354,16 @@ body {
 .first-promotion-warp {
     .ele-promotion-link {
         display: block;
+        width: 404px;
+        height: 137px;
+        background-position: top center;
+        overflow: hidden;
+        + .ele-promotion-link {
+            margin-top: 28px;
+        }
+        &:hover {
+            background-position: bottom center;
+        }
     }
 }
 
@@ -386,6 +397,9 @@ body {
     margin-bottom: 5px;
     .first-hotgame-rank {
         text-align: center;
+    }
+    .first-hotgame-icon img {
+        display: block;
     }
     .first-hotgame-name {
         padding-left: 7px;
@@ -595,7 +609,7 @@ body {
         .first-live-bg {
             width: 580px;
             height: 332px;
-            -webkit-mask: url('image/first_live_bg.svg') bottom center no-repeat;
+            -webkit-mask: url('/image/first_live_bg.svg') bottom center no-repeat;
             background-color: rgb(var(--color-secondary));
         }
         .first-live-btn {
@@ -720,7 +734,7 @@ body {
         .first-mob-h5-icon {
             width: 136px;
             height: 136px;
-            -webkit-mask: url('image/first_h5.svg');
+            -webkit-mask: url('/image/first_h5.svg');
             background-color: rgb(var(--color-primary));
             margin: 0 auto;
         }

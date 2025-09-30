@@ -1,13 +1,14 @@
 <template>
-  <div class="page-wrap">
-    <Loading :show="showMask" />
-    <ThemeManager />
-    <Header />
-    <div class="page-container">
-      <router-view />
+  <ThemeManager>
+    <div class="page-wrap">
+      <Loading :show="showMask" />
+      <Header />
+      <div class="page-container">
+        <router-view />
+      </div>
+      <Footer />
     </div>
-    <Footer />
-  </div>
+  </ThemeManager>
 </template>
 
 <script setup>

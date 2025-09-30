@@ -1,20 +1,19 @@
-<!-- src/theme/components/ThemeManager.vue -->
 <template>
-  <teleport to="body">
+  <div class="themeManager-editer-wrap">
     <TemplateZoom />
-
-    <div class="themeManager-toggle-btn" v-if="panelVisible === false">
-      <button type="button" class="themeManager-btn" @click="panelVisible = true">
-        顯示主題面板
-      </button>
-    </div>
-
-    <div class="themeManager-wrap" v-show="panelVisible">
-      <button type="button" class="themeManager-hide-btn" @click="panelVisible = false">
-        隱藏面板
-      </button>
-
+    <div class="themeManager-edit-wrap">
+      <div class="themeManager-toggle-btn">
+        <button
+          type="button"
+          :class="['themeManager-btn-preview', { 'is-show': panelVisible }]"
+          @click="panelVisible = !panelVisible"
+          :title="panelVisible ? '隱藏主題面板' : '顯示主題面板'"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19.1642 12L12.9571 5.79291L11.5429 7.20712L16.3358 12L11.5429 16.7929L12.9571 18.2071L19.1642 12ZM13.5143 12L7.30722 5.79291L5.89301 7.20712L10.6859 12L5.89301 16.7929L7.30722 18.2071L13.5143 12Z"></path></svg>
+        </button>
+      </div>
       <div class="themeManager-content">
+        <h3 class="themeManager-header">header</h3>
         <details class="themeManager-details">
           <summary>Logo与轮播图尺寸</summary>
           <LogoUploader />
@@ -74,7 +73,10 @@
         </details>
       </div>
     </div>
-  </teleport>
+    <div class="themeManager-site-wrap">
+      <slot></slot>
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -93,8 +95,19 @@ import LogoUploader from "./LogoUploader.vue";
 import PlatformSelet from "./PlatformSelet.vue";
 import TemplateZoom from "./TemplateZoom.vue";
 
+
 /** ---- UI：面板顯示 ---- */
-const panelVisible = ref(true);
+const panelVisible = ref(false);
+
+watch(panelVisible, (val) => {
+  if (typeof window !== 'undefined' && window.document && window.document.body) {
+    if (val) {
+      document.body.classList.add('is-edit');
+    } else {
+      document.body.classList.remove('is-edit');
+    }
+  }
+}, { immediate: true });
 
 /** ---- 版型編號（匯出／匯入校驗） ---- */
 const ENV_VERSION = String(import.meta.env?.VITE_VERSION ?? "").trim();
@@ -637,8 +650,7 @@ function waitForImages(root, timeoutMs = 15000) {
 </script>
 
 <style lang="scss">
-:root
-{
+:root {
   --cp-bg-primary: #fff;
   --cp-bg-secondary: #889ebc;
   --cp-color-bg: #f1f4f8;
@@ -648,19 +660,92 @@ function waitForImages(root, timeoutMs = 15000) {
   --cp-text-secondary: #97a2af;
 }
 
-.themeManager-wrap {
-  position: fixed;
-  top: 16px;
-  right: 16px;
+html, body, .is-edit, .page-layout, .themeManager-editer-wrap, .themeManager-site-wrap {
+  height: 100%;
+}
+html, body, .is-edit {
+  overflow: hidden;
+}
+
+.themeManager-edit-wrap {
+  width: 310px;
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
   z-index: 9999;
 }
 
-.themeManager-toggle-btn {
-  position: fixed;
-  top: 16px;
-  right: 16px;
-  z-index: 9999;
+.themeManager-btn-preview {
+  background-color: var(--cp-bg-secondary);
+  // background: #fff;
+  border-radius: 10px 0 0 10px;
+  color: var(--cp-text-primary);
+  cursor: pointer;
+  height: 52px;
+  position: absolute;
+  right: 100%;
+  top: 0;
+  width: 36px;
+  z-index: 1099;
+  svg {
+    color: #fff;
+    transform: rotate(180deg);
+    position: relative;
+    top: 2px;
+    // transform: rotate(0);
+    transition: .5s ease;
+    width: 24px;
+  }
 }
+
+
+body.is-static.is-edit {
+  min-width: auto;
+}
+.page-layout {
+  overflow: hidden;
+}
+
+.themeManager-site-wrap {
+  width: calc(100% - 0px);
+  transition: all 0.3s ease;
+}
+
+.is-edit .themeManager-site-wrap {
+  transition: all 0.3s ease;
+  width: calc(100% - 310px);
+  overflow: auto;
+  position: relative;
+}
+.page-wrap {
+  min-width: var(--page-width);
+}
+.ele-fixed-inner.fixed {
+  position: sticky !important;
+}
+
+.themeManager-wrap {
+  // width: 310px;
+  // position: absolute;
+  // top: 0;
+  // right: 0;
+  // z-index: 9999;
+  // transform: translateX(100%);
+  // * {
+  //   box-sizing: border-box;
+  // }
+  &.is-visible {
+    transform: translateX(0);
+  }
+}
+
+// .themeManager-wrap {
+//   position: fixed;
+//   top: 16px;
+//   right: 16px;
+//   z-index: 9999;
+// }
 
 .themeManager-hide-btn {
   position: absolute;
@@ -677,21 +762,40 @@ function waitForImages(root, timeoutMs = 15000) {
 
 .themeManager-content {
   font-size: 13px;
-  padding: 24px;
   color: #000;
-  background: #f9f9f9;
-  border-radius: 8px;
-  max-width: 480px;
-  margin: 32px auto;
+  background: var(--cp-bg-primary);
+  width: 100%;
+  height: 100%;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 
   h3 {
+    height: 70px;
     margin-top: 0;
   }
 }
 
-.themeManager-details summary {
-  padding: 10px 0;
+.themeManager-details {
+  padding: 1rem;
+  &:before {
+    content: '';
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -1;
+    opacity: .15;
+    transition: opacity .2s;
+  }
+  summary {
+    color: var(--cp-text-primary);
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 700;
+    list-style: none;
+    position: relative;
+  }
 }
 
 /* 主題切換 */
@@ -751,10 +855,10 @@ function waitForImages(root, timeoutMs = 15000) {
 }
 
 .themeManager-btn{
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid #ddd;
-  background: #fff;
+  // padding: 6px 10px;
+  // border-radius: 6px;
+  // border: 1px solid #ddd;
+  // background: #fff;
   cursor: pointer;
 }
 
