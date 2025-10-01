@@ -20,10 +20,9 @@
   display: flex;
   gap: 4px;
   border-radius: 4px;
-  padding: 3px;
   label {
     cursor: pointer;
-    flex: 0 0 80px;
+    flex: 1 0 90px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -51,7 +50,7 @@
     }
     &:has(input[type="radio"]:checked) {
       color: #FFF;
-      background-color: #889EBC;
+      background-color: var(--cp-color-primary);
       span {
         padding-left: 12px;
       }

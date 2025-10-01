@@ -73,7 +73,7 @@ onMounted(() => {
     padding: 2px 8px;
     &:hover {
       color: #FFF;
-      background-color: #889EBC;
+      background-color: var(--cp-bg-secondary);
     }
   }
   .btn-reload {

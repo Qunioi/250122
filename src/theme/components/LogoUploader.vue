@@ -14,7 +14,7 @@
           @change="onLogoFileChange"
           id="themeManager-imgSize-input"
         />
-        <label for="themeManager-imgSize-input" class="themeManager-btn themeManager-imgSize-upload-btn">選擇圖片</label>
+        <label for="themeManager-imgSize-input" class="themeManager-btn themeManager-imgSize-upload-btn">上傳Logo示意圖</label>
         <button
           type="button"
           class="themeManager-btn themeManager-imgSize-reset-btn"
@@ -25,7 +25,7 @@
         </button>
       </div>
       <div class="themeManager-imgSize-tips">
-        <span>僅接受 <b>JPG/PNG/GIF</b>，大小 ≤ <b>600KB</b>，解析度需為 <b>{{ logoSize }}</b></span>
+        <span>僅接受<b>JPG/PNG/GIF</b>，大小≤<b>600KB</b></span>
       </div>
     </div>
     <div class="themeManager-imgSize-section">
@@ -38,37 +38,110 @@
 </template>
 
 <script setup>
-import { nextTick, computed, onMounted } from 'vue'
 import { useBrandAssetsStore } from '@/stores/brandAssetsStore'
 
-const MAX_SIZE = 600 * 1024 // 600 KB
+const MAX_SIZE = 600 * 1024
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif']
 const ALLOWED_EXTS  = ['jpg','jpeg','png','gif']
 
 const assets = useBrandAssetsStore()
-onMounted(() => assets.load())
+const logoSize = ref('未偵測到')
+const sliderSize = ref('未偵測到')
 
-/** 共用：讀取 DOM 元素尺寸 */
-function getBox(selector, fallbackW, fallbackH) {
-  const el = document.querySelector(selector)
-  if (!el) return { el: null, w: fallbackW, h: fallbackH }
-  const r = el.getBoundingClientRect()
-  const w = Math.round(r.width || Number(el.getAttribute('width')) || fallbackW)
-  const h = Math.round(r.height || Number(el.getAttribute('height')) || fallbackH)
-  return { el, w, h }
+let logoObserver = null
+let sliderObserver = null
+let domObserver = null  // 用來等元素進 DOM
+
+onMounted(async () => {
+  assets.load()
+  await nextTick()
+
+  const logoEl = await waitForEl('.ele-logo-img', 8000)
+  if (logoEl) {
+    // 先做一次初始化量測（避免一開始 0x0）
+    updateBoxSize(logoEl, logoSize)
+
+    // 若是 <img>，等它 load 後再量一次
+    if (logoEl.tagName === 'IMG' && !isImgComplete(logoEl)) {
+      logoEl.addEventListener('load', () => updateBoxSize(logoEl, logoSize), { once: true })
+      logoEl.addEventListener('error', () => updateBoxSize(logoEl, logoSize), { once: true })
+    }
+
+    // 監聽尺寸變化
+    logoObserver = new ResizeObserver(() => updateBoxSize(logoEl, logoSize))
+    logoObserver.observe(logoEl)
+  }
+
+  const sliderEl = await waitForEl('.ele-slider-img', 8000)
+  if (sliderEl) {
+    updateBoxSize(sliderEl, sliderSize)
+    if (sliderEl.tagName === 'IMG' && !isImgComplete(sliderEl)) {
+      sliderEl.addEventListener('load', () => updateBoxSize(sliderEl, sliderSize), { once: true })
+      sliderEl.addEventListener('error', () => updateBoxSize(sliderEl, sliderSize), { once: true })
+    }
+    sliderObserver = new ResizeObserver(() => updateBoxSize(sliderEl, sliderSize))
+    sliderObserver.observe(sliderEl)
+  }
+})
+
+onUnmounted(() => {
+  if (logoObserver) logoObserver.disconnect()
+  if (sliderObserver) sliderObserver.disconnect()
+  if (domObserver) domObserver.disconnect()
+})
+
+/** 等待元素進 DOM（處理 v-if / 延遲載入） */
+function waitForEl(selector, timeout = 5000) {
+  return new Promise((resolve) => {
+    const found = document.querySelector(selector)
+    if (found) return resolve(found)
+
+    const timer = setTimeout(() => {
+      if (domObserver) domObserver.disconnect()
+      resolve(null)
+    }, timeout)
+
+    domObserver = new MutationObserver(() => {
+      const el = document.querySelector(selector)
+      if (el) {
+        clearTimeout(timer)
+        domObserver.disconnect()
+        resolve(el)
+      }
+    })
+    domObserver.observe(document.documentElement, { childList: true, subtree: true })
+  })
 }
 
-// logo 尺寸
-const logoSize = computed(() => {
-  const { w, h } = getBox('.ele-logo-img', 180, 116)
-  return `${w}x${h}`
-})
+/** 圖片是否已完整可量測 */
+function isImgComplete(img) {
+  return img.complete && img.naturalWidth > 0 && img.naturalHeight > 0
+}
 
-// slider 尺寸
-const sliderSize = computed(() => {
-  const { w, h } = getBox('.ele-slider-img', 375, 200) // 預設一個常見的輪播圖尺寸
-  return `${w}x${h}`
-})
+/** 量測並寫入顯示字串（多來源 fallback） */
+function updateBoxSize(el, targetRef) {
+  // 1) 先拿 layout 寬高
+  const rect = el.getBoundingClientRect()
+  let w = Math.round(rect.width)
+  let h = Math.round(rect.height)
+
+  // 2) 若為 0，且是 <img>，試 naturalWidth/Height
+  if ((!w || !h) && el.tagName === 'IMG') {
+    const iw = el.naturalWidth || 0
+    const ih = el.naturalHeight || 0
+    if (iw && ih) { w = iw; h = ih }
+  }
+
+  // 3) 仍為 0，再試 computed style（px 轉數字）
+  if (!w || !h) {
+    const cs = window.getComputedStyle(el)
+    const sw = parseFloat(cs.width)
+    const sh = parseFloat(cs.height)
+    if (sw && sh) { w = Math.round(sw); h = Math.round(sh) }
+  }
+
+  targetRef.value = (w && h) ? `${w}x${h}` : '未偵測到'
+}
 
 /** Logo 上傳檢查 */
 async function onLogoFileChange(e) {
@@ -141,24 +214,27 @@ function loadImageSize(dataUrl) {
 .themeManager-imgSize-wrap {
   display: grid;
   gap: 4px;
-  margin-top: 10px;
 }
 
 /* 區塊卡片 */
 .themeManager-imgSize-section {
   background: var(--cp-color-third);
-  border: 1px solid #e8e8ef;
-  border-radius: 12px;
-  padding: 16px;
-  box-shadow: 0 2px 10px rgba(0,0,0,.04);
+  // border: 1px solid #e8e8ef;
+  border-radius: 6px;
+  padding: 10px;
+  // box-shadow: 0 2px 10px rgba(0,0,0,.04);
 }
 
 /* 標題列 */
 .themeManager-imgSize-title {
   display: flex;
+  align-items: center;
   gap: 10px;
   &.logo {
     margin-bottom: 8px;
+    svg {
+      margin-left: auto;
+    }
   }
   label {
     font-size: 14px;
@@ -171,6 +247,9 @@ function loadImageSize(dataUrl) {
     font-size: 12px;
     color: #fff;
     background: var(--cp-bg-secondary);
+    border: 1px solid #e8e8ef;
+    color: #1e2233;
+    background-color: #fff;
     border-radius: 20px;
     padding: 3px 8px 2px;
   }
@@ -206,7 +285,7 @@ function loadImageSize(dataUrl) {
     transition: background-color .3s;
     appearance: none;
     color: #fff;
-    background-color: var(--cp-bg-secondary);
+    background-color: var(--cp-color-primary);
 
     &:hover {
       transform: translateY(-1px);
@@ -214,7 +293,7 @@ function loadImageSize(dataUrl) {
     }
 
     &:disabled {
-      opacity: .55;
+      opacity: .2;
       cursor: not-allowed;
       box-shadow: none;
     }
@@ -223,16 +302,11 @@ function loadImageSize(dataUrl) {
 
 /* 提示文字 */
 .themeManager-imgSize-tips {
-  margin-top: 8px;
   font-size: 12px;
-  color: #6f7791;
-  line-height: 1.5;
-  b { font-weight: 700; color: #384166; }
-}
-
-/* 小尺寸適配 */
-@media (max-width: 480px) {
-  .themeManager-imgSize-section { padding: 12px; }
-  .themeManager-imgSize-title { flex-direction: column; gap: 6px; }
+  color: var(--cp-text-secondary);
+  padding-top: 8px;
+  b {
+    font-size: 11px;
+  }
 }
 </style>

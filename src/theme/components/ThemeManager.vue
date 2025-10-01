@@ -5,71 +5,92 @@
       <div class="themeManager-toggle-btn">
         <button
           type="button"
-          :class="['themeManager-btn-preview', { 'is-show': panelVisible }]"
+          :class="['themeManager-preview-btn', { 'is-show': panelVisible }]"
           @click="panelVisible = !panelVisible"
-          :title="panelVisible ? '隱藏主題面板' : '顯示主題面板'"
+          :title="panelVisible ? '隱藏主題面板' : '開啟主題面板'"
         >
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19.1642 12L12.9571 5.79291L11.5429 7.20712L16.3358 12L11.5429 16.7929L12.9571 18.2071L19.1642 12ZM13.5143 12L7.30722 5.79291L5.89301 7.20712L10.6859 12L5.89301 16.7929L7.30722 18.2071L13.5143 12Z"></path></svg>
         </button>
       </div>
       <div class="themeManager-content">
-        <h3 class="themeManager-header">header</h3>
-        <details class="themeManager-details">
+        <div class="themeManager-header">
+          <button
+            type="button"
+            class="themeManager-instructions-btn"
+            :title="instructionsVisible ? '' : '開啟使用說明'"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM11 15H13V17H11V15ZM13 13.3551V14H11V12.5C11 11.9477 11.4477 11.5 12 11.5C12.8284 11.5 13.5 10.8284 13.5 10C13.5 9.17157 12.8284 8.5 12 8.5C11.2723 8.5 10.6656 9.01823 10.5288 9.70577L8.56731 9.31346C8.88637 7.70919 10.302 6.5 12 6.5C13.933 6.5 15.5 8.067 15.5 10C15.5 11.5855 14.4457 12.9248 13 13.3551Z"></path></svg>
+          </button>
+          <button
+            type="button"
+            class="themeManager-save-btn"
+            :disabled="saving"
+            :title="saving ? '汇出保存中…' : '下載壓縮檔（含 .css 與畫面示意圖）'"
+            @click="saveTheme"
+          >
+            <span>保存</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" viewBox="0 0 24 24" fill="currentColor"><path d="M7 19V13H17V19H19V7.82843L16.1716 5H5V19H7ZM4 3H17L21 7V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3ZM9 15V19H15V15H9Z"></path></svg>
+          </button>
+        </div>
+        <details class="themeManager-details" open>
           <summary>Logo与轮播图尺寸</summary>
-          <LogoUploader />
+          <div class="themeManager-detail-content">
+            <LogoUploader />
+          </div>
         </details>
-        <details class="themeManager-details">
+        <details class="themeManager-details" open>
           <summary>版型主題</summary>
-          <PlatformSelet />
+          <div class="themeManager-detail-content">
+            <PlatformSelet />
+          </div>
         </details>
-        <details class="themeManager-details">
+        <details class="themeManager-details" open>
           <summary>版型配色</summary>
-          <div class="themeManager-theme-wrap">
-            <button v-for="theme in themes" :key="theme.themeID ?? theme.themeName" :class="['themeManager-theme-btn',{ active: selectedThemeName === theme.themeName },]" type="button" @click="selectTheme(theme.themeName)">
-              <div class="themeManager-theme-color" :style="{background: `linear-gradient(90deg, ${theme.themeColor.primary} 0, ${theme.themeColor.primary} 50%, ${theme.themeColor.secondary} 50%, ${theme.themeColor.secondary} 100%)`,}" />
-              <span class="themeManager-theme-name">
-                {{ theme.themeName }} ({{ theme.themeMode }})
-              </span>
-            </button>
-            <button class="themeManager-theme-reset" type="button" :disabled="!hasModified" :title="hasModified ? '重置當前主題所有自訂顏色' : '尚未調整，無需重置'
-              " @click="resetTheme">
-              重置主題
-            </button>
-            <span class="themeManager-theme-modified">已調整：{{ hasModified ? "true" : "false" }}</span>
+          <div class="themeManager-detail-content">
+            <div class="themeManager-theme-wrap">
+              <div class="themeManager-theme-title">
+                预设配色
+              </div>
+              <div class="themeManager-theme-content">
+                <button v-for="theme in themes" :key="theme.themeID ?? theme.themeName" :class="['themeManager-theme-btn',{ active: selectedThemeName === theme.themeName },]" type="button" @click="selectTheme(theme.themeName)">
+                  <div class="themeManager-theme-color" :style="{background: `linear-gradient(90deg, ${theme.themeColor.primary} 0, ${theme.themeColor.primary} 50%, ${theme.themeColor.secondary} 50%, ${theme.themeColor.secondary} 100%)`,}" />
+                  <span class="themeManager-theme-name">
+                    {{ theme.themeName }} ({{ theme.themeMode }})
+                  </span>
+                </button>
+                <button class="themeManager-theme-reset-btn" type="button" :disabled="!hasModified" :title="hasModified ? '重置当前主题所有自订颜色' : '尚未调整，无需重置'
+                  " @click="resetTheme">
+                  重置
+                </button>
+                <!-- <span class="themeManager-theme-modified">已調整：{{ hasModified ? "true" : "false" }}</span> -->
+              </div>
+            </div>
+            <h4>主题颜色自订</h4>
+            <div v-if="selectedColors.length">
+              <ColorPicker v-for="color in selectedColors" :key="color.id" :item="color" :modified="modifiedMap[color.id]" @update="updateColor" @remove="removeColor" />
+            </div>
+            <div v-else>
+              <p>此主題尚未設定 colorVariables。</p>
+            </div>
+            <!-- 匯出 / 匯入 / 保存 -->
+            <div class="themeManager-io-wrap">
+              <button type="button" class="themeManager-btn themeManager-btn-export" @click="exportTheme" :title="hasModified
+                  ? '汇出目前自订配色'
+                  : '没有自订变更，汇出将与预设相同'
+                ">
+                匯出配色
+              </button>
+              <button type="button" class="themeManager-btn themeManager-btn-import" @click="triggerImport">
+                匯入配色
+              </button>
+              <input ref="fileInputRef" type="file" accept=".css,.txt" class="themeManager-file-hidden"
+                @change="onFileChange" />
+            </div>
+            <!-- 匯入結果訊息 -->
+            <div v-if="importMessage" :class="['themeManager-import-msg', importSuccess ? 'ok' : 'err']">
+              <pre class="themeManager-import-text">{{ importMessage }}</pre>
+            </div>
           </div>
-
-          <h4>主題顏色自訂</h4>
-          <div v-if="selectedColors.length">
-            <ColorPicker v-for="color in selectedColors" :key="color.id" :item="color" :modified="modifiedMap[color.id]" @update="updateColor" @remove="removeColor" />
-          </div>
-          <div v-else>
-            <p>此主題尚未設定 colorVariables。</p>
-          </div>
-
-          <!-- 匯出 / 匯入 / 保存 -->
-          <div class="themeManager-io-wrap">
-            <button type="button" class="themeManager-btn themeManager-btn-export" @click="exportTheme" :title="hasModified
-                ? '汇出目前自订配色'
-                : '没有自订变更，汇出将与预设相同'
-              ">
-              匯出配色
-            </button>
-            <button type="button" class="themeManager-btn themeManager-btn-import" @click="triggerImport">
-              匯入配色
-            </button>
-            <button type="button" class="themeManager-btn themeManager-btn-save" :disabled="saving" :title="saving ? '汇出保存中…' : '下載壓縮檔（含 .css 與畫面示意圖）'
-              " @click="saveTheme">
-              保存
-            </button>
-            <input ref="fileInputRef" type="file" accept=".css,.txt" class="themeManager-file-hidden"
-              @change="onFileChange" />
-          </div>
-
-          <!-- 匯入結果訊息 -->
-          <div v-if="importMessage" :class="['themeManager-import-msg', importSuccess ? 'ok' : 'err']">
-            <pre class="themeManager-import-text">{{ importMessage }}</pre>
-          </div>
-
         </details>
       </div>
     </div>
@@ -96,9 +117,8 @@ import PlatformSelet from "./PlatformSelet.vue";
 import TemplateZoom from "./TemplateZoom.vue";
 
 
-/** ---- UI：面板顯示 ---- */
+/** ---- 面板顯示 ---- */
 const panelVisible = ref(false);
-
 watch(panelVisible, (val) => {
   if (typeof window !== 'undefined' && window.document && window.document.body) {
     if (val) {
@@ -108,6 +128,9 @@ watch(panelVisible, (val) => {
     }
   }
 }, { immediate: true });
+
+const instructionsVisible = ref(false);
+
 
 /** ---- 版型編號（匯出／匯入校驗） ---- */
 const ENV_VERSION = String(import.meta.env?.VITE_VERSION ?? "").trim();
@@ -508,25 +531,33 @@ async function saveTheme() {
     }
   }
 
-  let captureEl = null;
-  let originalStyle = "";
+  let siteWrapEl = null;
+  let originalSiteWrapStyle = "";
   let objectUrl = null;
 
   try {
     const tpl = String(currentTemplateNumber.value || "").trim() || "theme";
     const cssContent = buildCssContent();
 
-    // 目標容器：優先 #capture-root，其次 .page-wrap
-    captureEl =
-      document.getElementById("capture-root") ||
-      document.querySelector(".page-wrap") ||
-      document.body;
+    // 截圖目標：固定為 .page-wrap
+    const captureEl = document.querySelector(".page-wrap");
+    if (!captureEl) throw new Error("找不到 .page-wrap 容器");
 
-    if (!captureEl) throw new Error("找不到可截圖的容器");
+    // 修改寬度的目標：固定為 .themeManager-site-wrap
+    siteWrapEl = document.querySelector(".themeManager-site-wrap");
+    if (siteWrapEl) {
+      originalSiteWrapStyle = siteWrapEl.style.cssText || "";
+      siteWrapEl.style.cssText = `${originalSiteWrapStyle}; width: 1920px;`;
 
-    // 固定寬度 1920 以利輸出
-    originalStyle = captureEl.style.cssText || "";
-    captureEl.style.cssText = `${originalStyle}; width: 1920px;`;
+      // 修正右側浮動元素位置
+      const rightFloatElements = siteWrapEl.querySelectorAll('.float-right-wrap');
+      rightFloatElements.forEach((el) => {
+        el.style.cssText = `${el.style.cssText}; position: absolute; right: 0px; left: auto;`;
+      });
+    }
+
+    // 等待 2 秒讓佈局穩定再進行截圖作業
+    await new Promise(resolve => setTimeout(resolve, 300));
 
     const imgs = captureEl.querySelectorAll("img");
     imgs.forEach((img) => {
@@ -657,10 +688,15 @@ function waitForImages(root, timeoutMs = 15000) {
   --cp-color-primary: #417ff7;
   --cp-color-third: #f5f7fa;
   --cp-text-primary: #3d4154;
-  --cp-text-secondary: #97a2af;
+  --cp-text-secondary: #aab4c4;
 }
 
-html, body, .is-edit, .page-layout, .themeManager-editer-wrap, .themeManager-site-wrap {
+html,
+body,
+.is-edit,
+.page-layout,
+.themeManager-editer-wrap,
+.themeManager-site-wrap {
   height: 100%;
 }
 html, body, .is-edit {
@@ -674,11 +710,12 @@ html, body, .is-edit {
   top: 0;
   bottom: 0;
   z-index: 9999;
+  transform: translateX(100%);
+  transition: .3s transform ease;
 }
 
-.themeManager-btn-preview {
+.themeManager-preview-btn {
   background-color: var(--cp-bg-secondary);
-  // background: #fff;
   border-radius: 10px 0 0 10px;
   color: var(--cp-text-primary);
   cursor: pointer;
@@ -693,15 +730,23 @@ html, body, .is-edit {
     transform: rotate(180deg);
     position: relative;
     top: 2px;
-    // transform: rotate(0);
     transition: .5s ease;
     width: 24px;
   }
+  .is-edit & {
+    background-color: var(--cp-bg-primary);
+    svg {
+      color: var(--cp-bg-secondary);
+      transform: rotate(0deg);
+    }
+  }
 }
-
 
 body.is-static.is-edit {
   min-width: auto;
+  .themeManager-edit-wrap {
+    transform: translateX(0);
+  }
 }
 .page-layout {
   overflow: hidden;
@@ -717,6 +762,18 @@ body.is-static.is-edit {
   width: calc(100% - 310px);
   overflow: auto;
   position: relative;
+  &::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: var(--cp-color-third);
+  }
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    background-color: black;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--cp-bg-secondary);
+  }
 }
 .page-wrap {
   min-width: var(--page-width);
@@ -726,26 +783,10 @@ body.is-static.is-edit {
 }
 
 .themeManager-wrap {
-  // width: 310px;
-  // position: absolute;
-  // top: 0;
-  // right: 0;
-  // z-index: 9999;
-  // transform: translateX(100%);
-  // * {
-  //   box-sizing: border-box;
-  // }
   &.is-visible {
     transform: translateX(0);
   }
 }
-
-// .themeManager-wrap {
-//   position: fixed;
-//   top: 16px;
-//   right: 16px;
-//   z-index: 9999;
-// }
 
 .themeManager-hide-btn {
   position: absolute;
@@ -767,15 +808,41 @@ body.is-static.is-edit {
   width: 100%;
   height: 100%;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+}
 
-  h3 {
-    height: 70px;
-    margin-top: 0;
+.themeManager-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 52px;
+  padding: 0 10px;
+  background: var(--cp-bg-primary);
+
+  .themeManager-instructions-btn {
+    width: 24px;
+    height: 24px;
+    color: #fff;
+    border-radius: 50%;
+    background-color: var(--cp-bg-secondary);
+    cursor: pointer;
+  }
+  .themeManager-save-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    height: 34px;
+    font-family: Google Sans, Roboto, Arial, sans-serif;
+    font-size: 14px;
+    color: #fff;
+    background-color: var(--cp-color-primary);
+    border-radius: 4px;
+    padding: 0 12px;
+    cursor: pointer;
   }
 }
 
 .themeManager-details {
-  padding: 1rem;
   &:before {
     content: '';
     pointer-events: none;
@@ -789,83 +856,115 @@ body.is-static.is-edit {
     transition: opacity .2s;
   }
   summary {
+    list-style: none;
     color: var(--cp-text-primary);
     cursor: pointer;
     font-size: 15px;
     font-weight: 700;
-    list-style: none;
+    padding: 16px;
     position: relative;
+    &::before,
+    &::after {
+      content: '';
+      width: .75em;
+      height: 1px;
+      text-align: right;
+      background-color: currentColor;
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transition: transform .2s ease-in-out, opacity .3s ease-in-out;
+      transform: translateY(-50%);
+    }
+    &::after {
+      transform: translateY(-50%) rotate(90deg);
+      opacity: 1;
+    }
+    &::-webkit-details-marker {
+      display: none;
+    }
+  }
+  &:hover {
+    background-color: var(--cp-color-third);
+  }
+  &[open] {
+    background-color: var(--cp-bg-primary);
+    summary::after  {
+      transform: translateY(-50%) rotate(0deg);
+      opacity: 0;
+    }
   }
 }
+.themeManager-detail-content {
+  padding: 0 16px 6px;
+}
+
 
 /* 主題切換 */
 .themeManager-theme-wrap {
   display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 8px;
   margin-bottom: 16px;
-  align-items: center;
-  flex-wrap: wrap;
-
-  .themeManager-theme-btn {
+  .themeManager-theme-title {
+    font-size: 12px;
+    // color: var(--cp-text-secondary);
+    color: #787c87;
+  }
+  .themeManager-theme-content {
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 4px;
+  }
+  .themeManager-theme-btn {
     width: 26px;
     height: 26px;
     border-radius: 4px;
+    background: var(--cp-color-third);
     border: 1px solid transparent;
-    background: #fff;
     cursor: pointer;
+    &.active {
+      border-color: var(--cp-color-primary);
+    }
   }
-
-  .themeManager-theme-btn.active {
-    border-color: var(--cp-color-primary);
-  }
-
   .themeManager-theme-color{
     width: 20px;
     height: 20px;
     border-radius: 2px;
+    margin: 0 auto;
   }
-
   .themeManager-theme-name{
     display: none;
   }
-
-  .themeManager-theme-reset{
-    margin-left: auto;
-    padding: 6px 10px;
-    border-radius: 6px;
-    border: 1px solid #ddd;
-    background: #fff;
+  .themeManager-theme-reset-btn {
+    border-radius: 4px;
     cursor: pointer;
+    font-size: 13px;
+    height: 26px;
+    line-height: 1;
+    color: var(--cp-text-primary);
+    background-color: var(--cp-color-third);
+    padding: 0 8px;
   }
+}
 
-  .themeManager-theme-reset:disabled{
-    opacity: 0.5;
+button {
+  cursor: pointer;
+  &:disabled {
+    pointer-events: none;
+    color: var(--cp-text-secondary);
+    background-color: var(--cp-color-third);
     cursor: not-allowed;
   }
 }
 
 /* 匯出 / 匯入 / 保存 */
-.themeManager-io-wrap{
+.themeManager-io-wrap {
   display: flex;
   gap: 8px;
   margin: 12px 0 16px;
-}
-
-.themeManager-btn{
-  // padding: 6px 10px;
-  // border-radius: 6px;
-  // border: 1px solid #ddd;
-  // background: #fff;
-  cursor: pointer;
-}
-
-.themeManager-btn-save:disabled
-{
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 .themeManager-file-hidden
@@ -912,15 +1011,13 @@ body.is-static.is-edit {
   margin: 8px 0 16px;
 }
 
-.changeColor-upload
-{
+.changeColor-upload {
   grid-column: 1 / -1;
   display: flex;
   gap: 8px;
   align-items: center;
 
-  .changeColor-upload-tips
-  {
+  .changeColor-upload-tips {
     font-size: 12px;
     color: #666;
   }
