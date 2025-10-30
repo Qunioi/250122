@@ -699,19 +699,24 @@ body,
 .themeManager-site-wrap {
   height: 100%;
 }
-html, body, .is-edit {
-  overflow: hidden;
-}
+
+
 
 .themeManager-edit-wrap {
   width: 310px;
-  position: absolute;
+  position: fixed;
   right: 0;
   top: 0;
   bottom: 0;
   z-index: 9999;
   transform: translateX(100%);
   transition: .3s transform ease;
+}
+body.is-static.is-edit {
+  min-width: auto;
+  .themeManager-edit-wrap {
+    transform: translateX(0);
+  }
 }
 
 .themeManager-preview-btn {
@@ -742,15 +747,7 @@ html, body, .is-edit {
   }
 }
 
-body.is-static.is-edit {
-  min-width: auto;
-  .themeManager-edit-wrap {
-    transform: translateX(0);
-  }
-}
-.page-layout {
-  overflow: hidden;
-}
+
 
 .themeManager-site-wrap {
   width: calc(100% - 0px);

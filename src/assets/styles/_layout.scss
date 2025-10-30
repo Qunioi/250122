@@ -1,9 +1,5 @@
 @use "@/assets/styles/env" as *;
 
-// .float-wrap {
-//     display: none;
-// }
-
 body {
     &.is-static {
         min-width: var(--page-width);
@@ -92,6 +88,7 @@ body {
 .est-timing {
 	width: 230px;
 	font-size: 15px;
+    color: rgb(var(--color-secondary-text));
     margin: 9px 17px 0 19px;
 }
 

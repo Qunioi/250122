@@ -1,5 +1,5 @@
 <template>
-  <ThemeManager>
+  <component :is="enableThemeManager ? ThemeManager : 'div'">
     <div class="page-wrap">
       <Loading :show="showMask" />
       <Header />
@@ -8,13 +8,17 @@
       </div>
       <Footer />
     </div>
-  </ThemeManager>
+  </component>
 </template>
 
 <script setup>
 import ThemeManager from '@/theme/components/ThemeManager.vue'
 import Loading from '@/components/common/Loading.vue'
 import { setMaskRef } from '@/router'
+
+// 控制 ThemeManager 開關
+const enableThemeManager = true
+
 const showMask = ref(false)
 onMounted(() => {
   setMaskRef(showMask)
