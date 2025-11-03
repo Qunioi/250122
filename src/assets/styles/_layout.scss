@@ -142,10 +142,7 @@ body {
     }
     .ele-show-password {
         right: 32px;
-        svg {
-            width: 17px;
-            color: rgb(255 255 255);
-        }
+        background-color: rgb(var(--color-primary-text));
     }
     .ele-forget-pw {
         width: 21px;
@@ -803,7 +800,7 @@ body {
         width: 698px;
         font-size: 15px;
         line-height: 24px;
-        color: var(--color-secondary-text);
+        color: rgb(var(--color-secondary-text));
     }
 }
 .footer-bottom-wrap {
