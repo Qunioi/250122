@@ -83,9 +83,10 @@ $langs: ('zh-tw', 'zh-cn', 'en');
         .ele-lang-option {
             cursor: pointer;
             display: inline-block;
-            width: 22px;
+            width: 20px;
             height: 20px;
             background-image: url('/image/not-use/lang_circle_a.png');
+            margin: 0 4px;
         }
         @for $i from 1 through list.length($langs) {
             $lang: list.nth($langs, $i);
