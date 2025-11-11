@@ -2,7 +2,7 @@
   "colorVariables": [1, 2, 4, 7, 8],
   "colorThemes": [
     {
-      "themeID": 1,
+      "themeSort": 1,
       "themeMode": "dark",
       "themeName": "2501221",
       "themeColor": {
@@ -18,7 +18,7 @@
       "value": "2501221"
     },
     {
-      "themeID": 2,
+      "themeSort": 2,
       "themeMode": "dark",
       "themeName": "2501222",
       "themeColor": {
@@ -34,7 +34,7 @@
       "value": "2501222"
     },
     {
-      "themeID": 3,
+      "themeSort": 3,
       "themeMode": "light",
       "themeName": "2501223",
       "themeColor": {
@@ -50,7 +50,7 @@
       "value": "2501223"
     },
     {
-      "themeID": 4,
+      "themeSort": 4,
       "themeMode": "light",
       "themeName": "2501224",
       "themeColor": {

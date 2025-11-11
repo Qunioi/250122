@@ -94,9 +94,7 @@
               <li class="ele-meminfo-link">
                 <a :href="link.link">{{ link.title }}</a>
               </li>
-              <span v-if="showSeparator && index < filteredLinks.length" class="ele-meminfo-link-line">
-                {{ separatorContent }}
-              </span>
+              <span v-if="showSeparator && (showLastSeparator ? index < (filteredLinks?.length ?? 0) : index < ((filteredLinks?.length ?? 0) - 1))" class="ele-meminfo-link-line">{{ separatorContent }}</span>
             </template>
             <li class="ele-meminfo-link">
               <button type="button" class="ele-logout-btn" @click="handleLogout">登出</button>
@@ -117,6 +115,22 @@ const dataStore = useDataStore();
 const authStore = useAuthStore();
 const route = useRoute();
 
+// 🔸 控制登入後會員連結分隔符號
+const props = defineProps({
+  showSeparator: {
+    type: Boolean,
+    default: true
+  },
+  separatorContent: {
+    type: String,
+    default: '|'
+  },
+  showLastSeparator: {
+    type: Boolean,
+    default: true // 控制最後一個項目是否顯示分隔符號
+  }
+});
+
 // 使用 authStore 的登入狀態
 const { isLoggedIn, user } = storeToRefs(authStore);
 
@@ -129,19 +143,6 @@ const filteredLinks = computed(() => {
   // 根據 navClass 取得對應的 meminfoLinks，如果沒有則使用 'else'
   return dataStore.meminfoLinks[navClass] || dataStore.meminfoLinks['else'] || [];
 });
-
-// 🔸 控制登入後會員連結分隔符號
-const props = defineProps({
-  showSeparator: {
-    type: Boolean,
-    default: true
-  },
-  separatorContent: {
-    type: String,
-    default: '|'
-  }
-});
-
 
 // 登入欄位點擊後透明度效果
 const username = ref('');

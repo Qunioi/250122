@@ -17,7 +17,7 @@ import Loading from '@/components/common/Loading.vue'
 import { setMaskRef } from '@/router'
 
 // 控制 ThemeManager 開關
-const enableThemeManager = false
+const enableThemeManager = true
 
 const showMask = ref(false)
 onMounted(() => {

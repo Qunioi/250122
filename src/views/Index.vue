@@ -6,7 +6,7 @@
         <div class="main-left-wrap">
           <div class="first-slider-wrap">
             <!-- 轮播 -->
-            <div class="slider-wrap">
+            <div class="ele-slider-wrap slider-wrap">
               <Swiper
                 :modules="[Autoplay, Pagination]"
                 :pagination="{ clickable: true }"

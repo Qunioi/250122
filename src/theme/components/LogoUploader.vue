@@ -1,6 +1,9 @@
 <template>
   <div class="themeManager-imgSize-wrap">
-    <div class="themeManager-imgSize-section">
+    <div
+      class="themeManager-imgSize-section"
+      @mouseenter="handleMouseEnter('logo')"
+      @mouseleave="handleMouseLeave">
       <div class="themeManager-imgSize-title logo">
         <label>Logo</label>
         <span class="themeManager-imgSize-size">{{ logoSize }}</span>
@@ -14,23 +17,26 @@
           @change="onLogoFileChange"
           id="themeManager-imgSize-input"
         />
-        <label for="themeManager-imgSize-input" class="themeManager-btn themeManager-imgSize-upload-btn">上傳Logo示意圖</label>
+        <label for="themeManager-imgSize-input" class="themeManager-btn themeManager-imgSize-upload-btn">上传Logo示意图</label>
         <button
           type="button"
           class="themeManager-btn themeManager-imgSize-reset-btn"
           @click="resetLogo"
           :disabled="!assets.logoDataUrl"
         >
-          還原預設 Logo
+          还原预设Logo
         </button>
       </div>
       <div class="themeManager-imgSize-tips">
-        <span>僅接受<b>JPG/PNG/GIF</b>，大小≤<b>600KB</b></span>
+        <span>仅接受<b>JPG/PNG/GIF</b>，大小≤<b>600KB</b></span>
       </div>
     </div>
-    <div class="themeManager-imgSize-section">
+    <div
+      class="themeManager-imgSize-section"
+      @mouseenter="handleMouseEnter('slider')"
+      @mouseleave="handleMouseLeave">
       <div class="themeManager-imgSize-title">
-        <label>輪播圖</label>
+        <label>轮播图</label>
         <span class="themeManager-imgSize-size">{{ sliderSize }}</span>
       </div>
     </div>
@@ -45,12 +51,70 @@ const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif']
 const ALLOWED_EXTS  = ['jpg','jpeg','png','gif']
 
 const assets = useBrandAssetsStore()
-const logoSize = ref('未偵測到')
-const sliderSize = ref('未偵測到')
+const logoSize = ref('偵測中')
+const sliderSize = ref('偵測中')
 
 let logoObserver = null
 let sliderObserver = null
 let domObserver = null  // 用來等元素進 DOM
+
+const showHighlightByDefault = false
+let currentHighlight = null
+
+// 處理滑鼠進入事件
+const handleMouseEnter = (type) => {
+  if (!showHighlightByDefault) {
+    removeHighlight()
+    if (type === 'logo') {
+      addLogoHighlight()
+    } else if (type === 'slider') {
+      addSliderHighlight()
+    }
+  }
+}
+// 處理滑鼠離開事件
+const handleMouseLeave = () => {
+  if (!showHighlightByDefault) {
+    removeHighlight()
+  }
+}
+
+// 添加 Logo 高亮
+const addLogoHighlight = () => {
+  const logoEl = document.querySelector('.ele-logo-wrap')
+  if (logoEl) {
+    // 創建高亮 div
+    const highlightDiv = document.createElement('div')
+    highlightDiv.className = 'ele-highlight'
+    highlightDiv.textContent = logoSize.value
+
+    // 添加到 logo 元素內部
+    logoEl.appendChild(highlightDiv)
+    currentHighlight = highlightDiv
+  }
+}
+
+// 添加輪播高亮
+const addSliderHighlight = () => {
+  const sliderWrap = document.querySelector('.ele-slider-wrap')
+  if (sliderWrap) {
+    // 創建高亮 div
+    const highlightDiv = document.createElement('div')
+    highlightDiv.className = 'ele-highlight'
+    highlightDiv.textContent = sliderSize.value
+
+    sliderWrap.appendChild(highlightDiv)
+    currentHighlight = highlightDiv
+  }
+}
+
+// 移除高亮
+const removeHighlight = () => {
+  if (currentHighlight) {
+    currentHighlight.remove()
+    currentHighlight = null
+  }
+}
 
 onMounted(async () => {
   assets.load()
@@ -72,15 +136,59 @@ onMounted(async () => {
     logoObserver.observe(logoEl)
   }
 
-  const sliderEl = await waitForEl('.ele-slider-img', 8000)
+  // 先嘗試找 .ele-slider-img，找不到就找其他可能的容器
+  let sliderEl = await waitForEl('.ele-slider-img', 3000);
+
+  if (!sliderEl) {
+    // 找不到 .ele-slider-img，嘗試找其他可能的輪播容器
+    sliderEl = await waitForEl('.ele-slider-wrap', 3000) ||
+              await waitForEl('.slider-wrap', 3000);
+  }
   if (sliderEl) {
-    updateBoxSize(sliderEl, sliderSize)
-    if (sliderEl.tagName === 'IMG' && !isImgComplete(sliderEl)) {
-      sliderEl.addEventListener('load', () => updateBoxSize(sliderEl, sliderSize), { once: true })
-      sliderEl.addEventListener('error', () => updateBoxSize(sliderEl, sliderSize), { once: true })
+    // 初始量測
+    updateSliderSize(sliderEl, sliderSize);
+    
+    // 如果是圖片元素，監聽載入事件
+    if (sliderEl.tagName === 'IMG') {
+      if (!isImgComplete(sliderEl)) {
+        sliderEl.addEventListener('load', () => updateSliderSize(sliderEl, sliderSize), { once: true });
+        sliderEl.addEventListener('error', () => { sliderSize.value = '載入失敗' }, { once: true });
+      }
+      
+      // 監聽 src 變化（輪播切換）
+      sliderObserver = new MutationObserver(() => {
+        updateSliderSize(sliderEl, sliderSize);
+      });
+      sliderObserver.observe(sliderEl, {
+        attributes: true,
+        attributeFilter: ['src']
+      });
+    } else {
+      // 監聽容器內部變化（包括子元素的圖片載入）
+      sliderObserver = new MutationObserver(() => {
+        updateSliderSize(sliderEl, sliderSize);
+      });
+      sliderObserver.observe(sliderEl, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+        attributeFilter: ['src', 'style'] // 也監聽 style 變化
+      });
+      
+      // 同時監聽容器尺寸變化
+      const resizeObserver = new ResizeObserver(() => {
+        updateSliderSize(sliderEl, sliderSize);
+      });
+      resizeObserver.observe(sliderEl);
     }
-    sliderObserver = new ResizeObserver(() => updateBoxSize(sliderEl, sliderSize))
-    sliderObserver.observe(sliderEl)
+  } else {
+    // 完全找不到輪播元素
+    sliderSize.value = '找不到輪播元素';
+  }
+  if (showHighlightByDefault) {
+    await nextTick()
+    addLogoHighlight()
+    addSliderHighlight()
   }
 })
 
@@ -88,9 +196,10 @@ onUnmounted(() => {
   if (logoObserver) logoObserver.disconnect()
   if (sliderObserver) sliderObserver.disconnect()
   if (domObserver) domObserver.disconnect()
+  removeHighlight() // 清理高亮元素
 })
 
-/** 等待元素進 DOM（處理 v-if / 延遲載入） */
+// 等待元素進 DOM（處理 v-if / 延遲載入）
 function waitForEl(selector, timeout = 5000) {
   return new Promise((resolve) => {
     const found = document.querySelector(selector)
@@ -113,12 +222,12 @@ function waitForEl(selector, timeout = 5000) {
   })
 }
 
-/** 圖片是否已完整可量測 */
+// 圖片是否已完整可量測
 function isImgComplete(img) {
   return img.complete && img.naturalWidth > 0 && img.naturalHeight > 0
 }
 
-/** 量測並寫入顯示字串（多來源 fallback） */
+// 量測並寫入顯示字串（多來源 fallback）
 function updateBoxSize(el, targetRef) {
   // 1) 先拿 layout 寬高
   const rect = el.getBoundingClientRect()
@@ -143,7 +252,80 @@ function updateBoxSize(el, targetRef) {
   targetRef.value = (w && h) ? `${w}x${h}` : '未偵測到'
 }
 
-/** Logo 上傳檢查 */
+// Slider 尺寸量測（優先使用圖片原始尺寸）
+function updateSliderSize(el, targetRef) {
+  // 1) 如果是 <img> 元素，優先使用原始尺寸
+  if (el.tagName === 'IMG') {
+    const naturalW = el.naturalWidth || 0;
+    const naturalH = el.naturalHeight || 0;
+    
+    if (naturalW && naturalH) {
+      targetRef.value = `${naturalW}x${naturalH}`;
+      return;
+    }
+    
+    // 如果圖片還沒載入完成，顯示載入狀態
+    if (!isImgComplete(el)) {
+      targetRef.value = '載入中...';
+      return;
+    }
+    
+    // 如果是圖片但沒有原始尺寸，可能是載入失敗
+    targetRef.value = '載入失敗';
+    return;
+  }
+
+  // 2) 如果不是 <img> 元素，嘗試找到內部的 img
+  const imgElement = el.querySelector('img');
+  if (imgElement) {
+    const naturalW = imgElement.naturalWidth || 0;
+    const naturalH = imgElement.naturalHeight || 0;
+    
+    if (naturalW && naturalH) {
+      targetRef.value = `${naturalW}x${naturalH}`;
+      return;
+    }
+    
+    if (!isImgComplete(imgElement)) {
+      targetRef.value = '載入中...';
+      return;
+    }
+    
+    targetRef.value = '載入失敗';
+    return;
+  }
+
+  // 3) 找不到圖片元素，直接量測容器尺寸
+  const rect = el.getBoundingClientRect();
+  let w = Math.round(rect.width);
+  let h = Math.round(rect.height);
+
+  // 如果容器尺寸為 0，嘗試 computed style
+  if (!w || !h) {
+    const cs = window.getComputedStyle(el);
+    const sw = parseFloat(cs.width);
+    const sh = parseFloat(cs.height);
+    if (sw && sh) { 
+      w = Math.round(sw); 
+      h = Math.round(sh); 
+    }
+  }
+
+  targetRef.value = (w && h) ? `${w}x${h} (容器)` : '未偵測到';
+}
+
+function getBox(selector, fallbackW = 0, fallbackH = 0) {
+  const el = document.querySelector(selector)
+  if (!el) return { el: null, w: fallbackW, h: fallbackH }
+
+  const rect = el.getBoundingClientRect()
+  const w = Math.round(rect.width) || fallbackW
+  const h = Math.round(rect.height) || fallbackH
+
+  return { el, w, h }
+}
+
+// Logo 上傳檢查
 async function onLogoFileChange(e) {
   const file = e?.target?.files?.[0]
   if (!file) return
@@ -211,25 +393,55 @@ function loadImageSize(dataUrl) {
 </script>
 
 <style scoped lang="scss">
+:global(.ele-logo-wrap),
+:global(.ele-slider-wrap) {
+  position: relative;
+}
+:global(.ele-highlight) {
+  align-items: center;
+  background-color: #55d97f99;
+  color: #fff;
+  display: flex;
+  font-size: 5rem;
+  font-weight: 700;
+  height: 100%;
+  justify-content: center;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  text-shadow: 0 0 10px rgba(0, 0, 0, .7);
+  top: 0;
+  width: 100%;
+  z-index: 99;
+  transition: all .3s ease;
+}
+:global(.ele-logo-wrap .ele-highlight) {
+  font-size: 2.6rem;
+}
+
 .themeManager-imgSize-wrap {
   display: grid;
   gap: 4px;
 }
 
-/* 區塊卡片 */
+// 區塊卡片
 .themeManager-imgSize-section {
   background: var(--cp-color-third);
-  // border: 1px solid #e8e8ef;
   border-radius: 6px;
   padding: 10px;
-  // box-shadow: 0 2px 10px rgba(0,0,0,.04);
+  &:hover {
+    .themeManager-imgSize-size {
+      color: #fff;
+      background-color: var(--cp-color-secondary);
+    }
+  }
 }
 
-/* 標題列 */
+// 標題列
 .themeManager-imgSize-title {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 4px;
   &.logo {
     margin-bottom: 8px;
     svg {
@@ -238,30 +450,28 @@ function loadImageSize(dataUrl) {
   }
   label {
     font-size: 14px;
-    font-weight: 700;
     letter-spacing: .02em;
-    color: #1e2233;
+    color: var(--cp-text-primary);
   }
 
   .themeManager-imgSize-size {
     font-size: 12px;
-    color: #fff;
-    background: var(--cp-bg-secondary);
-    border: 1px solid #e8e8ef;
     color: #1e2233;
     background-color: #fff;
+    border: 1px solid #e8e8ef;
     border-radius: 20px;
     padding: 3px 8px 2px;
+    transition: background-color .3s, color .3s;
   }
 }
 
-/* 上傳區 */
+// 上傳區
 .themeManager-imgSize-upload {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
 
-  /* 隱藏原生 input，改用 label 當按鈕 */
+  // 隱藏原生 input，改用 label 當按鈕
   .themeManager-imgSize-upload-input {
     position: absolute;
     width: 1px; height: 1px;
@@ -288,8 +498,7 @@ function loadImageSize(dataUrl) {
     background-color: var(--cp-color-primary);
 
     &:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(28, 76, 231, .08);
+      background-color: var(--cp-color-secondary);
     }
 
     &:disabled {
@@ -300,10 +509,10 @@ function loadImageSize(dataUrl) {
   }
 }
 
-/* 提示文字 */
+// 提示文字
 .themeManager-imgSize-tips {
   font-size: 12px;
-  color: var(--cp-text-secondary);
+  color: var(--cp-text-third);
   padding-top: 8px;
   b {
     font-size: 11px;

@@ -12,7 +12,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M19.1642 12L12.9571 5.79291L11.5429 7.20712L16.3358 12L11.5429 16.7929L12.9571 18.2071L19.1642 12ZM13.5143 12L7.30722 5.79291L5.89301 7.20712L10.6859 12L5.89301 16.7929L7.30722 18.2071L13.5143 12Z"></path></svg>
         </button>
       </div>
-      <div class="themeManager-content">
+      <div class="themeManager-container">
         <div class="themeManager-header">
           <button
             type="button"
@@ -20,6 +20,7 @@
             :title="instructionsVisible ? '' : '開啟使用說明'"
           >
             <svg xmlns="http://www.w3.org/2000/svg" width="24" viewBox="0 0 24 24" fill="currentColor"><path d="M12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12C22 17.5228 17.5228 22 12 22ZM12 20C16.4183 20 20 16.4183 20 12C20 7.58172 16.4183 4 12 4C7.58172 4 4 7.58172 4 12C4 16.4183 7.58172 20 12 20ZM11 15H13V17H11V15ZM13 13.3551V14H11V12.5C11 11.9477 11.4477 11.5 12 11.5C12.8284 11.5 13.5 10.8284 13.5 10C13.5 9.17157 12.8284 8.5 12 8.5C11.2723 8.5 10.6656 9.01823 10.5288 9.70577L8.56731 9.31346C8.88637 7.70919 10.302 6.5 12 6.5C13.933 6.5 15.5 8.067 15.5 10C15.5 11.5855 14.4457 12.9248 13 13.3551Z"></path></svg>
+            <div class="themeManager-instructions-tips">操作说明&规范</div>
           </button>
           <button
             type="button"
@@ -32,66 +33,83 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="14" viewBox="0 0 24 24" fill="currentColor"><path d="M7 19V13H17V19H19V7.82843L16.1716 5H5V19H7ZM4 3H17L21 7V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3ZM9 15V19H15V15H9Z"></path></svg>
           </button>
         </div>
-        <details class="themeManager-details" open>
-          <summary>Logo与轮播图尺寸</summary>
-          <div class="themeManager-detail-content">
-            <LogoUploader />
-          </div>
-        </details>
-        <details class="themeManager-details" open>
-          <summary>版型主題</summary>
-          <div class="themeManager-detail-content">
-            <PlatformSelet />
-          </div>
-        </details>
-        <details class="themeManager-details" open>
-          <summary>版型配色</summary>
-          <div class="themeManager-detail-content">
-            <div class="themeManager-theme-wrap">
-              <div class="themeManager-theme-title">
-                预设配色
+        <div class="themeManager-body">
+          <details class="themeManager-details" open>
+            <summary>Logo与轮播图尺寸</summary>
+            <div class="themeManager-detail-content">
+              <LogoUploader />
+            </div>
+          </details>
+          <details class="themeManager-details" open>
+            <summary>版型主題</summary>
+            <div class="themeManager-detail-content">
+              <PlatformSelet />
+            </div>
+          </details>
+          <details class="themeManager-details" open>
+            <summary>版型配色</summary>
+            <div class="themeManager-detail-content">
+              <div class="themeManager-theme-wrap">
+                <div class="themeManager-theme-title">
+                  预设配色
+                </div>
+                <div class="themeManager-theme-content">
+                  <button v-for="theme in sortedThemes" :key="theme.themeSort ?? theme.themeName" :class="['themeManager-theme-btn',{ active: selectedThemeName === theme.themeName },]" type="button" @click="selectTheme(theme.themeName)">
+                    <div class="themeManager-theme-color" :style="{background: `linear-gradient(90deg, ${theme.themeColor.primary} 0, ${theme.themeColor.primary} 50%, ${theme.themeColor.secondary} 50%, ${theme.themeColor.secondary} 100%)`,}" />
+                    <span class="themeManager-theme-name">
+                      {{ theme.themeName }} ({{ theme.themeMode }})
+                    </span>
+                  </button>
+                  <button
+                    class="themeManager-theme-reset-btn"
+                    type="button"
+                    :disabled="!hasModified"
+                    :title="hasModified ? '重置当前主题所有自订颜色' : '尚未调整，无需重置'"
+                    @click="confirmResetTheme">
+                    重置
+                  </button>
+                </div>
               </div>
-              <div class="themeManager-theme-content">
-                <button v-for="theme in themes" :key="theme.themeID ?? theme.themeName" :class="['themeManager-theme-btn',{ active: selectedThemeName === theme.themeName },]" type="button" @click="selectTheme(theme.themeName)">
-                  <div class="themeManager-theme-color" :style="{background: `linear-gradient(90deg, ${theme.themeColor.primary} 0, ${theme.themeColor.primary} 50%, ${theme.themeColor.secondary} 50%, ${theme.themeColor.secondary} 100%)`,}" />
-                  <span class="themeManager-theme-name">
-                    {{ theme.themeName }} ({{ theme.themeMode }})
-                  </span>
+              <h4>主题颜色自订</h4>
+              <div class="themeManager-picker-wrap" v-if="selectedColors.length">
+                <ColorPicker
+                  v-for="color in selectedColors"
+                  :key="color.id"
+                  :item="color"
+                  :pickerId="color.id"
+                  :isOpen="activePickerId === color.id"
+                  :modified="modifiedMap[color.id]"
+                  @update="updateColor"
+                  @remove="removeColor"
+                  @toggle-picker="handleTogglePicker"
+                />
+              </div>
+              <div v-else>
+                <p>此主題尚未設定 colorVariables。</p>
+              </div>
+              <!-- 匯出 / 匯入 / 保存 -->
+              <div class="themeManager-io-wrap">
+                <button type="button" class="themeManager-btn themeManager-btn-export" @click="exportTheme" :title="hasModified
+                    ? '汇出目前自订配色'
+                    : '没有自订变更，汇出将与预设相同'
+                  ">
+                  <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.625 7.9375V9.15625C0.625 9.47948 0.753404 9.78948 0.981964 10.018C1.21052 10.2466 1.52052 10.375 1.84375 10.375H9.15625C9.47948 10.375 9.78948 10.2466 10.018 10.018C10.2466 9.78948 10.375 9.47948 10.375 9.15625V7.9375M8.75 3.875L5.5 7.125M5.5 0.625V7.125M2.25 3.875L5.5 7.125" stroke="currentColor" stroke-width="0.8125" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                  导出配色
                 </button>
-                <button class="themeManager-theme-reset-btn" type="button" :disabled="!hasModified" :title="hasModified ? '重置当前主题所有自订颜色' : '尚未调整，无需重置'
-                  " @click="resetTheme">
-                  重置
+                <button type="button" class="themeManager-btn themeManager-btn-import" @click="triggerImport">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75v-2.25m-3-7.5L12 3m0 0L6 9m6-6v12"></path></svg>
+                  导入配色
                 </button>
-                <!-- <span class="themeManager-theme-modified">已調整：{{ hasModified ? "true" : "false" }}</span> -->
+                <input ref="fileInputRef" type="file" accept=".css,.txt" class="themeManager-file-hidden"
+                  @change="onFileChange" />
+              </div>
+              <!-- 匯入結果訊息 -->
+              <div v-if="importMessage" :class="['themeManager-import-msg', importSuccess ? 'ok' : 'err']">
+                <pre class="themeManager-import-text">{{ importMessage }}</pre>
               </div>
             </div>
-            <h4>主题颜色自订</h4>
-            <div v-if="selectedColors.length">
-              <ColorPicker v-for="color in selectedColors" :key="color.id" :item="color" :modified="modifiedMap[color.id]" @update="updateColor" @remove="removeColor" />
-            </div>
-            <div v-else>
-              <p>此主題尚未設定 colorVariables。</p>
-            </div>
-            <!-- 匯出 / 匯入 / 保存 -->
-            <div class="themeManager-io-wrap">
-              <button type="button" class="themeManager-btn themeManager-btn-export" @click="exportTheme" :title="hasModified
-                  ? '汇出目前自订配色'
-                  : '没有自订变更，汇出将与预设相同'
-                ">
-                匯出配色
-              </button>
-              <button type="button" class="themeManager-btn themeManager-btn-import" @click="triggerImport">
-                匯入配色
-              </button>
-              <input ref="fileInputRef" type="file" accept=".css,.txt" class="themeManager-file-hidden"
-                @change="onFileChange" />
-            </div>
-            <!-- 匯入結果訊息 -->
-            <div v-if="importMessage" :class="['themeManager-import-msg', importSuccess ? 'ok' : 'err']">
-              <pre class="themeManager-import-text">{{ importMessage }}</pre>
-            </div>
-          </div>
-        </details>
+          </details>
+        </div>
       </div>
     </div>
     <div class="themeManager-site-wrap">
@@ -101,7 +119,6 @@
 </template>
 
 <script setup>
-import { ref, computed, watch, onMounted, nextTick } from "vue";
 import JSZip from "jszip";
 import { toPng } from "html-to-image";
 
@@ -117,9 +134,22 @@ import PlatformSelet from "./PlatformSelet.vue";
 import TemplateZoom from "./TemplateZoom.vue";
 
 
-/** ---- 面板顯示 ---- */
-const panelVisible = ref(false);
-watch(panelVisible, (val) => {
+// 處理顏色選擇器開關
+const activePickerId = ref(null);
+const handleTogglePicker = (pickerId) => {
+  if (activePickerId.value === pickerId) {
+    // 如果點擊的是已開啟的選擇器，則關閉
+    activePickerId.value = null;
+  } else {
+    // 否則開啟新的選擇器（會自動關閉其他的）
+    activePickerId.value = pickerId;
+  }
+};
+
+// 面板顯示
+const panelVisible = ref(true);
+watch(panelVisible, async (val) => {
+  await nextTick(); // 等待 DOM 更新
   if (typeof window !== 'undefined' && window.document && window.document.body) {
     if (val) {
       document.body.classList.add('is-edit');
@@ -128,24 +158,30 @@ watch(panelVisible, (val) => {
     }
   }
 }, { immediate: true });
+onMounted(async () => {
+  await nextTick();
+  if (panelVisible.value) {
+    document.body.classList.add('is-edit');
+  }
+});
 
+// 說明顯示
 const instructionsVisible = ref(false);
 
-
-/** ---- 版型編號（匯出／匯入校驗） ---- */
+// 版型編號（匯出／匯入校驗）
 const ENV_VERSION = String(import.meta.env?.VITE_VERSION ?? "").trim();
 
-/** ---- useTheme： useTheme.applyTheme / initTheme ---- */
+// useTheme： useTheme.applyTheme / initTheme
 const theme = useTheme({ namespace: "app" });
 const { themes, getColorVars, persistCustom } = theme;
 const getCustomThemeColors = persistCustom.get;
 const saveCustomThemeColors = persistCustom.set;
 const clearCustomThemeColors = persistCustom.clear;
 
-/** ---- 與 Pinia 同步 ---- */
+// 與 Pinia 同步
 const config = useConfigStore();
 
-/** ---- 選中主題／主題資料 ---- */
+// 選中主題／主題資料
 const selectedThemeName = ref(
   config.themeColor.value || themes[0]?.themeName || ""
 );
@@ -154,17 +190,21 @@ const currentTheme = computed(() =>
 );
 const colorVars = computed(() => getColorVars(selectedThemeName.value));
 
-/** ---- 版型編號：優先 .env，其次主題名稱 ---- */
+const sortedThemes = computed(() => {
+  return [...themes].sort((a, b) => a.themeSort - b.themeSort);
+});
+
+// 版型編號：優先 .env，其次主題名稱
 const currentTemplateNumber = computed(
   () => ENV_VERSION || currentTheme.value?.themeName || selectedThemeName.value
 );
 
-/** ---- 色票與狀態 ---- */
+// 色票與狀態
 const selectedColors = ref([]); // [{ id, name, varName, value: '#rrggbb' }]
 const baselineMap = ref({}); // { [id]: '#rrggbb' } 來自目前主題預設值
 const savedColors = ref({}); // { [id]: '#rrggbb' } 來自 localStorage
 
-/** ---- 小工具：色彩轉換 ---- */
+// 小工具：色彩轉換
 const normalizeHex = (hex) => (hex || "").toLowerCase();
 function hexToRgbSpace(hex) {
   const v = normalizeHex(hex).replace("#", "");
@@ -225,7 +265,7 @@ function toHex(val) {
   return v;
 }
 
-/** ---- DOM 讀取／清除 ---- */
+// DOM 讀取／清除
 function getThemeColorValue(varName) {
   if (typeof window === "undefined") return "#000000";
   return (
@@ -241,7 +281,7 @@ function clearThemeInlineColors() {
     .forEach((item) => el.style.removeProperty(item.varName));
 }
 
-/** ---- 主題切換（單一入口）：委派給 Pinia（Pinia 會再委派 useTheme.applyTheme） ---- */
+// 主題切換（單一入口）：委派給 Pinia（Pinia 會再委派 useTheme.applyTheme）
 function onThemeChange() {
   // 1) 先讓 Pinia 設定主題（Pinia 會基於主題預設 mode 或 keepMode 呼叫 useTheme.applyTheme）
   config.setThemeColor(selectedThemeName.value);
@@ -283,7 +323,7 @@ function onThemeChange() {
 
 watch(selectedThemeName, onThemeChange, { immediate: true });
 
-/** ---- 是否有變更 ---- */
+// 是否有變更
 const modifiedMap = computed(() => {
   const map = {};
   for (const item of selectedColors.value) {
@@ -297,7 +337,7 @@ const hasModified = computed(() =>
   Object.values(modifiedMap.value).some(Boolean)
 );
 
-/** ---- 更新單一色 ---- */
+// 更新單一色
 function updateColor(item, newHex) {
   const themeName = selectedThemeName.value;
   const next = normalizeHex(newHex);
@@ -328,7 +368,7 @@ function updateColor(item, newHex) {
   document.documentElement.style.setProperty(item.varName, hexToRgbSpace(next));
 }
 
-/** ---- 移除單一色的自訂 ---- */
+// 移除單一色的自訂
 function removeColor(item) {
   const themeName = selectedThemeName.value;
 
@@ -347,7 +387,15 @@ function removeColor(item) {
   document.documentElement.style.removeProperty(item.varName);
 }
 
-/** ---- 全部重置（當前主題） ---- */
+// 修改重置函數，加上確認提示
+function confirmResetTheme() {
+  const confirmed = confirm('您确定要重置当前主题的配色吗？');
+  if (confirmed) {
+    resetTheme();
+  }
+}
+
+// 全部重置（當前主題）
 function resetTheme() {
   clearThemeInlineColors();
   clearCustomThemeColors(selectedThemeName.value);
@@ -358,7 +406,7 @@ function resetTheme() {
   }));
 }
 
-/** ---- 匯出／匯入 ---- */
+// 匯出／匯入
 const fileInputRef = ref(null);
 const importMessage = ref("");
 const importSuccess = ref(false);
@@ -639,12 +687,12 @@ async function saveTheme() {
   }
 }
 
-/** ---- UI 事件 ---- */
+// UI 事件
 function selectTheme(themeName) {
   selectedThemeName.value = themeName;
 }
 
-/** 等待容器內所有 <img> 載入完成或失敗（失敗就隱藏） */
+// 等待容器內所有 <img> 載入完成或失敗（失敗就隱藏）
 function waitForImages(root, timeoutMs = 15000) {
   const imgs = Array.from(root.querySelectorAll("img"));
   if (imgs.length === 0) return Promise.resolve();
@@ -678,6 +726,7 @@ function waitForImages(root, timeoutMs = 15000) {
     setTimeout(resolve, timeoutMs);
   });
 }
+
 </script>
 
 <style lang="scss">
@@ -685,10 +734,28 @@ function waitForImages(root, timeoutMs = 15000) {
   --cp-bg-primary: #fff;
   --cp-bg-secondary: #889ebc;
   --cp-color-bg: #f1f4f8;
-  --cp-color-primary: #417ff7;
+  --cp-color-primary: #889ebc;
+  --cp-color-secondary: #417FF7;
   --cp-color-third: #f5f7fa;
   --cp-text-primary: #3d4154;
-  --cp-text-secondary: #aab4c4;
+  --cp-text-secondary: #8e97a5;
+  --cp-text-third: #aab4c4;
+}
+
+.is-edit .themeManager-site-wrap,
+.themeManager-body {
+  &::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    background-color: var(--cp-color-third);
+  }
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+    background-color: black;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: var(--cp-bg-secondary);
+  }
 }
 
 html,
@@ -700,8 +767,6 @@ body,
   height: 100%;
 }
 
-
-
 .themeManager-edit-wrap {
   width: 310px;
   position: fixed;
@@ -712,7 +777,7 @@ body,
   transform: translateX(100%);
   transition: .3s transform ease;
 }
-body.is-static.is-edit {
+body.is-edit {
   min-width: auto;
   .themeManager-edit-wrap {
     transform: translateX(0);
@@ -759,19 +824,8 @@ body.is-static.is-edit {
   width: calc(100% - 310px);
   overflow: auto;
   position: relative;
-  &::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    background-color: var(--cp-color-third);
-  }
-  &::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-    background-color: black;
-  }
-  &::-webkit-scrollbar-thumb {
-    background-color: var(--cp-bg-secondary);
-  }
 }
+
 .page-wrap {
   min-width: var(--page-width);
 }
@@ -798,9 +852,9 @@ body.is-static.is-edit {
   color: #888;
 }
 
-.themeManager-content {
+.themeManager-container {
   font-size: 13px;
-  color: #000;
+  color: var(--cp-text-primary);
   background: var(--cp-bg-primary);
   width: 100%;
   height: 100%;
@@ -832,14 +886,25 @@ body.is-static.is-edit {
     font-family: Google Sans, Roboto, Arial, sans-serif;
     font-size: 14px;
     color: #fff;
-    background-color: var(--cp-color-primary);
+    background-color: var(--cp-color-secondary);
     border-radius: 4px;
     padding: 0 12px;
     cursor: pointer;
+    &:hover {
+      background-color: #366edc;
+    }
   }
 }
 
+.themeManager-body {
+    overflow: auto;
+  height: calc(100% - 52px);
+}
+
 .themeManager-details {
+  &[open] {
+    margin-bottom: 1rem;
+  }
   &:before {
     content: '';
     pointer-events: none;
@@ -903,17 +968,18 @@ body.is-static.is-edit {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
+  border-bottom: 1px solid rgba(233, 237, 246, .5);
   margin-bottom: 16px;
+  padding-bottom: 16px;
   .themeManager-theme-title {
     font-size: 12px;
-    // color: var(--cp-text-secondary);
-    color: #787c87;
+    color: var(--cp-text-secondary);
   }
   .themeManager-theme-content {
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
   }
   .themeManager-theme-btn {
     width: 26px;
@@ -944,6 +1010,14 @@ body.is-static.is-edit {
     color: var(--cp-text-primary);
     background-color: var(--cp-color-third);
     padding: 0 8px;
+    transition: background-color 0.3s, color 0.3s;
+    &:hover {
+      color: #fff;
+      background-color: var(--cp-color-secondary);
+    }
+    &:disabled {
+      color: var(--cp-text-secondary);
+    }
   }
 }
 
@@ -962,6 +1036,24 @@ button {
   display: flex;
   gap: 8px;
   margin: 12px 0 16px;
+  .themeManager-btn {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    height: 30px;
+    color: var(--cp-text-primary);
+    background-color: transparent;
+    border: 1px solid #e9edf3;
+    border-radius: 4px;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+    &:hover {
+      color: #fff;
+      background-color: var(--cp-color-secondary);
+      border-color: var(--cp-color-secondary);
+    }
+  }
 }
 
 .themeManager-file-hidden

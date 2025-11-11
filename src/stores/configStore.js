@@ -1,9 +1,8 @@
-// src/stores/configStore.js
 import { defineStore } from 'pinia'
 import { useTheme } from '@/theme/useTheme'
 import themeConfig from '@/assets/data/theme.json'
 
-// 為了和 useTheme 的命名空間一致，建議統一 'app'
+// 與 useTheme 的命名空間一致
 const NAMESPACE = 'app'
 
 const hasWindow = () => typeof window !== 'undefined'
@@ -19,12 +18,25 @@ export const useConfigStore = defineStore('config', () => {
   )
 
   // 初值（若 storage 沒有，退回 .env 或預設）
-  const fallbackColor = import.meta.env.VITE_THEME_COLOR || '2501221'
+  const fallbackColor = import.meta.env.VITE_THEME_COLOR || '2501231'
   const fallbackMode  = import.meta.env.VITE_THEME_MODE  || theme.getDefaultModeOf(fallbackColor) || 'dark'
 
-  const themeColor = ref(lsGet(`${NAMESPACE}:themeColor`) || fallbackColor)
-  const themeMode  = ref(lsGet(`${NAMESPACE}:themeMode`)  || fallbackMode)
+  // 如果環境變量存在，就使用環境變量，否則才使用 localStorage
+  const storedColor = lsGet(`${NAMESPACE}:themeColor`)
+  const storedMode = lsGet(`${NAMESPACE}:themeMode`)
+
+  // 優先順序：環境變量 > localStorage > 預設值
+  const themeColor = ref(import.meta.env.VITE_THEME_COLOR || storedColor || fallbackColor)
+  const themeMode  = ref(import.meta.env.VITE_THEME_MODE || storedMode || fallbackMode)
   const lang       = ref(lsGet('lang') || import.meta.env.VITE_LANG || 'zh-cn')
+
+  // 在初始化時，如果使用了環境變量，就更新 localStorage
+  if (import.meta.env.VITE_THEME_COLOR && import.meta.env.VITE_THEME_COLOR !== storedColor) {
+    lsSet(`${NAMESPACE}:themeColor`, import.meta.env.VITE_THEME_COLOR)
+  }
+  if (import.meta.env.VITE_THEME_MODE && import.meta.env.VITE_THEME_MODE !== storedMode) {
+    lsSet(`${NAMESPACE}:themeMode`, import.meta.env.VITE_THEME_MODE)
+  }
 
   // 衍生配置
   const themeFooterLogo = computed(() => themeConfig.colorThemes.find(t => t.themeName === themeColor.value)?.footerLogo || { bb: 'white', ub: 'white' })

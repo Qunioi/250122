@@ -58,7 +58,8 @@ body {
     .news-wrap {
         width: 700px;
         position: absolute;
-        bottom: 12px;
+        bottom: 40px;
+        left: 10px;
     }
 }
 .banner-wrap {
@@ -135,6 +136,7 @@ body {
         background-color: rgb(var(--color-tertiary-bg) / 30%);
         .ele-login-input {
             font-size: 13px;
+            color: rgb(var(--color-primary-text));
         }
         &:has(.ele-login-input:focus) {
             border-color: rgb(var(--color-primary));

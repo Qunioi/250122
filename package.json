@@ -1,5 +1,5 @@
 {
-  "name": "250122",
+  "name": "250123",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@cyhnkckali/vue3-color-picker": "^2.1.5",
     "html-to-image": "^1.11.13",
     "jszip": "^3.10.1",
     "pinia": "^3.0.3",

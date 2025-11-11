@@ -32,7 +32,7 @@
     background-color: var(--cp-color-third);
     border-radius: 4px;
     position: relative;
-    transition: background-color .3s;
+    transition: background-color .3s, color .3s;
     span {
       padding-left: 0;
       transition: padding-left .3s;
@@ -63,7 +63,7 @@
     }
     &:hover {
       color: #FFF;
-      background-color: var(--cp-color-primary);
+      background-color: var(--cp-color-secondary);
       &:has(input[type="radio"]:disabled) {
         background-color: var(--cp-color-third);
       }
