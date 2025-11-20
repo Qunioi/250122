@@ -128,9 +128,9 @@ $langs: ('zh-tw', 'zh-cn', 'en');
     .ele-show-password {
         width: 17px;
         height: 18px;
-        -webkit-mask: url('/image/not-use/ic_eyeClose.svg');
+        mask: url('/image/not-use/ic_eyeClose.svg');
         &.is-show {
-            -webkit-mask: url('/image/not-use/ic_eyeOpen.svg');
+            mask: url('/image/not-use/ic_eyeOpen.svg');
         }
     }
 }

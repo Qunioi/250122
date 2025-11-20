@@ -149,7 +149,7 @@ body {
     .ele-forget-pw {
         width: 21px;
         height: 21px;
-        -webkit-mask: url('/image/ic_forget.svg');
+        mask: url('/image/ic_forget.svg');
         background-color: rgb(var(--color-primary));
         position: absolute;
         top: 50%;
@@ -259,7 +259,7 @@ body {
             position: absolute;
             top: 6px;
             left: 0;
-            -webkit-mask: url('/image/sub.svg');
+            mask: url('/image/sub.svg');
             background-color: rgb(var(--color-primary));
         }
         .ele-morenav-container {
@@ -605,7 +605,7 @@ body {
         .first-live-bg {
             width: 580px;
             height: 332px;
-            -webkit-mask: url('/image/first_live_bg.svg') bottom center no-repeat;
+            mask: url('/image/first_live_bg.svg') bottom center no-repeat;
             background-color: rgb(var(--color-secondary));
         }
         .first-live-btn {
@@ -730,7 +730,7 @@ body {
         .first-mob-h5-icon {
             width: 136px;
             height: 136px;
-            -webkit-mask: url('/image/first_h5.svg');
+            mask: url('/image/first_h5.svg');
             background-color: rgb(var(--color-primary));
             margin: 0 auto;
         }
