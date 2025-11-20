@@ -829,7 +829,7 @@ body.is-edit {
 .page-wrap {
   min-width: var(--page-width);
 }
-.ele-fixed-inner.fixed {
+.is-edit.ele-fixed-inner.fixed {
   position: sticky !important;
 }
 
