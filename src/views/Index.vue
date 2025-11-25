@@ -1,6 +1,5 @@
 <template>
   <div class="page-container">
-    <FloatImg />
     <section class="first-section-wrap first-main-wrap">
       <div class="section-wrap">
         <div class="main-left-wrap">

@@ -1,9 +1,10 @@
 
 <template>
-  <div ref="floatContainer" class="ele-float-container">
+  <div class="ele-float-container">
     <div
       v-if="showLeft"
       class="ele-nest-wrap float-left-wrap"
+      ref="leftWrap"
       :class="{ 'slide-out': !isLeftVisible, 'slide-in': isLeftVisible }"
       :style="containerStyle"
     >
@@ -13,21 +14,22 @@
         href="#"
         :class="{ 'has-hover': hasHoverImage('left', index) }"
         @click.prevent="index === leftList.length - 1 ? toggleLeft() : null"
-        @mouseenter="hoverIndex = index"
-        @mouseleave="hoverIndex = null"
+        @mouseenter="hoverLeftIndex = index"
+        @mouseleave="hoverLeftIndex = null"
       >
         <img
-          :src="hoverIndex === index && hasHoverImage('left', index)
+          :src="hoverLeftIndex === index && hasHoverImage('left', index)
             ? getImgUrl('left', index, item.imgHover, true)
             : getImgUrl('left', index, item.imgDefault)"
           class="float-img"
-          :class="{ 'is-hover': hoverIndex === index && hasHoverImage('left', index) }"
+          :class="{ 'is-hover': hoverLeftIndex === index && hasHoverImage('left', index) }"
         />
       </a>
     </div>
     <div
       v-if="showRight"
       class="ele-nest-wrap float-right-wrap"
+      ref="rightWrap"
       :class="{ 'slide-out': !isRightVisible, 'slide-in': isRightVisible }"
       :style="containerStyle"
     >
@@ -37,15 +39,15 @@
         href="#"
         :class="{ 'has-hover': hasHoverImage('right', index) }"
         @click.prevent="index === rightList.length - 1 ? toggleRight() : null"
-          @mouseenter="hoverIndex = index"
-          @mouseleave="hoverIndex = null"
+        @mouseenter="hoverRightIndex = index"
+        @mouseleave="hoverRightIndex = null"
       >
         <img
-          :src="hoverIndex === index && hasHoverImage('right', index)
+          :src="hoverRightIndex === index && hasHoverImage('right', index)
             ? getImgUrl('right', index, item.imgHover, true)
             : getImgUrl('right', index, item.imgDefault)"
           class="float-img"
-          :class="{ 'is-hover': hoverIndex === index && hasHoverImage('right', index) }"
+          :class="{ 'is-hover': hoverRightIndex === index && hasHoverImage('right', index) }"
         />
       </a>
     </div>
@@ -66,7 +68,9 @@ const props = defineProps({
 const config = useConfigStore();
 const themeName = computed(() => config.themeColor);
 const lang = computed(() => config.lang);
-const hoverIndex = ref(null);
+
+const hoverLeftIndex = ref(null);
+const hoverRightIndex = ref(null);
 
 // 浮動圖列表（從 localStorage 載入）
 const leftList = ref([]);
@@ -170,53 +174,72 @@ watch([isLeftVisible, isRightVisible], () => {
 });
 
 // 滾動位置管理
-const floatContainer = ref(null);
-const containerStyle = ref({ top: "150px" });
-let scrollTimeout = null;
-let scrollContainer = null; // 滾動容器
+const containerStyle = ref({ transform: 'translateY(0px)' });
+const leftWrap = ref(null);
+const rightWrap = ref(null);
+
+// 獲取 header 高度
+function getHeaderHeight() {
+  const header = document.querySelector('.header-fixed-wrap');
+  return header ? header.offsetHeight + 20 : 150; // 如果找不到 header，預設 150px
+}
 
 // 根據滾動更新容器位置
 function updatePosition() {
-  // 固定 top 150px + 當前 scrollY
-  let scrollY = 0;
-  
-  // 優先檢查 .themeManager-site-wrap 的滾動（編輯模式）
+  // 檢查編輯模式容器
   const siteWrap = document.querySelector('.themeManager-site-wrap');
-  if (siteWrap && siteWrap.scrollTop !== undefined) {
-    scrollY = siteWrap.scrollTop;
-  } else {
-    // 否則使用 window 的滾動（一般模式）
-    scrollY = window.scrollY || window.pageYOffset || 0;
+  let scrollTop = window.scrollY || window.pageYOffset || 0;
+  
+  if (siteWrap) {
+    const style = window.getComputedStyle(siteWrap);
+    if (style.overflowY === 'auto' || style.overflowY === 'scroll') {
+      scrollTop = siteWrap.scrollTop;
+    }
   }
   
-  const newTop = 150 + scrollY;
-  // console.log('scrollY:', scrollY, 'newTop:', newTop);
+  const headerHeight = getHeaderHeight();
+  const translateY = scrollTop;
   containerStyle.value = {
-    top: `${newTop}px`
+    transform: `translateY(${scrollTop + headerHeight}px)`
   };
 }
 
 // 處理滾動事件
 function onScroll() {
-  updatePosition();
+  requestAnimationFrame(updatePosition);
 }
 
-// 初始化位置並添加滾動監聽
+
+
+// 初始化
 onMounted(() => {
   loadFloatImagesList();
   loadCustomImages();
   loadVisibility();
-  updatePosition();
+  
+  // 初始校正
+  requestAnimationFrame(updatePosition);
   
   // 監聽 window 滾動
-  window.addEventListener('scroll', onScroll);
+  window.addEventListener('scroll', onScroll, { passive: true });
   
   // 監聽 .themeManager-site-wrap 滾動（編輯模式）
+  // 這裡我們只需要監聽事件觸發更新，不需要讀取 scrollTop
   const siteWrap = document.querySelector('.themeManager-site-wrap');
   if (siteWrap) {
-    scrollContainer = siteWrap;
-    scrollContainer.addEventListener('scroll', onScroll);
+    siteWrap.addEventListener('scroll', onScroll, { passive: true });
   }
+  
+  // 額外監聽 DOM 變化以處理編輯模式切換
+  const observer = new MutationObserver(() => {
+    const newSiteWrap = document.querySelector('.themeManager-site-wrap');
+    if (newSiteWrap) {
+      newSiteWrap.removeEventListener('scroll', onScroll); // 避免重複
+      newSiteWrap.addEventListener('scroll', onScroll, { passive: true });
+    }
+    requestAnimationFrame(updatePosition);
+  });
+  observer.observe(document.body, { childList: true, subtree: true });
   
   window.addEventListener('storage', onStorageChange);
   window.addEventListener('float-img-update', onCustomUpdate);
@@ -254,7 +277,7 @@ const onCustomUpdate = () => {
   loadFloatImagesList();
 };
 
-// 清理滾動監聽
+// 清理監聽
 onBeforeUnmount(() => {
   window.removeEventListener('scroll', onScroll);
   if (scrollContainer) {
@@ -262,7 +285,6 @@ onBeforeUnmount(() => {
   }
   window.removeEventListener('storage', onStorageChange);
   window.removeEventListener('float-img-update', onCustomUpdate);
-  if (scrollTimeout) clearTimeout(scrollTimeout);
 });
 </script>
 
@@ -273,13 +295,23 @@ onBeforeUnmount(() => {
   align-items: center;
   position: absolute;
   left: 0;
-  z-index: 9;
-
+  z-index: 901;
+  transition: transform 0.3s, opacity 0.3s, visibility 0.3s, max-width 0.3s;
   &.float-right-wrap {
     left: auto;
     right: 0;
   }
-
+  &.slide-in {
+    transform: translateX(0);
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    max-width: none;
+    overflow: visible;
+  }
+  &.slide-out {
+    display: none;
+  }
   img {
     display: block;
     max-width: 100%;

@@ -24,9 +24,19 @@
           v-for="(item, index) in leftFloatImages"
           :key="'left-' + item.id"
           class="themeManager-floatImg-item"
+          draggable="true"
+          @dragstart="onDragStart($event, 'left', index)"
+          @dragend="onDragEnd"
+          @dragover="onDragOver"
+          @dragleave="onDragLeave"
+          @drop="onDrop($event, 'left', index)"
         >
           <div class="themeManager-floatImg-header">
-            <span class="themeManager-floatImg-label">左图{{ index + 1 }} (预设图尺寸: {{ imageSizes.left[index] || '检测中' }})</span>
+            <span class="themeManager-floatImg-label" title="長按可拖曳改變排序">
+              <svg width="12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M8.5 7C9.32843 7 10 6.32843 10 5.5C10 4.67157 9.32843 4 8.5 4C7.67157 4 7 4.67157 7 5.5C7 6.32843 7.67157 7 8.5 7ZM8.5 13.5C9.32843 13.5 10 12.8284 10 12C10 11.1716 9.32843 10.5 8.5 10.5C7.67157 10.5 7 11.1716 7 12C7 12.8284 7.67157 13.5 8.5 13.5ZM10 18.5C10 19.3284 9.32843 20 8.5 20C7.67157 20 7 19.3284 7 18.5C7 17.6716 7.67157 17 8.5 17C9.32843 17 10 17.6716 10 18.5ZM15.5 7C16.3284 7 17 6.32843 17 5.5C17 4.67157 16.3284 4 15.5 4C14.6716 4 14 4.67157 14 5.5C14 6.32843 14.6716 7 15.5 7ZM17 12C17 12.8284 16.3284 13.5 15.5 13.5C14.6716 13.5 14 12.8284 14 12C14 11.1716 14.6716 10.5 15.5 10.5C16.3284 10.5 17 11.1716 17 12ZM15.5 20C16.3284 20 17 19.3284 17 18.5C17 17.6716 16.3284 17 15.5 17C14.6716 17 14 17.6716 14 18.5C14 19.3284 14.6716 20 15.5 20Z"></path></svg>
+              左圖{{ index + 1 }} <span v-if="imageSizes.left[index] && imageSizes.left[index] !== '检测失败'">(預設圖尺寸: {{ imageSizes.left[index] }})</span>
+              <div class="themeManager-floatImg-tooltip">長按可拖曳改變排序</div>
+            </span>
             <div class="themeManager-floatImg-header-actions">
               <button
                 v-if="leftFloatImages.length > 1"
@@ -218,9 +228,19 @@
           v-for="(item, index) in rightFloatImages"
           :key="'right-' + item.id"
           class="themeManager-floatImg-item"
+          draggable="true"
+          @dragstart="onDragStart($event, 'right', index)"
+          @dragend="onDragEnd"
+          @dragover="onDragOver"
+          @dragleave="onDragLeave"
+          @drop="onDrop($event, 'right', index)"
         >
           <div class="themeManager-floatImg-header">
-            <span class="themeManager-floatImg-label">右图{{ index + 1 }} (预设图尺寸: {{ imageSizes.right[index] || '检测中' }})</span>
+            <span class="themeManager-floatImg-label" title="長按可拖曳改變排序">
+              <svg width="12" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M8.5 7C9.32843 7 10 6.32843 10 5.5C10 4.67157 9.32843 4 8.5 4C7.67157 4 7 4.67157 7 5.5C7 6.32843 7.67157 7 8.5 7ZM8.5 13.5C9.32843 13.5 10 12.8284 10 12C10 11.1716 9.32843 10.5 8.5 10.5C7.67157 10.5 7 11.1716 7 12C7 12.8284 7.67157 13.5 8.5 13.5ZM10 18.5C10 19.3284 9.32843 20 8.5 20C7.67157 20 7 19.3284 7 18.5C7 17.6716 7.67157 17 8.5 17C9.32843 17 10 17.6716 10 18.5ZM15.5 7C16.3284 7 17 6.32843 17 5.5C17 4.67157 16.3284 4 15.5 4C14.6716 4 14 4.67157 14 5.5C14 6.32843 14.6716 7 15.5 7ZM17 12C17 12.8284 16.3284 13.5 15.5 13.5C14.6716 13.5 14 12.8284 14 12C14 11.1716 14.6716 10.5 15.5 10.5C16.3284 10.5 17 11.1716 17 12ZM15.5 20C16.3284 20 17 19.3284 17 18.5C17 17.6716 16.3284 17 15.5 17C14.6716 17 14 17.6716 14 18.5C14 19.3284 14.6716 20 15.5 20Z"></path></svg>
+              右圖{{ index + 1 }} <span v-if="imageSizes.right[index] && imageSizes.right[index] !== '检测失败'">(預設圖尺寸: {{ imageSizes.right[index] }})</span>
+              <div class="themeManager-floatImg-tooltip">長按可拖曳改變排序</div>
+            </span>
             <div class="themeManager-floatImg-header-actions">
               <button
                 v-if="rightFloatImages.length > 1"
@@ -798,6 +818,107 @@ const resetHoverImage = (side, index) => {
   }));
 };
 
+// --- 拖曳排序邏輯 ---
+
+const draggingIndex = ref(null);
+const draggingSide = ref(null);
+
+const onDragStart = (e, side, index) => {
+  draggingIndex.value = index;
+  draggingSide.value = side;
+  e.dataTransfer.effectAllowed = 'move';
+  e.dataTransfer.dropEffect = 'move';
+  // 設置拖曳時的透明度，讓用戶知道正在拖曳
+  e.target.style.opacity = '0.5';
+};
+
+const onDragEnd = (e) => {
+  draggingIndex.value = null;
+  draggingSide.value = null;
+  e.target.style.opacity = '1';
+  
+  // 移除所有可能的 drag-over 樣式
+  document.querySelectorAll('.themeManager-floatImg-item').forEach(el => {
+    el.classList.remove('drag-over');
+  });
+};
+
+const onDragOver = (e) => {
+  e.preventDefault(); // 允許放置
+  e.dataTransfer.dropEffect = 'move';
+  
+  // 添加視覺提示
+  const item = e.target.closest('.themeManager-floatImg-item');
+  if (item) {
+    item.classList.add('drag-over');
+  }
+};
+
+const onDragLeave = (e) => {
+  const item = e.target.closest('.themeManager-floatImg-item');
+  if (item) {
+    item.classList.remove('drag-over');
+  }
+};
+
+const onDrop = (e, side, index) => {
+  e.preventDefault();
+  
+  // 移除樣式
+  const item = e.target.closest('.themeManager-floatImg-item');
+  if (item) {
+    item.classList.remove('drag-over');
+  }
+
+  // 檢查是否同側且索引不同
+  if (draggingSide.value === side && draggingIndex.value !== null && draggingIndex.value !== index) {
+    moveItem(side, draggingIndex.value, index);
+  }
+};
+
+// 移動項目並同步所有相關數據
+const moveItem = (side, fromIndex, toIndex) => {
+  // 1. 移動主列表 (leftFloatImages / rightFloatImages)
+  const list = side === 'left' ? leftFloatImages : rightFloatImages;
+  const itemToMove = list.value[fromIndex];
+  list.value.splice(fromIndex, 1);
+  list.value.splice(toIndex, 0, itemToMove);
+  
+  // 2. 同步移動 customImages (滑入圖)
+  // 將對象轉換為數組 -> 移動 -> 轉回對象
+  const syncObject = (objRef) => {
+    const arr = [];
+    // 找出最大索引以確定數組長度
+    const maxIndex = Math.max(...Object.keys(objRef[side]).map(Number), Math.max(fromIndex, toIndex));
+    
+    for (let i = 0; i <= maxIndex; i++) {
+      arr[i] = objRef[side][i];
+    }
+    
+    // 移動數組元素
+    const valToMove = arr[fromIndex];
+    arr.splice(fromIndex, 1);
+    arr.splice(toIndex, 0, valToMove);
+    
+    // 重建對象
+    const newObj = {};
+    arr.forEach((val, i) => {
+      if (val !== undefined) {
+        newObj[i] = val;
+      }
+    });
+    objRef[side] = newObj;
+  };
+
+  syncObject(customImages);
+  syncObject(imageSizes);
+  syncObject(hoverImageSizes);
+
+  // 3. 保存所有變更
+  saveFloatImagesList();
+  saveCustomImages();
+};
+
 // 删除滑出图片 (Slide-out) - 直接清空
 const resetDefaultImage = (side, index) => {
   const images = side === 'left' ? leftFloatImages : rightFloatImages;
@@ -1062,14 +1183,73 @@ onUnmounted(() => {
 
 .themeManager-floatImg-item {
   background: var(--cp-color-third);
-  border: 1px solid #e8e8ef;
   border-radius: 6px;
   padding: 12px;
-  margin-bottom: 12px;
-  transition: border-color .3s;
+  margin-bottom: 4px;
+  transition: border-color .3s, opacity 0.2s;
+  cursor: grab; /* 提示可拖曳 */
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  /* 拖曳時的樣式 */
+  &.drag-over {
+    border: 2px dashed var(--cp-color-secondary);
+    background: rgba(var(--cp-color-secondary-rgb), 0.1);
+  }
+
   &:hover {
     border-color: var(--cp-color-secondary);
   }
+}
+
+.themeManager-floatImg-label {
+  font-weight: 500;
+  color: var(--cp-text-primary);
+  position: relative; /* 為 Tooltip 定位 */
+  cursor: help;
+
+  /* Tooltip 樣式 */
+  .themeManager-floatImg-tooltip {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-bottom: 8px;
+    padding: 6px 10px;
+    background-color: #333;
+    color: #fff;
+    font-size: 12px;
+    border-radius: 4px;
+    white-space: nowrap;
+    z-index: 10;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+    /* 小三角形 */
+    &::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 5px;
+      border-style: solid;
+      border-color: #333 transparent transparent transparent;
+    }
+  }
+
+  &:hover .themeManager-floatImg-tooltip {
+    display: block;
+    animation: fadeIn 0.2s ease-in-out;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translate(-50%, 5px); }
+  to { opacity: 1; transform: translate(-50%, 0); }
 }
 
 .themeManager-floatImg-header {
@@ -1131,12 +1311,6 @@ onUnmounted(() => {
   &:hover {
     background: #fee;
   }
-}
-
-.themeManager-floatImg-add-wrap {
-  margin-top: 12px;
-  padding-top: 12px;
-  border-top: 1px dashed #e8e8ef;
 }
 
 .themeManager-floatImg-add-btn {
