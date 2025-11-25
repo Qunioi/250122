@@ -10,6 +10,6 @@ import ThemeManager from '@/theme/components/ThemeManager.vue'
 import Layout from '@/components/Layout.vue'
 
 // 控制 ThemeManager 開關
-const enableThemeManager = ref(true)
+const enableThemeManager = ref(false)
 provide('enableThemeManager', enableThemeManager)
 </script>
