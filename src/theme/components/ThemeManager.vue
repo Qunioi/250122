@@ -33,83 +33,92 @@
             <svg xmlns="http://www.w3.org/2000/svg" width="14" viewBox="0 0 24 24" fill="currentColor"><path d="M7 19V13H17V19H19V7.82843L16.1716 5H5V19H7ZM4 3H17L21 7V20C21 20.5523 20.5523 21 20 21H4C3.44772 21 3 20.5523 3 20V4C3 3.44772 3.44772 3 4 3ZM9 15V19H15V15H9Z"></path></svg>
           </button>
         </div>
-        <div class="themeManager-body">
-          <details class="themeManager-details" open>
-            <summary>Logo与轮播图尺寸</summary>
-            <div class="themeManager-detail-content">
-              <LogoUploader />
-            </div>
-          </details>
-          <details class="themeManager-details" open>
-            <summary>版型主題</summary>
-            <div class="themeManager-detail-content">
-              <PlatformSelet />
-            </div>
-          </details>
-          <details class="themeManager-details" open>
-            <summary>版型配色</summary>
-            <div class="themeManager-detail-content">
-              <div class="themeManager-theme-wrap">
-                <div class="themeManager-theme-title">
-                  预设配色
-                </div>
-                <div class="themeManager-theme-content">
-                  <button v-for="theme in sortedThemes" :key="theme.themeSort ?? theme.themeName" :class="['themeManager-theme-btn',{ active: selectedThemeName === theme.themeName },]" type="button" @click="selectTheme(theme.themeName)">
-                    <div class="themeManager-theme-color" :style="{background: `linear-gradient(90deg, ${theme.themeColor.primary} 0, ${theme.themeColor.primary} 50%, ${theme.themeColor.secondary} 50%, ${theme.themeColor.secondary} 100%)`,}" />
-                    <span class="themeManager-theme-name">
-                      {{ theme.themeName }} ({{ theme.themeMode }})
-                    </span>
-                  </button>
-                  <button
-                    class="themeManager-theme-reset-btn"
-                    type="button"
-                    :disabled="!hasModified"
-                    :title="hasModified ? '重置当前主题所有自订颜色' : '尚未调整，无需重置'"
-                    @click="confirmResetTheme">
-                    重置
-                  </button>
-                </div>
-              </div>
-              <h4>主题颜色自订</h4>
-              <div class="themeManager-picker-wrap" v-if="selectedColors.length">
-                <ColorPicker
-                  v-for="color in selectedColors"
-                  :key="color.id"
-                  :item="color"
-                  :pickerId="color.id"
-                  :isOpen="activePickerId === color.id"
-                  :modified="modifiedMap[color.id]"
-                  @update="updateColor"
-                  @remove="removeColor"
-                  @toggle-picker="handleTogglePicker"
-                />
-              </div>
-              <div v-else>
-                <p>此主題尚未設定 colorVariables。</p>
-              </div>
-              <!-- 匯出 / 匯入 / 保存 -->
-              <div class="themeManager-io-wrap">
-                <button type="button" class="themeManager-btn themeManager-btn-export" @click="exportTheme" :title="hasModified
-                    ? '汇出目前自订配色'
-                    : '没有自订变更，汇出将与预设相同'
-                  ">
-                  <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.625 7.9375V9.15625C0.625 9.47948 0.753404 9.78948 0.981964 10.018C1.21052 10.2466 1.52052 10.375 1.84375 10.375H9.15625C9.47948 10.375 9.78948 10.2466 10.018 10.018C10.2466 9.78948 10.375 9.47948 10.375 9.15625V7.9375M8.75 3.875L5.5 7.125M5.5 0.625V7.125M2.25 3.875L5.5 7.125" stroke="currentColor" stroke-width="0.8125" stroke-linecap="round" stroke-linejoin="round"></path></svg>
-                  导出配色
-                </button>
-                <button type="button" class="themeManager-btn themeManager-btn-import" @click="triggerImport">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75v-2.25m-3-7.5L12 3m0 0L6 9m6-6v12"></path></svg>
-                  导入配色
-                </button>
-                <input ref="fileInputRef" type="file" accept=".css,.txt" class="themeManager-file-hidden"
-                  @change="onFileChange" />
-              </div>
-              <!-- 匯入結果訊息 -->
-              <div v-if="importMessage" :class="['themeManager-import-msg', importSuccess ? 'ok' : 'err']">
-                <pre class="themeManager-import-text">{{ importMessage }}</pre>
-              </div>
-            </div>
-          </details>
+        <div class="themeManager-tabs">
+          <button class="themeManager-tab-btn" :class="{ active: tabState === 'tabTheme' }" @click="tabState = 'tabTheme'">版面</button>
+          <button class="themeManager-tab-btn" :class="{ active: tabState === 'tabFloat' }" @click="tabState = 'tabFloat'">浮动图</button>
         </div>
+        <Transition>
+          <div class="themeManager-body" v-if="tabState === 'tabTheme'">
+            <details class="themeManager-details" open>
+              <summary>Logo与轮播图尺寸</summary>
+              <div class="themeManager-detail-content">
+                <LogoUploader />
+              </div>
+            </details>
+            <details class="themeManager-details" open>
+              <summary>版型主題</summary>
+              <div class="themeManager-detail-content">
+                <PlatformSelet />
+              </div>
+            </details>
+            <details class="themeManager-details" open>
+              <summary>版型配色</summary>
+              <div class="themeManager-detail-content">
+                <div class="themeManager-theme-wrap">
+                  <div class="themeManager-theme-title">
+                    预设配色
+                  </div>
+                  <div class="themeManager-theme-content">
+                    <button v-for="theme in sortedThemes" :key="theme.themeSort ?? theme.themeName" :class="['themeManager-theme-btn',{ active: selectedThemeName === theme.themeName },]" type="button" @click="selectTheme(theme.themeName)">
+                      <div class="themeManager-theme-color" :style="{background: `linear-gradient(90deg, ${theme.themeColor.primary} 0, ${theme.themeColor.primary} 50%, ${theme.themeColor.secondary} 50%, ${theme.themeColor.secondary} 100%)`,}" />
+                      <span class="themeManager-theme-name">
+                        {{ theme.themeName }} ({{ theme.themeMode }})
+                      </span>
+                    </button>
+                    <button
+                      class="themeManager-theme-reset-btn"
+                      type="button"
+                      :disabled="!hasModified"
+                      :title="hasModified ? '重置当前主题所有自订颜色' : '尚未调整，无需重置'"
+                      @click="confirmResetTheme">
+                      重置
+                    </button>
+                  </div>
+                </div>
+                <h4>主题颜色自订</h4>
+                <div class="themeManager-picker-wrap" v-if="selectedColors.length">
+                  <ColorPicker
+                    v-for="color in selectedColors"
+                    :key="color.id"
+                    :item="color"
+                    :pickerId="color.id"
+                    :isOpen="activePickerId === color.id"
+                    :modified="modifiedMap[color.id]"
+                    @update="updateColor"
+                    @remove="removeColor"
+                    @toggle-picker="handleTogglePicker"
+                  />
+                </div>
+                <div v-else>
+                  <p>此主題尚未設定 colorVariables。</p>
+                </div>
+                <!-- 匯出 / 匯入 / 保存 -->
+                <div class="themeManager-io-wrap">
+                  <button type="button" class="themeManager-btn themeManager-btn-export" @click="exportTheme" :title="hasModified
+                      ? '汇出目前自订配色'
+                      : '没有自订变更，汇出将与预设相同'
+                    ">
+                    <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0.625 7.9375V9.15625C0.625 9.47948 0.753404 9.78948 0.981964 10.018C1.21052 10.2466 1.52052 10.375 1.84375 10.375H9.15625C9.47948 10.375 9.78948 10.2466 10.018 10.018C10.2466 9.78948 10.375 9.47948 10.375 9.15625V7.9375M8.75 3.875L5.5 7.125M5.5 0.625V7.125M2.25 3.875L5.5 7.125" stroke="currentColor" stroke-width="0.8125" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                    导出配色
+                  </button>
+                  <button type="button" class="themeManager-btn themeManager-btn-import" @click="triggerImport">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75v-2.25m-3-7.5L12 3m0 0L6 9m6-6v12"></path></svg>
+                    导入配色
+                  </button>
+                  <input ref="fileInputRef" type="file" accept=".css,.txt" class="themeManager-file-hidden"
+                    @change="onFileChange" />
+                </div>
+                <!-- 匯入結果訊息 -->
+                <div v-if="importMessage" :class="['themeManager-import-msg', importSuccess ? 'ok' : 'err']">
+                  <pre class="themeManager-import-text">{{ importMessage }}</pre>
+                </div>
+              </div>
+            </details>
+          </div>
+          <div class="themeManager-body" v-else-if="tabState === 'tabFloat'">
+            <FloatImgUploader />
+          </div>
+        </Transition>
       </div>
     </div>
     <div class="themeManager-site-wrap">
@@ -132,19 +141,8 @@ import ColorPicker from "./ColorPicker.vue";
 import LogoUploader from "./LogoUploader.vue";
 import PlatformSelet from "./PlatformSelet.vue";
 import TemplateZoom from "./TemplateZoom.vue";
+import FloatImgUploader from "./FloatImgUploader.vue";
 
-
-// 處理顏色選擇器開關
-const activePickerId = ref(null);
-const handleTogglePicker = (pickerId) => {
-  if (activePickerId.value === pickerId) {
-    // 如果點擊的是已開啟的選擇器，則關閉
-    activePickerId.value = null;
-  } else {
-    // 否則開啟新的選擇器（會自動關閉其他的）
-    activePickerId.value = pickerId;
-  }
-};
 
 // 面板顯示
 const panelVisible = ref(true);
@@ -164,6 +162,24 @@ onMounted(async () => {
     document.body.classList.add('is-edit');
   }
 });
+
+
+// tabs
+const tabState = ref('tabTheme');
+
+
+// 處理顏色選擇器開關
+const activePickerId = ref(null);
+const handleTogglePicker = (pickerId) => {
+  if (activePickerId.value === pickerId) {
+    // 如果點擊的是已開啟的選擇器，則關閉
+    activePickerId.value = null;
+  } else {
+    // 否則開啟新的選擇器（會自動關閉其他的）
+    activePickerId.value = pickerId;
+  }
+};
+
 
 // 說明顯示
 const instructionsVisible = ref(false);
@@ -740,6 +756,7 @@ function waitForImages(root, timeoutMs = 15000) {
   --cp-text-primary: #3d4154;
   --cp-text-secondary: #8e97a5;
   --cp-text-third: #aab4c4;
+  --cp-red: #ff4d4f;
 }
 
 .is-edit .themeManager-site-wrap,
@@ -898,8 +915,49 @@ body.is-edit {
 
 .themeManager-body {
     overflow: auto;
-  height: calc(100% - 52px);
+  height: calc(100% - 96px);
 }
+
+
+.themeManager-tabs {
+  height: 44px;
+  border-bottom: 1px solid #dedede;
+  margin: 0 10px;
+  .themeManager-tab-btn {
+    cursor: pointer;
+    min-width: 74px;
+    font-size: 14px;
+    line-height: 44px;
+    color: var(--cp-text-secondary);
+    background: transparent;
+    padding: 0 1rem;
+    position: relative;
+    &::after {
+      content: "";
+      display: none;
+      width: 100%;
+      height: 2px;
+      background: var(--cp-primary);
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translate(-50%);
+    }
+    &:hover {
+      font-weight: bold;
+      color: var(--cp-text-primary);
+    }
+    &.active {
+      font-weight: bold;
+      color: var(--cp-text-primary);
+      &::after {
+        display: block;
+      }
+    }
+  }
+}
+
+
 
 .themeManager-details {
   &[open] {
@@ -934,7 +992,7 @@ body.is-edit {
       background-color: currentColor;
       position: absolute;
       top: 50%;
-      right: 10px;
+      right: 20px;
       transition: transform .2s ease-in-out, opacity .3s ease-in-out;
       transform: translateY(-50%);
     }

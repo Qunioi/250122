@@ -79,7 +79,7 @@
           }">
           <button class="first-live-btn">Play</button>
           <div class="first-live-info">
-            <div class="first-live-title">AG视讯</div>
+            <div class="first-live-title">PA视讯</div>
             <div class="first-live-description">
               <p>实体赌场真人荷官现场发牌</p>
             </div>
