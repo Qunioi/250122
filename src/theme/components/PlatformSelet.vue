@@ -49,7 +49,7 @@
       display: none;
     }
     &:has(input[type="radio"]:checked) {
-      color: #FFF;
+      color: rgb(255 255 255);
       background-color: var(--cp-color-primary);
       span {
         padding-left: 12px;
@@ -62,7 +62,7 @@
       color: var(--cp-text-secondary);
     }
     &:hover {
-      color: #FFF;
+      color: rgb(255 255 255);
       background-color: var(--cp-color-secondary);
       &:has(input[type="radio"]:disabled) {
         background-color: var(--cp-color-third);

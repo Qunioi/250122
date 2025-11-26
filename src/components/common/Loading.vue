@@ -11,7 +11,7 @@ defineProps({ show: Boolean })
 .page-mask {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.5);
+  background: rgb(0 0 0 / 50%);
   z-index: 9996;
   opacity: 1;
 }

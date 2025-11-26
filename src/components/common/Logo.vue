@@ -19,26 +19,26 @@
       <path style="mix-blend-mode:multiply" d="M125 45.32C124.02 43.25 122.15 41.4 118.58 41.4V51.23C118.58 51.23 124.89 45.43 125 45.32Z" fill="url(#paint4_linear)"/>
       <defs>
       <linearGradient id="paint0_linear" x1="71.15" y1="37.8" x2="71.15" y2="51.91" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#000" stop-opacity="0"/>
-      <stop offset="1" stop-color="#000" stop-opacity="0.35"/>
+      <stop stop-color="rgb(0 0 0)" stop-opacity="0"/>
+      <stop offset="1" stop-color="rgb(0 0 0)" stop-opacity="0.35"/>
       </linearGradient>
       <linearGradient id="paint1_linear" x1="123.09" y1="45.07" x2="122.45" y2="63.2" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#000" stop-opacity="0"/>
-      <stop offset="0.42" stop-color="#000" stop-opacity="0.25"/>
-      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+      <stop stop-color="rgb(0 0 0)" stop-opacity="0"/>
+      <stop offset="0.42" stop-color="rgb(0 0 0)" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="rgb(0 0 0)" stop-opacity="0"/>
       </linearGradient>
       <linearGradient id="paint2_linear" x1="24.49" y1="38.88" x2="23.36" y2="51.79" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#000" stop-opacity="0"/>
-      <stop offset="1" stop-color="#000" stop-opacity="0.35"/>
+      <stop stop-color="rgb(0 0 0)" stop-opacity="0"/>
+      <stop offset="1" stop-color="rgb(0 0 0)" stop-opacity="0.35"/>
       </linearGradient>
       <linearGradient id="paint3_linear" x1="88.34" y1="53.91" x2="93.92" y2="69.18" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#000" stop-opacity="0"/>
-      <stop offset="1" stop-color="#000" stop-opacity="0.35"/>
+      <stop stop-color="rgb(0 0 0)" stop-opacity="0"/>
+      <stop offset="1" stop-color="rgb(0 0 0)" stop-opacity="0.35"/>
       </linearGradient>
       <linearGradient id="paint4_linear" x1="121.77" y1="47.17" x2="121.93" y2="54.96" gradientUnits="userSpaceOnUse">
-      <stop stop-color="#000" stop-opacity="0"/>
-      <stop offset="0.42" stop-color="#000" stop-opacity="0.25"/>
-      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+      <stop stop-color="rgb(0 0 0)" stop-opacity="0"/>
+      <stop offset="0.42" stop-color="rgb(0 0 0)" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="rgb(0 0 0)" stop-opacity="0"/>
       </linearGradient>
       </defs>
     </svg>

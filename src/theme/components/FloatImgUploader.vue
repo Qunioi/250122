@@ -1082,8 +1082,8 @@ onUnmounted(() => {
 <style scoped lang="scss">
 :global(.ele-highlight-float) {
   align-items: center;
-  background-color: #55d97f99;
-  color: #fff;
+  background-color: rgb(85 217 127 / 60%);
+  color: rgb(255 255 255);
   display: flex;
   font-size: 1.2rem;
   font-weight: 700;
@@ -1092,7 +1092,7 @@ onUnmounted(() => {
   left: 0;
   pointer-events: none;
   position: absolute;
-  text-shadow: 0 0 10px rgba(0, 0, 0, .7);
+  text-shadow: 0 0 10px rgb(0 0 0 / 70%);
   top: 0;
   width: 100%;
   z-index: 999;
@@ -1147,7 +1147,7 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
+  background-color: rgb(204 204 204);
   border-radius: 20px;
   transition: .3s;
   &::before {
@@ -1172,7 +1172,7 @@ onUnmounted(() => {
   border-radius: 4px;
   transition: background-color .3s, opacity .3s;
   &:hover:not(:disabled) {
-    color: #fff;
+    color: rgb(255 255 255);
     background-color: var(--cp-color-secondary);
   }
   &:disabled {
@@ -1219,14 +1219,14 @@ onUnmounted(() => {
     transform: translateX(-50%);
     margin-bottom: 8px;
     padding: 6px 10px;
-    background-color: #333;
-    color: #fff;
+    background-color: rgb(51 51 51);
+    color: rgb(255 255 255);
     font-size: 12px;
     border-radius: 4px;
     white-space: nowrap;
     z-index: 10;
     pointer-events: none;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 8px rgb(0 0 0 / 15%);
 
     /* 小三角形 */
     &::after {
@@ -1237,7 +1237,7 @@ onUnmounted(() => {
       transform: translateX(-50%);
       border-width: 5px;
       border-style: solid;
-      border-color: #333 transparent transparent transparent;
+      border-color: rgb(51 51 51) transparent transparent transparent;
     }
   }
 
@@ -1258,7 +1258,7 @@ onUnmounted(() => {
   justify-content: space-between;
   margin-bottom: 12px;
   padding-bottom: 8px;
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: 1px solid rgb(240 240 240);
 }
 
 .themeManager-floatImg-header-actions {
@@ -1282,7 +1282,7 @@ onUnmounted(() => {
   height: 24px;
   border-radius: 4px;
   background: transparent;
-  border: 1px solid #e8e8ef;
+  border: 1px solid rgb(232 232 239);
   cursor: pointer;
   transition: all .3s;
   svg {
@@ -1290,10 +1290,10 @@ onUnmounted(() => {
     transition: stroke .3s;
   }
   &:hover:not(:disabled) {
-    background: #fee;
-    border-color: #f44;
+    background: rgb(255 238 238);
+    border-color: rgb(255 68 68);
     svg {
-      stroke: #f44;
+      stroke: rgb(255 68 68);
     }
   }
   &:disabled {
@@ -1307,9 +1307,9 @@ onUnmounted(() => {
   top: 4px;
   right: 4px;
   z-index: 10;
-  background: rgba(255, 255, 255, 0.9);
+  background: rgb(255 255 255 / 90%);
   &:hover {
-    background: #fee;
+    background: rgb(255 238 238);
   }
 }
 
@@ -1332,7 +1332,7 @@ onUnmounted(() => {
     transition: stroke .3s;
   }
   &:hover {
-    background: rgba(65, 127, 247, 0.05);
+    background: rgb(65 127 247 / 5%);
     border-color: var(--cp-color-primary);
     color: var(--cp-color-primary);
     svg {
@@ -1365,8 +1365,8 @@ onUnmounted(() => {
   position: relative;
   width: 100%;
   aspect-ratio: 1;
-  background: #f5f7fa;
-  border: 1px solid #e8e8ef;
+  background: rgb(245 247 250);
+  border: 1px solid rgb(232 232 239);
   border-radius: 4px;
   overflow: hidden;
   cursor: pointer;
@@ -1385,8 +1385,8 @@ onUnmounted(() => {
   position: relative;
   width: 100%;
   aspect-ratio: 1;
-  background: #f5f7fa;
-  border: 1px solid #e8e8ef;
+  background: rgb(245 247 250);
+  border: 1px solid rgb(232 232 239);
   border-radius: 4px;
   overflow: hidden;
   &.has-image {
@@ -1404,7 +1404,7 @@ onUnmounted(() => {
   bottom: 2px;
   right: 2px;
   background: var(--cp-red);
-  color: #fff;
+  color: rgb(255 255 255);
   font-size: 11px;
   font-weight: 600;
   padding: 4px 8px;
@@ -1418,7 +1418,7 @@ onUnmounted(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgb(0 0 0 / 60%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1430,7 +1430,7 @@ onUnmounted(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgb(0 0 0 / 60%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1447,7 +1447,7 @@ onUnmounted(() => {
   cursor: pointer;
   transition: background-color .3s;
   &:hover {
-    color: #fff;
+    color: rgb(255 255 255);
     background: var(--cp-color-secondary);
   }
 }
@@ -1458,17 +1458,17 @@ onUnmounted(() => {
   gap: 8px;
   margin-top: 12px;
   padding: 10px 12px;
-  background: #fff3cd;
-  border: 1px solid #ffc107;
+  background: rgb(255 243 205);
+  border: 1px solid rgb(255 193 7);
   border-radius: 6px;
   svg {
     flex-shrink: 0;
-    stroke: #ff9800;
+    stroke: rgb(255 152 0);
     margin-top: 2px;
   }
   span {
     font-size: 12px;
-    color: #856404;
+    color: rgb(133 100 4);
     line-height: 1.5;
   }
 }
@@ -1492,8 +1492,8 @@ onUnmounted(() => {
   justify-content: center;
   width: 100%;
   height: 100%;
-  background: #f5f7fa;
-  border: 1px dashed #d0d0d0;
+  background: rgb(245 247 250);
+  border: 1px dashed rgb(208 208 208);
   border-radius: 4px;
   cursor: pointer;
   transition: all .3s;
@@ -1508,7 +1508,7 @@ onUnmounted(() => {
     transition: color .3s;
   }
   &:hover {
-    background: #eef2f7;
+    background: rgb(238 242 247);
     border-color: var(--cp-color-secondary);
     svg {
       stroke: var(--cp-color-secondary);

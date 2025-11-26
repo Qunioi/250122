@@ -1,7 +1,7 @@
 .ele-join-section {
 	box-sizing: border-box;
 	width: 660px;
-	color: #fff; //可改
+	color: rgb(255 255 255); //可改
 	padding: 37px 27px 40px 46px;
 	margin: 0 auto;
     .info-title {
@@ -19,7 +19,7 @@
         max-height: 70px;
         font-size: 24px;
         font-weight: bold;
-        color: #fff; //可改
+        color: rgb(255 255 255); //可改
         text-indent: 1em;
         text-overflow: ellipsis;
         white-space: nowrap;
@@ -53,14 +53,14 @@
     }
 	.base-input {
 		width: 100%;
-		border: 1px solid #dadada; //可改
+		border: 1px solid rgb(218 218 218); //可改
 		position: relative;
 		input {
 			width: 100%;
 			height: 36px;
 			font-size: 14px;
-			color: #757575; //可改
-			background: #fff; //可改
+			color: rgb(117 117 117); //可改
+			background: rgb(255 255 255); //可改
 			padding-left: 2%;
 			border: 0;
 			border-radius: 0;
@@ -79,7 +79,7 @@
 		}
 	}
 	.text-unicode {
-		color: #757575;
+		color: rgb(117 117 117);
 		line-height: 30px;
 		right: 82px;
 	}
@@ -107,14 +107,14 @@
 		margin: 3px 0 3px 8px;
 		width: 12px;
 		height: 12px;
-		color: #8088a1;
+		color: rgb(128 136 161);
 	}
 	.captcha-msg {
 		float: left;
 		margin: 1px 0 0 6px;
 		max-width: 445px;
 		line-height: 19px;
-		color: #8088a1;
+		color: rgb(128 136 161);
 		font-size: 12px;
 		letter-spacing: .6px;
 	}
@@ -142,14 +142,14 @@
     display: block;
     margin: 0 auto;
     width: 200px;
-    background: #4d83b2;
+    background: rgb(77 131 178);
     height: 36px;
     text-align: center;
     font-size: 14px;
-    color: #fff;
+    color: rgb(255 255 255);
     outline: 0;
     cursor: pointer;
-    border: 1px solid #4d83b2;
+    border: 1px solid rgb(77 131 178);
 }
 
 .separate-line {
@@ -160,8 +160,8 @@
 .wallet-wrap {
     box-sizing: border-box;
     width: 98%;
-    background: #fff;
-    border: 1px solid #ededed;
+    background: rgb(255 255 255);
+    border: 1px solid rgb(237 237 237);
     border-radius: 4px;
     padding: 15px 10px;
     margin: 0 auto 10px;
@@ -175,7 +175,7 @@
 				content: "";
 				width: 100%;
 				height: 1px;
-				background: #757575;
+				background: rgb(117 117 117);
 				position: absolute;
 				top: 50%;
 				left: 0;
@@ -184,14 +184,14 @@
 		.wallet-title-content {
 			display: inline-block;
 			max-width: 70%;
-			color: #757575;
-			background: #fff;
+			color: rgb(117 117 117);
+			background: rgb(255 255 255);
 			word-break: break-all;
 			padding: 0 20px;
 			position: relative;
 		}
 		.wallet-subtitle {
-			color: #757575;
+			color: rgb(117 117 117);
 			margin-top: 10px;
 		}
 	}
@@ -208,13 +208,13 @@
 		max-width: 60px;
 		min-width: 40px;
 		min-height: 40px;
-		color: #757575;
+		color: rgb(117 117 117);
 		cursor: pointer;
 		user-select: none;
 		margin: 10px 5px 0;
 		position: relative;
 		&.active {
-			color: #404e67; //可改
+			color: rgb(64 78 103); //可改
 			.wallet-bank-icon::before {
 				display: block;
 			}
@@ -224,11 +224,11 @@
 			width: 40px;
 			height: 40px;
 			background-size: 24px;
-			background-color: #fff;
+			background-color: rgb(255 255 255);
 			background-repeat: no-repeat;
 			background-position: 50%;
 			background-image: url('/image/not-use/join/wallet_nolink.png');
-			border: 2px solid #ededed;
+			border: 2px solid rgb(237 237 237);
 			border-radius: 50%;
 			margin-left: -20px;
 			position: absolute;
@@ -239,8 +239,8 @@
 				display: none;
 				width: 16px;
 				height: 16px;
-				color: #fff;
-				background: #404e67; //可改
+				color: rgb(255 255 255);
+				background: rgb(64 78 103); //可改
 				border-radius: 50%;
 				position: absolute;
 				top: -4px;

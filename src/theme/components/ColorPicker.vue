@@ -25,7 +25,7 @@
             @input="handleHexInput"
             @blur="handleHexBlur"
             @keydown.enter="handleHexEnter"
-            placeholder="#000000"
+            placeholder="rgb(0 0 0)"
             maxlength="7"
           />
           <span class="themeManager-picker-hex-error"></span>
@@ -132,7 +132,7 @@ const validateAndApplyHex = (value) => {
     // 如果格式不正確，恢復原值
     hexValue.value = rgbToHex(props.item.value)
     // 可選：顯示錯誤提示
-    alert('請輸入正確的顏色格式，例如：#ff0000 或 #f00')
+    alert('請輸入正確的顏色格式，例如：rgb(255 0 0) 或 rgb(255 0 0)')
   }
 }
 
@@ -144,10 +144,10 @@ const isValidHexColor = (hex) => {
   return hexPattern.test(hex)
 }
 
-// 標準化 hex 顏色格式（#abc -> #aabbcc）
+// 標準化 hex 顏色格式（rgb(170 187 204) -> rgb(170 187 204)）
 const normalizeHexColor = (hex) => {
   if (hex.length === 4) {
-    // #abc -> #aabbcc
+    // rgb(170 187 204) -> rgb(170 187 204)
     return '#' + hex.slice(1).split('').map(ch => ch + ch).join('')
   }
   return hex.toUpperCase()
@@ -170,7 +170,7 @@ onUnmounted(() => {
 
 /** 支援 'rgb(r,g,b)'、'r g b'、'#rgb'、'#rrggbb' */
 function rgbToHex(rgb) {
-  if (!rgb) return '#000000'
+  if (!rgb) return 'rgb(0 0 0)'
   const v = String(rgb).toLowerCase()
 
   if (v.startsWith('#')) {
@@ -245,7 +245,7 @@ function rgbToHex(rgb) {
   align-items: center;
   justify-content: center;
   width: 120px;
-  background-color: #f5f7fa;
+  background-color: rgb(245 247 250);
   border-radius: 4px;
   padding: 6px 12px;
   .themeManager-picker-hex-input {
@@ -263,7 +263,7 @@ function rgbToHex(rgb) {
   display: inline-block;
   width: 20px;
   height: 20px;
-  border: 1px solid #fff;
+  border: 1px solid rgb(255 255 255);
   border-radius: 4px;
 }
 </style>

@@ -72,7 +72,7 @@ onMounted(() => {
     border-radius: 3px;
     padding: 2px 8px;
     &:hover {
-      color: #FFF;
+      color: rgb(255 255 255);
       background-color: var(--cp-bg-secondary);
     }
   }

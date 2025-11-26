@@ -238,7 +238,7 @@ function hexToRgbSpace(hex) {
   return `${r} ${g} ${b}`;
 }
 function toHex(val) {
-  if (!val) return "#000000";
+  if (!val) return "rgb(0 0 0)";
   const v = String(val).toLowerCase();
   if (v.startsWith("#")) {
     if (v.length === 4)
@@ -283,11 +283,11 @@ function toHex(val) {
 
 // DOM 讀取／清除
 function getThemeColorValue(varName) {
-  if (typeof window === "undefined") return "#000000";
+  if (typeof window === "undefined") return "rgb(0 0 0)";
   return (
     getComputedStyle(document.documentElement)
       .getPropertyValue(varName)
-      .trim() || "#000000"
+      .trim() || "rgb(0 0 0)"
   );
 }
 function clearThemeInlineColors() {
@@ -646,7 +646,7 @@ async function saveTheme() {
         return true;
       },
       backgroundColor:
-        getComputedStyle(document.body).backgroundColor || "#ffffff",
+        getComputedStyle(document.body).backgroundColor || "rgb(255 255 255)",
     });
 
     const imageBlob = await fetch(dataUrl).then((r) => r.blob());
@@ -747,22 +747,22 @@ function waitForImages(root, timeoutMs = 15000) {
 
 <style lang="scss">
 :root {
-  --cp-bg-primary: #fff;
-  --cp-bg-secondary: #889ebc;
-  --cp-color-bg: #f1f4f8;
-  --cp-color-primary: #889ebc;
-  --cp-color-secondary: #417FF7;
-  --cp-color-third: #f5f7fa;
-  --cp-text-primary: #3d4154;
-  --cp-text-secondary: #8e97a5;
-  --cp-text-third: #aab4c4;
-  --cp-red: #ff4d4f;
+  --cp-bg-primary: rgb(255 255 255);
+  --cp-bg-secondary: rgb(136 158 188);
+  --cp-color-bg: rgb(241 244 248);
+  --cp-color-primary: rgb(136 158 188);
+  --cp-color-secondary: rgb(65 127 247);
+  --cp-color-third: rgb(245 247 250);
+  --cp-text-primary: rgb(61 65 84);
+  --cp-text-secondary: rgb(142 151 165);
+  --cp-text-third: rgb(170 180 196);
+  --cp-red: rgb(255 77 79);
 }
 
 .is-edit .themeManager-site-wrap,
 .themeManager-body {
   &::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    -webkit-box-shadow: inset 0 0 6px rgb(0 0 0 / 30%);
     background-color: var(--cp-color-third);
   }
   &::-webkit-scrollbar {
@@ -813,7 +813,7 @@ body.is-edit {
   width: 36px;
   z-index: 1099;
   svg {
-    color: #fff;
+    color: rgb(255 255 255);
     transform: rotate(180deg);
     position: relative;
     top: 2px;
@@ -862,11 +862,11 @@ body.is-edit {
   right: 8px;
   padding: 4px 10px;
   border-radius: 6px;
-  border: 1px solid #ddd;
-  background: #fff;
+  border: 1px solid rgb(221 221 221);
+  background: rgb(255 255 255);
   cursor: pointer;
   font-size: 13px;
-  color: #888;
+  color: rgb(136 136 136);
 }
 
 .themeManager-container {
@@ -875,7 +875,7 @@ body.is-edit {
   background: var(--cp-bg-primary);
   width: 100%;
   height: 100%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 2px 8px rgb(0 0 0 / 6%);
 }
 
 .themeManager-header {
@@ -889,7 +889,7 @@ body.is-edit {
   .themeManager-instructions-btn {
     width: 24px;
     height: 24px;
-    color: #fff;
+    color: rgb(255 255 255);
     border-radius: 50%;
     background-color: var(--cp-bg-secondary);
     cursor: pointer;
@@ -902,13 +902,13 @@ body.is-edit {
     height: 34px;
     font-family: Google Sans, Roboto, Arial, sans-serif;
     font-size: 14px;
-    color: #fff;
+    color: rgb(255 255 255);
     background-color: var(--cp-color-secondary);
     border-radius: 4px;
     padding: 0 12px;
     cursor: pointer;
     &:hover {
-      background-color: #366edc;
+      background-color: rgb(54 110 220);
     }
   }
 }
@@ -921,7 +921,7 @@ body.is-edit {
 
 .themeManager-tabs {
   height: 44px;
-  border-bottom: 1px solid #dedede;
+  border-bottom: 1px solid rgb(222 222 222);
   margin: 0 10px;
   .themeManager-tab-btn {
     cursor: pointer;
@@ -1026,7 +1026,7 @@ body.is-edit {
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  border-bottom: 1px solid rgba(233, 237, 246, .5);
+  border-bottom: 1px solid rgb(233 237 246 / 50%);
   margin-bottom: 16px;
   padding-bottom: 16px;
   .themeManager-theme-title {
@@ -1070,7 +1070,7 @@ body.is-edit {
     padding: 0 8px;
     transition: background-color 0.3s, color 0.3s;
     &:hover {
-      color: #fff;
+      color: rgb(255 255 255);
       background-color: var(--cp-color-secondary);
     }
     &:disabled {
@@ -1103,11 +1103,11 @@ button {
     height: 30px;
     color: var(--cp-text-primary);
     background-color: transparent;
-    border: 1px solid #e9edf3;
+    border: 1px solid rgb(233 237 243);
     border-radius: 4px;
     transition: background-color 0.3s, color 0.3s, border-color 0.3s;
     &:hover {
-      color: #fff;
+      color: rgb(255 255 255);
       background-color: var(--cp-color-secondary);
       border-color: var(--cp-color-secondary);
     }
@@ -1129,16 +1129,16 @@ button {
 
 .themeManager-import-msg.ok
 {
-  background: #e9f7ef;
-  border: 1px solid #b8e0c8;
-  color: #156a42;
+  background: rgb(233 247 239);
+  border: 1px solid rgb(184 224 200);
+  color: rgb(21 106 66);
 }
 
 .themeManager-import-msg.err
 {
-  background: #fff3f3;
-  border: 1px solid #f1c0c0;
-  color: #8b1f1f;
+  background: rgb(255 243 243);
+  border: 1px solid rgb(241 192 192);
+  color: rgb(139 31 31);
 }
 
 .themeManager-import-text
@@ -1166,7 +1166,7 @@ button {
 
   .changeColor-upload-tips {
     font-size: 12px;
-    color: #666;
+    color: rgb(102 102 102);
   }
 
   .changeColor-upload-input

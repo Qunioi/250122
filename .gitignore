@@ -25,3 +25,7 @@ dist-ssr
 
 
 .gitmessage.txt
+.vscode
+
+convert.cjs
+convert-all.cjs

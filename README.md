@@ -1,4 +1,4 @@
-# BBIN Partner Project (250123)
+# BBINPartner2.0 Project (250122)
 
 ## 環境需求
 

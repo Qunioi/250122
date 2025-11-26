@@ -399,8 +399,8 @@ function loadImageSize(dataUrl) {
 }
 :global(.ele-highlight) {
   align-items: center;
-  background-color: #55d97f99;
-  color: #fff;
+  background-color: rgb(85 217 127 / 60%);
+  color: rgb(255 255 255);
   display: flex;
   font-size: 5rem;
   font-weight: 700;
@@ -409,7 +409,7 @@ function loadImageSize(dataUrl) {
   left: 0;
   pointer-events: none;
   position: absolute;
-  text-shadow: 0 0 10px rgba(0, 0, 0, .7);
+  text-shadow: 0 0 10px rgb(0 0 0 / 70%);
   top: 0;
   width: 100%;
   z-index: 99;
@@ -431,7 +431,7 @@ function loadImageSize(dataUrl) {
   padding: 10px;
   &:hover {
     .themeManager-imgSize-size {
-      color: #fff;
+      color: rgb(255 255 255);
       background-color: var(--cp-color-secondary);
     }
   }
@@ -456,9 +456,9 @@ function loadImageSize(dataUrl) {
 
   .themeManager-imgSize-size {
     font-size: 12px;
-    color: #1e2233;
-    background-color: #fff;
-    border: 1px solid #e8e8ef;
+    color: rgb(30 34 51);
+    background-color: rgb(255 255 255);
+    border: 1px solid rgb(232 232 239);
     border-radius: 20px;
     padding: 3px 8px 2px;
     transition: background-color .3s, color .3s;
@@ -494,7 +494,7 @@ function loadImageSize(dataUrl) {
     position: relative;
     transition: background-color .3s;
     appearance: none;
-    color: #fff;
+    color: rgb(255 255 255);
     background-color: var(--cp-color-primary);
 
     &:hover {
