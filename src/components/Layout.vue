@@ -16,16 +16,20 @@ import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue';
 import Loading from '@/components/common/Loading.vue';
 import { setMaskRef } from '@/router';
+import { useDataStore } from '@/stores/dataStore.js';
 import { useConfigStore } from '@/stores/configStore.js';
 import { useRoute } from 'vue-router';
 
+const dataStore = useDataStore();
 const configStore = useConfigStore();
 const enableThemeManager = inject('enableThemeManager', ref(true))
 const route = useRoute();
 
 const showMask = ref(false);
-onMounted(() => {
+onMounted(async () => {
   setMaskRef(showMask);
+  await nextTick();
+  setBodyClass();
 });
 
 const isStatic = true;
@@ -40,10 +44,6 @@ function setBodyClass() {
   document.body.className = [staticClass, pageClass, configStore.lang].filter(Boolean).join(' ');
 }
 
-onMounted(() => {
-  setBodyClass();
-});
-
-watch(() => route.path, setBodyClass);
+watch(route, setBodyClass, { deep: true });
 watch(() => configStore.lang, setBodyClass);
 </script>

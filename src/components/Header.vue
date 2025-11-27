@@ -50,7 +50,7 @@ const navClass = computed(() => {
   const type = route.params.type
   return validTypes.includes(type) ? type : 'welcome'
 })
-const isFirst = computed(() => route.path === '/' || route.path === '/first')
+const isFirst = computed(() => route.meta?.pageClass?.includes('first'))
 
 const bannerImage = computed(() => ({
   backgroundImage: `url(${getPath(`/image/${themeColor.value}/lang/${lang.value}/title_${navClass.value}.png`)})`
