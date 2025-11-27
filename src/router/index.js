@@ -5,16 +5,40 @@ import About from '../views/About.vue';
 import Article from '../views/Article.vue';
 import Join from '../views/Join.vue';
 
-const routes = [
-  { path: '/', component: Index },
-  { path: '/about', component: About },
-  { path: '/article', component: Article },
-  { path: '/join', component: Join },
-  {
-    path: '/:type(card|casino|live|sport|lottery|promotion)',
-    component: TypePage
-  },
+// 靜態頁面配置
+const staticPages = [
+  { path: '/', component: Index, pageClass: 'first' },
+  { path: '/about', component: About, pageClass: 'advertise about' },
+  { path: '/article', component: Article, pageClass: 'advertise article' },
+  { path: '/join', component: Join, pageClass: 'advertise join' },
 ];
+
+// 動態頁面類型配置
+const typeClassMap = {
+  'sport': 'game sport',
+  'live': 'game live',
+  'casino': 'game casino',
+  'lottery': 'game lottery',
+  'card': 'game card',
+  'promotion': 'promotion'
+};
+
+// 生成靜態路由
+const routes = staticPages.map(page => ({
+  path: page.path,
+  component: page.component,
+  meta: { pageClass: page.pageClass }
+}));
+
+// 添加動態路由
+routes.push({
+  path: '/:type(card|casino|live|sport|lottery|promotion)',
+  component: TypePage,
+  beforeEnter: (to, from, next) => {
+    to.meta.pageClass = typeClassMap[to.params.type] || 'game';
+    next();
+  }
+});
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

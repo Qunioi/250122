@@ -18,8 +18,8 @@ export const useConfigStore = defineStore('config', () => {
   )
 
   // 初值（若 storage 沒有，退回 .env 或預設）
-  const fallbackColor = import.meta.env.VITE_THEME_COLOR || '2501231'
-  const fallbackMode  = import.meta.env.VITE_THEME_MODE  || theme.getDefaultModeOf(fallbackColor) || 'dark'
+  const fallbackColor = import.meta.env.VITE_THEME_COLOR
+  const fallbackMode  = import.meta.env.VITE_THEME_MODE
 
   // 如果環境變量存在，就使用環境變量，否則才使用 localStorage
   const storedColor = lsGet(`${NAMESPACE}:themeColor`)
