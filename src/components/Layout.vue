@@ -35,13 +35,48 @@ onMounted(async () => {
 const isStatic = true;
 const staticClass = isStatic ? 'is-static' : '';
 
+// 記錄上一次設定的 class,用於清除
+let lastPageClass = '';
+let lastLang = '';
+
 function getPageClass() {
   return route.meta?.pageClass || '';
 }
 
 function setBodyClass() {
   const pageClass = getPageClass();
-  document.body.className = [staticClass, pageClass, configStore.lang].filter(Boolean).join(' ');
+  const currentLang = configStore.lang;
+  
+  // 移除上一次的 pageClass 和 lang
+  if (lastPageClass) {
+    lastPageClass.split(' ').forEach(cls => {
+      if (cls) document.body.classList.remove(cls);
+    });
+  }
+  if (lastLang) {
+    document.body.classList.remove(lastLang);
+  }
+  
+  // 添加 staticClass (只在第一次)
+  if (staticClass && !document.body.classList.contains(staticClass)) {
+    document.body.classList.add(staticClass);
+  }
+  
+  // 添加新的 pageClass
+  if (pageClass) {
+    pageClass.split(' ').forEach(cls => {
+      if (cls) document.body.classList.add(cls);
+    });
+  }
+  
+  // 添加新的 lang
+  if (currentLang) {
+    document.body.classList.add(currentLang);
+  }
+  
+  // 記錄當前設定
+  lastPageClass = pageClass;
+  lastLang = currentLang;
 }
 
 watch(route, setBodyClass, { deep: true });

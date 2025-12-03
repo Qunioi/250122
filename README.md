@@ -42,8 +42,8 @@ npm run build
 <script setup>
 // ... 其他 import
 
-// 控制 ThemeManager 開關
-const enableThemeManager = ref(false) // true: 開啟, false: 關閉
+// 控制 ThemeManager 開關, true: 開啟, false: 關閉
+const enableThemeManager = ref(false)
 provide('enableThemeManager', enableThemeManager)
 </script>
 ```

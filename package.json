@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "prebuild": "npm run clean:ds",
+    "clean:ds": "find . -name '.DS_Store' -type f -delete",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -1,13 +1,24 @@
 .ele-join-section {
 	box-sizing: border-box;
-	width: 660px;
-	color: rgb(255 255 255); //可改
 	padding: 37px 27px 40px 46px;
 	margin: 0 auto;
     .info-title {
         font-size: 20px;
         font-weight: 400;
+				color: var(--join-subtitle);
         margin: 10px 0 14px;
+    }
+}
+.ele-join-section {
+    box-sizing: border-box;
+    height: calc(100% - 48px);
+    font-size: 18px;
+    border-radius: 0 18px 18px 0;
+    padding: 63px 50px 131px;
+    margin: 0;
+    .page-join-inner {
+        width: 660px;
+				margin: 0 auto;
     }
 }
 
@@ -15,15 +26,15 @@
     position: relative;
     .join-header-title {
         overflow: hidden;
-        background: url('/image/not-use/join/m_welcome.png') 0 0 no-repeat;
         max-height: 70px;
         font-size: 24px;
         font-weight: bold;
-        color: rgb(255 255 255); //可改
+        color: var(--join-title);
         text-indent: 1em;
         text-overflow: ellipsis;
         white-space: nowrap;
         line-height: 80px;
+        background: url('/image/not-use/join/m_welcome.png') 0 0 no-repeat;
         padding-left: 60px;
         margin-bottom: 10px;
         position: relative;
@@ -46,7 +57,7 @@
         width: 10px;
         line-height: 16px;
         font-size: 14px;
-        color: rgb(144 45 13); //可改
+        color: var(--join-star);
         &.is-required {
             display: block;
         }
@@ -66,6 +77,9 @@
 			border-radius: 0;
 			outline: none;
 			box-sizing: border-box;
+		}
+		&:has(input:focus) {
+			border-color: var(--join-input-focus);
 		}
 		.noEye {
 			position: absolute;
@@ -139,21 +153,26 @@
 }
 
 .join-form-btn {
+	cursor: pointer;
     display: block;
-    margin: 0 auto;
-    width: 200px;
-    background: rgb(77 131 178);
-    height: 36px;
     text-align: center;
-    font-size: 14px;
-    color: rgb(255 255 255);
+    width: 200px;
+    height: 36px;
+    font-size: 15px;
+    color: var(--join-submit-text);
+    background: var(--join-submit-bg);
+    border: var(--join-submit-border);
+		border-radius: var(--join-submit-radius);
     outline: 0;
-    cursor: pointer;
-    border: 1px solid rgb(77 131 178);
+    margin: 0 auto;
+		&:hover {
+			color: var(--join-submit-hover-text);
+			background-color: var(--join-submit-hover-bg);
+		}
 }
 
 .separate-line {
-	border-top: 1px solid rgb(var(--color-primary));
+	border-top: 1px solid rgb(var(--color-primary) / 40%);
     margin: 15px 0;
 }
 

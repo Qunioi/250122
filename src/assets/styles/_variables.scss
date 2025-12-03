@@ -22,6 +22,19 @@
   --balance-btn-text: rgb(255 255 255);
   --balance-btn-radius: 4px;
 
+  /* 註冊 */
+    --join-title: rgb(var(--color-primary-text));
+    --join-subtitle: rgb(var(--color-primary-text));
+    --join-line: rgb(var(--color-primary));
+    --join-star: rgb(144 45 13); /* 預設 #902D0D */
+    --join-input-focus: rgb(var(--color-primary));
+    --join-submit-bg: rgb(77 131 178);
+    --join-submit-hover-bg: rgb(77 131 178);
+    --join-submit-text: rgb(255 255 255);
+    --join-submit-hover-text: rgb(255 255 255);
+    --join-submit-border: 0;
+    --join-submit-radius: 0;
+
   /* 共用色 */
   --color-red: 210 25 39;
   --color-tertiary: 255 255 255;      /* #ffffff */
