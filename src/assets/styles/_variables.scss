@@ -1,89 +1,90 @@
 :root {
-  /* layout */
-  --page-width: 1366px;
-  --body-width: 1200px;
+	/* layout */
+	--page-width: 1366px;
+	--body-width: 1200px;
 
-  /* 背景影像（預設無） */
-  --page-bg: none;
+	/* 背景影像（預設無） */
+	--page-bg: none;
 
-  /* spacing */
-  --input-padding: 6px;
+	/* spacing */
+	--input-padding: 6px;
 
-  /* 第三方套件 */
-  --swiper-pagination-color: rgb(var(--color-primary));
+	/* 第三方套件 */
+	--swiper-pagination-color: rgb(var(--color-primary));
 
-  /* 餘額區塊 */
-  --balance-bg: rgb(0 0 0);
-  --balance-text: rgb(255 255 255);
-  --balance-tool-bg: rgb(167 167 167);
-  --balance-tool-line: transparent;
-  --balance-btn-bg: rgb(var(--color-primary));
-  --balance-btn-bg-hover: rgb(var(--color-primary) / 80%);
-  --balance-btn-text: rgb(255 255 255);
-  --balance-btn-radius: 4px;
+	/* 餘額區塊 */
+	--balance-bg: rgb(0 0 0);
+	--balance-text: rgb(255 255 255);
+	--balance-tool-bg: rgb(167 167 167);
+	--balance-tool-line: transparent;
+	--balance-btn-bg: rgb(var(--color-primary));
+	--balance-btn-bg-hover: rgb(var(--color-primary) / 80%);
+	--balance-btn-text: rgb(255 255 255);
+	--balance-btn-radius: 4px;
 
-  /* 註冊 */
-    --join-title: rgb(var(--color-primary-text));
-    --join-subtitle: rgb(var(--color-primary-text));
-    --join-line: rgb(var(--color-primary));
-    --join-star: rgb(144 45 13); /* 預設 #902D0D */
-    --join-input-focus: rgb(var(--color-primary));
-    --join-submit-bg: rgb(77 131 178);
-    --join-submit-hover-bg: rgb(77 131 178);
-    --join-submit-text: rgb(255 255 255);
-    --join-submit-hover-text: rgb(255 255 255);
-    --join-submit-border: 0;
-    --join-submit-radius: 0;
+	/* 註冊 */
+	--join-title: rgb(var(--color-primary-text));
+	--join-subtitle: rgb(var(--color-primary-text));
+	--join-text: rgb(var(--color-primary-text));
+	--join-line: rgb(var(--color-primary));
+	--join-star: rgb(144 45 13); /* 預設 #902D0D */
+	--join-input-focus: rgb(var(--color-primary));
+	--join-submit-bg: rgb(77 131 178);
+	--join-submit-hover-bg: rgb(77 131 178);
+	--join-submit-text: rgb(255 255 255);
+	--join-submit-hover-text: rgb(255 255 255);
+	--join-submit-border: 0;
+	--join-submit-radius: 0;
 
-  /* 共用色 */
-  --color-red: 210 25 39;
-  --color-tertiary: 255 255 255;      /* #ffffff */
-  --color-secondary-bg: 248 248 248;  /* #f8f8f8 */
-  --color-tertiary-bg: 2 2 2;         /* #020202 */
-  --color-tertiary-text: 255 255 255; /* #ffffff */
+	/* 共用色 */
+	--color-red: 210 25 39;
+	--color-tertiary: 255 255 255;      /* #ffffff */
+	--color-secondary-bg: 248 248 248;  /* #f8f8f8 */
+	--color-tertiary-bg: 2 2 2;         /* #020202 */
+	--color-tertiary-text: 255 255 255; /* #ffffff */
 
-  /* 預設主題（無品牌時的保底） */
-  --color-primary: 14 116 255;        /* #0e74ff */
-  --color-secondary: 80 184 248;      /* #50b8f8 */
-  --color-primary-bg: 0 0 0;          /* #000000 */
-  --color-primary-text: 255 255 255;  /* #ffffff */
-  --color-secondary-text: 167 167 167;/* #a7a7a7 */
+	/* 預設主題（無品牌時的保底） */
+	--color-primary: 14 116 255;        /* #0e74ff */
+	--color-secondary: 80 184 248;      /* #50b8f8 */
+	--color-primary-bg: 0 0 0;          /* #000000 */
+	--color-primary-text: 255 255 255;  /* #ffffff */
+	--color-secondary-text: 167 167 167;/* #a7a7a7 */
 }
 
 /* 250122-1 */
 :root[data-theme~="2501221"] {
-  --color-primary: 14 116 255;        /* #0e74ff */
-  --color-secondary: 80 184 248;      /* #50b8f8 */
-  --color-primary-bg: 0 0 0;          /* #000000 */
-  --color-primary-text: 255 255 255;  /* #ffffff */
-  --color-secondary-text: 167 167 167;/* #a7a7a7 */
+	--color-primary: 14 116 255;        /* #0e74ff */
+	--color-secondary: 80 184 248;      /* #50b8f8 */
+	--color-primary-bg: 0 0 0;          /* #000000 */
+	--color-primary-text: 255 255 255;  /* #ffffff */
+	--color-secondary-text: 167 167 167;/* #a7a7a7 */
 }
 
 /* 250122-2 */
 :root[data-theme~="2501222"] {
-  --color-primary: 244 122 234;       /* #f47aea */
-  --color-secondary: 132 71 200;      /* #8447c8 */
-  --color-primary-bg: 54 37 175;      /* #3625af */
-  --color-primary-text: 255 255 255;  /* #ffffff */
-  --color-secondary-text: 219 219 219;/* #dbdbdb */
-  --page-bg: linear-gradient(180deg, rgb(var(--color-secondary)), transparent);
+	--color-primary: 244 122 234;       /* #f47aea */
+	--color-secondary: 132 71 200;      /* #8447c8 */
+	--color-primary-bg: 54 37 175;      /* #3625af */
+	--color-primary-text: 255 255 255;  /* #ffffff */
+	--color-secondary-text: 219 219 219;/* #dbdbdb */
+	--page-bg: linear-gradient(180deg, rgb(var(--color-secondary)), transparent);
 }
 
 /* 250122-3 */
 :root[data-theme~="2501223"] {
-  --color-primary: 255 168 29;        /* #ffa81d */
-  --color-secondary: 36 249 228;      /* #24f9e4 */
-  --color-primary-bg: 14 206 255;     /* #0eceff */
-  --color-primary-text: 0 0 0;        /* #000000 */
-  --color-secondary-text: 54 54 54;   /* #363636 */
-  --page-bg: linear-gradient(180deg, rgb(var(--color-secondary) / 80%), transparent);
+	--color-primary: 255 168 29;        /* #ffa81d */
+	--color-secondary: 36 249 228;      /* #24f9e4 */
+	--color-primary-bg: 14 206 255;     /* #0eceff */
+	--color-primary-text: 0 0 0;        /* #000000 */
+	--color-secondary-text: 54 54 54;   /* #363636 */
+	--page-bg: linear-gradient(180deg, rgb(var(--color-secondary) / 80%), transparent);
 }
 
 /* 250122-4 */
 :root[data-theme~="2501224"] {
-  --color-primary: 226 87 87;         /* #e25757 */
-  --color-secondary: 255 217 220;     /* #ffd9dc */
-  --color-primary-bg: 230 230 230;    /* #e6e6e6 */
-  --color-primary-text: 0 0 0;        /* #000000 */
-  --color-secondary-text: 72 72 72;   /* #484848 */
+	--color-primary: 226 87 87;         /* #e25757 */
+	--color-secondary: 255 217 220;     /* #ffd9dc */
+	--color-primary-bg: 230 230 230;    /* #e6e6e6 */
+	--color-primary-text: 0 0 0;        /* #000000 */
+	--color-secondary-text: 72 72 72;   /* #484848 */
 }
