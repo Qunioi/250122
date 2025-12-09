@@ -25,16 +25,32 @@
 	/* 註冊 */
 	--join-title: rgb(var(--color-primary-text));
 	--join-subtitle: rgb(var(--color-primary-text));
-	--join-text: rgb(var(--color-primary-text));
+	--join-text: #fff;
+	--join-captcha: rgb(128 136 161);
+	--join-tips: rgb(var(--color-primary-text));
 	--join-line: rgb(var(--color-primary));
-	--join-star: rgb(144 45 13); /* 預設 #902D0D */
+	--join-star: rgb(144 45 13);
+	// 註冊 - Input
+	--join-input-text: rgb(0 0 0);
+	--join-input-placeholder: rgb(117 117 117);
+	--join-input-bg: rgb(255 255 255);
+	--join-input-border: rgb(218 218 218);
 	--join-input-focus: rgb(var(--color-primary));
+	// 註冊 - Wallet
+	--join-wallet-bg: var(--join-input-bg);
+	--join-wallet-border: var(--join-input-border);
+	--join-wallet-primary: rgb(64 78 103);
+	--join-wallet-title: rgb(117 117 117);
+	--join-wallet-line: rgb(117 117 117);
+	--join-wallet-label: rgb(255 255 255 / 50%);
+	// 註冊 - Submit Button
 	--join-submit-bg: rgb(77 131 178);
-	--join-submit-hover-bg: rgb(77 131 178);
+	--join-submit-hover-bg: rgb(77 131 178 / 90%);
 	--join-submit-text: rgb(255 255 255);
 	--join-submit-hover-text: rgb(255 255 255);
 	--join-submit-border: 0;
 	--join-submit-radius: 0;
+
 
 	/* 共用色 */
 	--color-red: 210 25 39;
@@ -49,6 +65,11 @@
 	--color-primary-bg: 0 0 0;          /* #000000 */
 	--color-primary-text: 255 255 255;  /* #ffffff */
 	--color-secondary-text: 167 167 167;/* #a7a7a7 */
+}
+
+/* dark */
+:root[data-theme~="light"] {
+    --join-text: rgb(34 34 34);
 }
 
 /* 250122-1 */

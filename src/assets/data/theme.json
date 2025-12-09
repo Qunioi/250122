@@ -15,7 +15,7 @@
         "bb": "white",
         "ub": "white"
       },
-      "value": "2501221"
+      "floatGotop": "white"
     },
     {
       "themeSort": 2,
@@ -31,7 +31,7 @@
         "bb": "white",
         "ub": "white"
       },
-      "value": "2501222"
+      "floatGotop": "white"
     },
     {
       "themeSort": 3,
@@ -47,7 +47,7 @@
         "bb": "black",
         "ub": "black"
       },
-      "value": "2501223"
+      "floatGotop": "black"
     },
     {
       "themeSort": 4,
@@ -63,7 +63,7 @@
         "bb": "red",
         "ub": "black"
       },
-      "value": "2501224"
+      "floatGotop": "black"
     }
   ]
 }

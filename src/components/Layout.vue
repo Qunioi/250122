@@ -7,11 +7,13 @@
       <router-view />
     </div>
     <Footer />
+    <FloatBottom v-if="enableThemeManager"  />
   </div>
 </template>
 
 <script setup>
 import FloatImg from '@/components/common/FloatImg.vue';
+import FloatBottom from '@/components/common/FloatBottom.vue';
 import Header from '@/components/Header.vue';
 import Footer from '@/components/Footer.vue';
 import Loading from '@/components/common/Loading.vue';
@@ -46,7 +48,7 @@ function getPageClass() {
 function setBodyClass() {
   const pageClass = getPageClass();
   const currentLang = configStore.lang;
-  
+
   // 移除上一次的 pageClass 和 lang
   if (lastPageClass) {
     lastPageClass.split(' ').forEach(cls => {
@@ -56,24 +58,24 @@ function setBodyClass() {
   if (lastLang) {
     document.body.classList.remove(lastLang);
   }
-  
+
   // 添加 staticClass (只在第一次)
   if (staticClass && !document.body.classList.contains(staticClass)) {
     document.body.classList.add(staticClass);
   }
-  
+
   // 添加新的 pageClass
   if (pageClass) {
     pageClass.split(' ').forEach(cls => {
       if (cls) document.body.classList.add(cls);
     });
   }
-  
+
   // 添加新的 lang
   if (currentLang) {
     document.body.classList.add(currentLang);
   }
-  
+
   // 記錄當前設定
   lastPageClass = pageClass;
   lastLang = currentLang;

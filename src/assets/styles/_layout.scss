@@ -25,6 +25,24 @@ body {
     }
 }
 
+.ele-float-bottom {
+    position: absolute;
+    right: 5px;
+    top: 0;
+    z-index: 990;
+    transition: opacity 0.3s, visibility 0.3s, max-width 0.3s;
+    .ele-float-bottom-link {
+        cursor: pointer;
+        display: block;
+        width: 40px;
+        height: 40px;
+        background-color: rgb(var(--color-secondary));
+        border-radius: .1875rem;
+        opacity: 0.8;
+    }
+}
+
+
 .first-section-wrap {
     .section-wrap {
         max-width: var(--page-width);
