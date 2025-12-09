@@ -7,7 +7,7 @@
       <router-view />
     </div>
     <Footer />
-    <FloatBottom v-if="enableThemeManager"  />
+    <FloatBottom />
   </div>
 </template>
 
