@@ -144,7 +144,7 @@ import TemplateZoom from "./TemplateZoom.vue";
 import FloatImgUploader from "./FloatImgUploader.vue";
 
 
-// 面板顯示
+// 控制面板預設開啟或關閉, true: 開啟, false: 關閉
 const panelVisible = ref(true);
 watch(panelVisible, async (val) => {
   await nextTick(); // 等待 DOM 更新
@@ -198,8 +198,10 @@ const clearCustomThemeColors = persistCustom.clear;
 const config = useConfigStore();
 
 // 選中主題／主題資料
+// 注意：config.themeColor 是 Pinia 內部的 ref，直接存取會取得值（不需要 .value）
+// 確保初始化時正確讀取 configStore 已從 localStorage 載入的主題
 const selectedThemeName = ref(
-  config.themeColor.value || themes[0]?.themeName || ""
+  config.themeColor || themes[0]?.themeName || ""
 );
 const currentTheme = computed(() =>
   themes.find((t) => t.themeName === selectedThemeName.value)

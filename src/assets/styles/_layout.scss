@@ -1,5 +1,3 @@
-@use "@/assets/styles/env" as *;
-
 body {
     &.is-static {
         min-width: var(--page-width);

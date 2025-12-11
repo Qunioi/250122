@@ -42,17 +42,9 @@ const getCurrentTheme = () => {
   try {
     const currentThemeName = themeName.value
     
-    // 先嘗試從直接引入的 theme.json 獲取
+    // 直接引入的 theme.json 獲取
     if (themeData && themeData.colorThemes) {
       return themeData.colorThemes.find(theme => 
-        theme.themeName === currentThemeName
-      )
-    }
-    
-    // 備用：從 store 獲取
-    const storeThemeData = config.themeData
-    if (storeThemeData && storeThemeData.colorThemes) {
-      return storeThemeData.colorThemes.find(theme => 
         theme.themeName === currentThemeName
       )
     }

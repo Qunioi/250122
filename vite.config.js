@@ -30,7 +30,7 @@ export default defineConfig(({ mode }) => {
       alias: { '@': path.resolve(__dirname, 'src') },
     },
     server: {
-      port: Number(env.VITE_PORT) || 3001,
+      port: Number(env.VITE_PORT) || 3000,
       host: true,
     },
     css: {
@@ -38,10 +38,6 @@ export default defineConfig(({ mode }) => {
         scss: {
           api: 'modern-compiler',
           silenceDeprecations: ['legacy-js-api'],
-          additionalData: `
-            $themeColor: "${env.VITE_THEME_COLOR}";
-            $lang: "${env.VITE_LANG}";
-          `,
         },
       },
     },

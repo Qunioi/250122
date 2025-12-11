@@ -1,92 +1,157 @@
 import { defineStore } from 'pinia'
+import { ref, computed, onMounted } from 'vue'
 import { useTheme } from '@/theme/useTheme'
 import themeConfig from '@/assets/data/theme.json'
 
-// 與 useTheme 的命名空間一致
+// ============================================================
+// CONFIG 設定區塊
+// ============================================================
 const NAMESPACE = 'app'
 
+// ============================================================
+// 工具函式
+// ============================================================
 const hasWindow = () => typeof window !== 'undefined'
 const lsGet = (k, fallback = null) => (hasWindow() ? localStorage.getItem(k) : null) ?? fallback
 const lsSet = (k, v) => { if (hasWindow()) localStorage.setItem(k, v) }
 
+/**
+ * 取得預設主題（themeSort === 1 或第一個）
+ */
+const getDefaultTheme = () => {
+  return themeConfig.colorThemes.find(t => t.themeSort === 1) || themeConfig.colorThemes[0]
+}
+
+/**
+ * 根據主題名稱取得主題配置
+ */
+const getThemeByName = (themeName) => {
+  return themeConfig.colorThemes.find(t => t.themeName === themeName)
+}
+
+// ============================================================
+// Store 定義
+// ============================================================
 export const useConfigStore = defineStore('config', () => {
   const theme = useTheme({ namespace: NAMESPACE })
+  const defaultTheme = getDefaultTheme()
 
-  // 下拉清單
+  // 預設值
+  const fallbackColor = defaultTheme?.themeName || ''
+  const fallbackMode = defaultTheme?.themeMode || 'dark'
+
+  // --------------------------------------------------------
+  // State（統一從 localStorage 或預設值初始化）
+  // --------------------------------------------------------
+  const themeColor = ref(lsGet(`${NAMESPACE}:themeColor`) || fallbackColor)
+  const themeMode = ref(lsGet(`${NAMESPACE}:themeMode`) || fallbackMode)
+  const lang = ref(lsGet('lang') || 'zh-cn')
+
+  // --------------------------------------------------------
+  // Computed / Getters
+  // --------------------------------------------------------
+  
+  // 下拉清單選項
   const themeOptions = computed(() =>
-    themeConfig.colorThemes.map(t => ({ value: t.themeName, label: `${t.themeName} (${t.themeMode})` }))
+    themeConfig.colorThemes.map(t => ({
+      value: t.themeName,
+      label: `${t.themeName} (${t.themeMode})`
+    }))
   )
 
-  // 初值（若 storage 沒有，退回 .env 或預設）
-  const fallbackColor = import.meta.env.VITE_THEME_COLOR
-  const fallbackMode  = import.meta.env.VITE_THEME_MODE
+  // 當前主題配置（快取查找結果）
+  const currentThemeConfig = computed(() => getThemeByName(themeColor.value))
 
-  // 如果環境變量存在，就使用環境變量，否則才使用 localStorage
-  const storedColor = lsGet(`${NAMESPACE}:themeColor`)
-  const storedMode = lsGet(`${NAMESPACE}:themeMode`)
+  // 衍生配置（使用 currentThemeConfig 避免重複查找）
+  const themeFooterLogo = computed(() => 
+    currentThemeConfig.value?.footerLogo || { bb: 'white', ub: 'white' }
+  )
+  const themeImgQrcode = computed(() => 
+    currentThemeConfig.value?.imgQrcode || 'qrcode_d'
+  )
+  const themeNavType = computed(() => 
+    currentThemeConfig.value?.themeNav || 'type-1'
+  )
 
-  // 優先順序：環境變量 > localStorage > 預設值
-  const themeColor = ref(import.meta.env.VITE_THEME_COLOR || storedColor || fallbackColor)
-  const themeMode  = ref(import.meta.env.VITE_THEME_MODE || storedMode || fallbackMode)
-  const lang       = ref(lsGet('lang') || import.meta.env.VITE_LANG || 'zh-cn')
+  // --------------------------------------------------------
+  // Actions
+  // --------------------------------------------------------
 
-  // 在初始化時，如果使用了環境變量，就更新 localStorage
-  if (import.meta.env.VITE_THEME_COLOR && import.meta.env.VITE_THEME_COLOR !== storedColor) {
-    lsSet(`${NAMESPACE}:themeColor`, import.meta.env.VITE_THEME_COLOR)
-  }
-  if (import.meta.env.VITE_THEME_MODE && import.meta.env.VITE_THEME_MODE !== storedMode) {
-    lsSet(`${NAMESPACE}:themeMode`, import.meta.env.VITE_THEME_MODE)
-  }
-
-  // 衍生配置
-  const themeFooterLogo = computed(() => themeConfig.colorThemes.find(t => t.themeName === themeColor.value)?.footerLogo || { bb: 'white', ub: 'white' })
-  const themeImgQrcode  = computed(() => themeConfig.colorThemes.find(t => t.themeName === themeColor.value)?.imgQrcode || 'qrcode_d')
-  const themeNavType    = computed(() => themeConfig.colorThemes.find(t => t.themeName === themeColor.value)?.themeNav || 'type-1')
-
-  // 行為：切換主題（預設會套用該主題的預設 mode，再寫回 state）
+  /**
+   * 切換主題顏色
+   * @param {string} themeName - 主題名稱
+   * @param {Object} options - 選項
+   * @param {boolean} options.keepMode - 是否保持當前模式
+   */
   const setThemeColor = (themeName, { keepMode = false } = {}) => {
     const nextMode = keepMode ? themeMode.value : theme.getDefaultModeOf(themeName)
+    
     themeColor.value = themeName
-    themeMode.value  = nextMode
+    themeMode.value = nextMode
+    
     lsSet(`${NAMESPACE}:themeColor`, themeName)
     lsSet(`${NAMESPACE}:themeMode`, nextMode)
-    // 交給 useTheme 套用（唯一動 DOM）
+    
+    // 交給 useTheme 套用 DOM
     theme.applyTheme(themeName, nextMode)
   }
 
-  // 行為：切換模式（不動顏色）
+  /**
+   * 切換主題模式（不改變顏色）
+   * @param {string} mode - 模式 (dark/light)
+   */
   const setThemeMode = (mode) => {
     themeMode.value = mode
     lsSet(`${NAMESPACE}:themeMode`, mode)
     theme.applyTheme(themeColor.value, mode)
   }
 
-  // 語言
+  /**
+   * 切換語言
+   * @param {string} language - 語言代碼
+   */
   const setLang = (language) => {
     lang.value = language
     lsSet('lang', language)
+    document.documentElement.setAttribute('lang', language)
   }
 
-  // 初始化：從 storage/預設讀取並真正套用一次
+  /**
+   * 初始化主題（統一入口）
+   * 在 onMounted 時呼叫，確保 DOM 已準備好
+   */
+  const initTheme = () => {
+    // 套用主題到 DOM
+    theme.applyTheme(themeColor.value, themeMode.value, true)
+    // 設定語言屬性
+    document.documentElement.setAttribute('lang', lang.value)
+  }
+
+  // --------------------------------------------------------
+  // 生命週期
+  // --------------------------------------------------------
   onMounted(() => {
-    const { themeName, mode } = theme.initTheme(themeColor.value, themeMode.value)
-    // 回寫到 store，以防 storage 與 state 不一致
-    themeColor.value = themeName
-    themeMode.value  = mode
+    initTheme()
   })
 
+  // --------------------------------------------------------
+  // 匯出
+  // --------------------------------------------------------
   return {
-    // state / computed
-    themeOptions,
-    themeMode,
+    // State
     themeColor,
+    themeMode,
+    lang,
+    // Computed
+    themeOptions,
     themeFooterLogo,
     themeImgQrcode,
     themeNavType,
-    lang,
-    // actions
-    setThemeMode,
+    currentThemeConfig,
+    // Actions
     setThemeColor,
+    setThemeMode,
     setLang,
+    initTheme,
   }
 })
