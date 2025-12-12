@@ -144,7 +144,7 @@ import TemplateZoom from "./TemplateZoom.vue";
 import FloatImgUploader from "./FloatImgUploader.vue";
 
 
-// 控制面板預設開啟或關閉, true: 開啟, false: 關閉
+// 面板顯示
 const panelVisible = ref(true);
 watch(panelVisible, async (val) => {
   await nextTick(); // 等待 DOM 更新
@@ -160,6 +160,11 @@ onMounted(async () => {
   await nextTick();
   if (panelVisible.value) {
     document.body.classList.add('is-edit');
+  }
+  
+  // 確保初始化時有選中的主題
+  if (!selectedThemeName.value && themes.length > 0) {
+    selectedThemeName.value = themes[0].themeName;
   }
 });
 
